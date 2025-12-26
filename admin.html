@@ -1,0 +1,2196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Zoro Burger</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍔</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 0 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .admin-logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin: 0 auto 1rem;
+            display: block;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.5rem;
+        }
+
+        .sidebar-header p {
+            color: #999;
+            font-size: 0.9rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-menu li:hover {
+            background: rgba(211, 47, 47, 0.15);
+            border-left-color: rgba(211, 47, 47, 0.5);
+        }
+
+        .sidebar-menu li.active {
+            background: rgba(211, 47, 47, 0.3);
+            border-left-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 2rem;
+            display: block;
+            visibility: visible;
+            position: relative;
+            z-index: 1;
+            opacity: 1 !important; /* Override styles.css opacity: 0 */
+        }
+
+        .header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .orders-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: block;
+            visibility: visible;
+            min-height: 200px;
+        }
+
+        .orders-section.hidden {
+            display: none !important;
+            visibility: hidden !important;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--border-color);
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-tab.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            display: table;
+            visibility: visible;
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .orders-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: table-cell;
+            visibility: visible;
+        }
+        
+        .orders-table tr {
+            display: table-row;
+            visibility: visible;
+        }
+
+        .orders-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-ordered {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-pending {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-confirmed {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-awaiting_rider {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-in_kitchen {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .status-rider_on_way {
+            background: #0dcaf0;
+            color: #000;
+        }
+
+        .status-delivered {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .btn-update {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-update:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-view {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #5a6268;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                padding: 1rem;
+            }
+
+            .admin-logo-img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .sidebar-header {
+                padding: 0 1rem;
+            }
+
+            .sidebar-menu li {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .orders-table {
+                font-size: 0.85rem;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 0.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 180px;
+            }
+
+            .main-content {
+                margin-left: 180px;
+                padding: 0.75rem;
+            }
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+        }
+
+        .login-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--dark-color);
+        }
+
+        .login-box img {
+            width: 100px;
+            height: 100px;
+            display: block;
+            margin: 0 auto 1.5rem;
+            object-fit: contain;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-box button:hover {
+            background: var(--secondary-color);
+        }
+
+        .logout-btn {
+            background: #dc3545 !important;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .logout-btn:hover {
+            background: #c82333 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <img src="zoroLogo.png" alt="Zoro Burger">
+            <h2>Admin Login</h2>
+            <form id="loginForm">
+                <input type="text" id="loginUsername" placeholder="Username" required autocomplete="username">
+                <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+                <button type="submit">Login</button>
+            </form>
+            <div id="loginError" style="color: red; margin-top: 1rem; text-align: center; display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard (hidden until logged in) -->
+    <div class="admin-container" id="adminContainer" style="display: none;">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="zoroLogo.png" alt="Zoro Burger" class="admin-logo-img">
+                <p style="color: #999; font-size: 0.9rem;">Admin Dashboard</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active" data-section="orders">Orders</li>
+                <li data-section="stats">Statistics</li>
+                <li data-section="customers">Customers</li>
+                <li data-section="users">Users</li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Orders Management</h1>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <span id="userInfo" style="color: #666; font-size: 0.9rem;"></span>
+                    <button class="action-btn btn-update" onclick="refreshOrders()">Refresh</button>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <div class="value" id="totalOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Today's Orders</h3>
+                    <div class="value" id="todayOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Revenue</h3>
+                    <div class="value" id="totalRevenue">Rs 0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Today's Revenue</h3>
+                    <div class="value" id="todayRevenue">Rs 0</div>
+                </div>
+            </div>
+
+            <div class="orders-section" id="ordersSection">
+                <div class="section-header">
+                    <h2>Recent Orders</h2>
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-status="all">All</button>
+                        <button class="filter-tab" data-status="ordered">Ordered</button>
+                        <button class="filter-tab" data-status="confirmed">Confirmed</button>
+                        <button class="filter-tab" data-status="awaiting_rider">Awaiting Rider</button>
+                        <button class="filter-tab" data-status="in_kitchen">In Kitchen</button>
+                        <button class="filter-tab" data-status="rider_on_way">Rider on Way</button>
+                        <button class="filter-tab" data-status="delivered">Delivered</button>
+                    </div>
+                </div>
+                <div style="overflow-x: auto; display: block; visibility: visible;">
+                    <table class="orders-table" style="display: table; visibility: visible; width: 100%;">
+                        <thead style="display: table-header-group; visibility: visible;">
+                            <tr style="display: table-row; visibility: visible;">
+                                <th>Order #</th>
+                                <th>Customer</th>
+                                <th>Branch</th>
+                                <th>Type</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody" style="display: table-row-group; visibility: visible;">
+                            <tr style="display: table-row; visibility: visible;">
+                                <td colspan="9" style="text-align: center; padding: 2rem;">Loading orders...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="orders-section" id="customersSection" style="display: none;">
+                <div class="section-header">
+                    <h2>Customers</h2>
+                    <button class="action-btn btn-update" onclick="refreshCustomers()">Refresh</button>
+                </div>
+                <div style="overflow-x: auto; display: block; visibility: visible;">
+                    <table class="orders-table" style="display: table; visibility: visible; width: 100%;">
+                        <thead style="display: table-header-group; visibility: visible;">
+                            <tr style="display: table-row; visibility: visible;">
+                                <th>Name</th>
+                                <th>Phone Number</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Total Orders</th>
+                                <th>Total Spent</th>
+                                <th>First Order</th>
+                                <th>Last Order</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTableBody" style="display: table-row-group; visibility: visible;">
+                            <tr style="display: table-row; visibility: visible;">
+                                <td colspan="8" style="text-align: center; padding: 2rem;">Loading customers...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="orders-section" id="usersSection" style="display: none;">
+                <div class="section-header">
+                    <h2>Admin Users</h2>
+                    <button class="action-btn btn-update" onclick="openAddUserModal()">Add User</button>
+                </div>
+                <div style="overflow-x: auto; display: block; visibility: visible;">
+                    <table class="orders-table" style="display: table; visibility: visible; width: 100%;">
+                        <thead style="display: table-header-group; visibility: visible;">
+                            <tr style="display: table-row; visibility: visible;">
+                                <th>Username</th>
+                                <th>User Type</th>
+                                <th>Created At</th>
+                                <th>Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody" style="display: table-row-group; visibility: visible;">
+                            <tr style="display: table-row; visibility: visible;">
+                                <td colspan="5" style="text-align: center; padding: 2rem;">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Status Modal -->
+    <div class="modal" id="updateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Update Order Status</h2>
+                <button class="close-modal" onclick="closeUpdateModal()">&times;</button>
+            </div>
+            <form id="updateForm">
+                <input type="hidden" id="updateOrderId">
+                <div class="form-group">
+                    <label>Order Status</label>
+                    <select id="updateStatus" required>
+                        <option value="ordered">Ordered</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="awaiting_rider">Awaiting Rider</option>
+                        <option value="in_kitchen">In Kitchen</option>
+                        <option value="rider_on_way">Rider on Way</option>
+                        <option value="delivered">Delivered</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Payment Status</label>
+                    <select id="updatePaymentStatus" required>
+                        <option value="pending">Pending</option>
+                        <option value="paid">Paid</option>
+                        <option value="refunded">Refunded</option>
+                    </select>
+                </div>
+                <button type="submit" class="action-btn btn-update" style="width: 100%; margin-top: 1rem;">Update Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Order Modal -->
+    <div class="modal" id="viewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Order Details</h2>
+                <button class="close-modal" onclick="closeViewModal()">&times;</button>
+            </div>
+            <div id="orderDetails"></div>
+        </div>
+    </div>
+
+    <!-- Edit Order Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2>Edit Order</h2>
+                <button class="close-modal" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editOrderId">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Customer Name *</label>
+                        <input type="text" id="editCustomerName" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Phone *</label>
+                        <input type="text" id="editCustomerPhone" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Customer Email</label>
+                        <input type="email" id="editCustomerEmail" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Branch *</label>
+                        <input type="text" id="editBranch" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Customer Address</label>
+                    <textarea id="editCustomerAddress" rows="2" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Order Type *</label>
+                        <select id="editOrderType" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                            <option value="delivery">Delivery</option>
+                            <option value="pickup">Pickup</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select id="editPaymentMethod" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="online">Online</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Order Items (JSON format) *</label>
+                    <textarea id="editItems" rows="8" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 0.9rem; font-family: monospace; resize: vertical;"></textarea>
+                    <small style="color: #666; font-size: 0.85rem;">Edit the JSON array of items. Make sure it's valid JSON format.</small>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Subtotal (Rs) *</label>
+                        <input type="number" id="editSubtotal" step="0.01" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Delivery Fee (Rs)</label>
+                        <input type="number" id="editDeliveryFee" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Tax (Rs)</label>
+                        <input type="number" id="editTax" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Total (Rs) *</label>
+                        <input type="number" id="editTotal" step="0.01" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Notes</label>
+                    <textarea id="editNotes" rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" class="action-btn btn-update" style="width: 100%; margin-top: 1rem; background: #28a745;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="userModalTitle">Add Admin User</h2>
+                <button class="close-modal" onclick="closeUserModal()">&times;</button>
+            </div>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="userUsername" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="userPassword" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    <small style="color: #666; font-size: 0.85rem;" id="passwordHint">Leave blank to keep current password (when editing)</small>
+                </div>
+                <div class="form-group" id="userTypeGroup">
+                    <label>User Type</label>
+                    <select id="userType" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <option value="gulberg">Gulberg User</option>
+                        <option value="jt">JT User</option>
+                        <option value="super_admin">Super Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="action-btn btn-update" style="width: 100%; margin-top: 1rem;">Save User</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let currentFilter = 'all';
+        let previousOrderIds = new Set(); // Track previous order IDs to detect new orders
+        let notificationInterval = null; // Track the looping sound interval
+        let hasUnacknowledgedOrders = false; // Track if there are unacknowledged new orders
+        let audioContext = null; // Store audio context for reuse
+        let currentUser = null; // Store current logged-in user
+
+        // Check if user is logged in
+        function checkAuth() {
+            const savedUser = localStorage.getItem('adminUser');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    console.log('Loaded user from localStorage:', currentUser);
+                    if (currentUser && currentUser.id && currentUser.user_type) {
+                        showDashboard();
+                        return true;
+                    } else {
+                        console.error('Invalid user data in localStorage:', currentUser);
+                        localStorage.removeItem('adminUser');
+                        currentUser = null;
+                    }
+                } catch (e) {
+                    console.error('Error parsing saved user:', e);
+                    localStorage.removeItem('adminUser');
+                    currentUser = null;
+                }
+            }
+            showLogin();
+            return false;
+        }
+
+        // Show login screen
+        function showLogin() {
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('adminContainer').style.display = 'none';
+            currentUser = null;
+        }
+
+        // Show dashboard
+        function showDashboard() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('adminContainer').style.display = 'flex';
+            
+            // Update user info display
+            if (currentUser) {
+                const userTypeLabel = {
+                    'gulberg': 'Gulberg Admin',
+                    'jt': 'JT Admin',
+                    'super_admin': 'Super Admin'
+                };
+                document.getElementById('userInfo').textContent = 
+                    `Logged in as: ${currentUser.username} (${userTypeLabel[currentUser.user_type] || currentUser.user_type})`;
+            }
+            
+            // Hide/show tabs based on user type
+            updateSidebarVisibility();
+        }
+
+        // Update sidebar visibility based on user type
+        function updateSidebarVisibility() {
+            if (!currentUser) return;
+            
+            const menuItems = document.querySelectorAll('.sidebar-menu li');
+            menuItems.forEach(item => {
+                const section = item.dataset.section;
+                
+                // Gulberg and JT users only see Orders tab
+                if (currentUser.user_type === 'gulberg' || currentUser.user_type === 'jt') {
+                    if (section !== 'orders') {
+                        item.style.display = 'none';
+                    } else {
+                        item.style.display = 'flex';
+                    }
+                } else {
+                    // Super admin sees all tabs
+                    item.style.display = 'flex';
+                }
+            });
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('adminUser');
+                currentUser = null;
+                showLogin();
+            }
+        }
+
+        // Get auth headers for API requests
+        function getAuthHeaders() {
+            if (!currentUser) {
+                console.warn('getAuthHeaders called but currentUser is null');
+                // Try to restore from localStorage
+                const savedUser = localStorage.getItem('adminUser');
+                if (savedUser) {
+                    try {
+                        currentUser = JSON.parse(savedUser);
+                        console.log('Restored currentUser in getAuthHeaders:', currentUser);
+                    } catch (e) {
+                        console.error('Error parsing saved user in getAuthHeaders:', e);
+                    }
+                }
+            }
+            
+            if (!currentUser || !currentUser.id || !currentUser.user_type) {
+                console.error('Cannot get auth headers - invalid currentUser:', currentUser);
+                return {};
+            }
+            
+            const headers = {
+                'user_id': currentUser.id,
+                'user_type': currentUser.user_type
+            };
+            console.log('Auth headers:', headers);
+            return headers;
+        }
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+            
+            try {
+                const response = await fetch(`${API_URL}/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Save user info
+                    currentUser = data.user;
+                    console.log('Login successful, user data:', currentUser);
+                    if (!currentUser || !currentUser.id || !currentUser.user_type) {
+                        console.error('Invalid user data from server:', currentUser);
+                        errorDiv.textContent = 'Invalid response from server. Please try again.';
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+                    localStorage.setItem('adminUser', JSON.stringify(currentUser));
+                    showDashboard();
+                    // Load initial data
+                    loadStats();
+                    loadOrders();
+                } else {
+                    errorDiv.textContent = data.error || 'Login failed';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorDiv.textContent = 'Failed to connect to server. Make sure the backend is running.';
+                errorDiv.style.display = 'block';
+            }
+        });
+
+        // Stop the looping notification sound
+        function stopNotificationSound() {
+            if (notificationInterval) {
+                clearInterval(notificationInterval);
+                notificationInterval = null;
+            }
+            hasUnacknowledgedOrders = false;
+            console.log('🔇 Notification sound stopped');
+        }
+
+        // Play a single notification sound
+        function playSingleNotificationSound() {
+            try {
+                // Create or reuse audio context
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                // Resume audio context if suspended (browser autoplay policy)
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                // Create a pleasant two-tone notification sound
+                const playTone = (frequency, duration, startTime) => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = frequency;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.3, startTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+                    
+                    oscillator.start(startTime);
+                    oscillator.stop(startTime + duration);
+                };
+                
+                // Play two tones: a higher tone followed by a lower tone (like a doorbell)
+                const now = audioContext.currentTime;
+                playTone(800, 0.15, now); // First tone (higher)
+                playTone(600, 0.15, now + 0.2); // Second tone (lower, slightly delayed)
+            } catch (error) {
+                console.error('Error playing notification sound:', error);
+            }
+        }
+
+        // Start looping notification sound when new order arrives
+        function startNotificationLoop() {
+            // Don't start if already looping
+            if (notificationInterval) {
+                return;
+            }
+            
+            // Only loop if the page is hidden (user not viewing the dashboard)
+            if (!document.hidden) {
+                // Page is visible - just play once
+                playSingleNotificationSound();
+                console.log('🔔 New order detected! (Dashboard is visible, playing once)');
+                return;
+            }
+            
+            hasUnacknowledgedOrders = true;
+            console.log('🔔 New order detected! Starting notification loop (dashboard is hidden)...');
+            
+            // Play immediately
+            playSingleNotificationSound();
+            
+            // Then play every 3 seconds in a loop
+            notificationInterval = setInterval(() => {
+                // Stop if page becomes visible or orders are acknowledged
+                if (!hasUnacknowledgedOrders || !document.hidden) {
+                    stopNotificationSound();
+                    return;
+                }
+                playSingleNotificationSound();
+            }, 3000); // Play every 3 seconds
+        }
+
+        // Acknowledge new orders (stop the loop)
+        function acknowledgeNewOrders() {
+            if (hasUnacknowledgedOrders) {
+                stopNotificationSound();
+                console.log('✅ New orders acknowledged');
+            }
+        }
+
+        // Format status for display
+        function formatStatus(status) {
+            const statusMap = {
+                'ordered': 'Ordered',
+                'pending': 'Pending',
+                'confirmed': 'Confirmed',
+                'awaiting_rider': 'Awaiting Rider',
+                'in_kitchen': 'In Kitchen',
+                'rider_on_way': 'Rider on Way',
+                'delivered': 'Delivered',
+                'preparing': 'Preparing',
+                'ready': 'Ready',
+                'completed': 'Completed',
+                'cancelled': 'Cancelled'
+            };
+            return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
+        }
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                if (!currentUser) {
+                    console.error('Not authenticated');
+                    return;
+                }
+                
+                const response = await fetch(`${API_URL}/stats`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.status === 401) {
+                    // Session expired, logout
+                    logout();
+                    return;
+                }
+                
+                const stats = await response.json();
+                
+                document.getElementById('totalOrders').textContent = stats.total_orders || 0;
+                document.getElementById('todayOrders').textContent = stats.today_orders || 0;
+                document.getElementById('totalRevenue').textContent = `Rs ${(stats.total_revenue || 0).toLocaleString()}`;
+                document.getElementById('todayRevenue').textContent = `Rs ${(stats.today_revenue || 0).toLocaleString()}`;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load orders
+        async function loadOrders(status = 'all') {
+            try {
+                const tbody = document.getElementById('ordersTableBody');
+                if (!tbody) {
+                    console.error('ordersTableBody element not found!');
+                    alert('Error: Table body element not found. Please refresh the page.');
+                    return;
+                }
+                
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">Loading orders...</td></tr>';
+                
+                // Re-check auth if currentUser is null
+                if (!currentUser) {
+                    const savedUser = localStorage.getItem('adminUser');
+                    if (savedUser) {
+                        try {
+                            currentUser = JSON.parse(savedUser);
+                            console.log('Restored user from localStorage in loadOrders:', currentUser);
+                        } catch (e) {
+                            console.error('Error parsing saved user:', e);
+                        }
+                    }
+                }
+                
+                if (!currentUser) {
+                    console.error('Not authenticated - currentUser is null');
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem; color: red;">Please login to view orders.</td></tr>';
+                    return;
+                }
+                
+                console.log('Loading orders with user:', currentUser);
+                
+                const url = status === 'all' ? `${API_URL}/orders` : `${API_URL}/orders?status=${status}`;
+                console.log('Fetching orders from:', url);
+                
+                let response;
+                try {
+                    response = await fetch(url, {
+                        headers: getAuthHeaders()
+                    });
+                } catch (fetchError) {
+                    console.error('Fetch error:', fetchError);
+                    throw new Error(`Failed to connect to server: ${fetchError.message}. Make sure the backend is running on http://localhost:3000`);
+                }
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                }
+                
+                const orders = await response.json();
+                console.log('Received orders:', orders);
+                
+                if (!Array.isArray(orders)) {
+                    console.error('Expected array but got:', orders);
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem; color: red;">Invalid response from server. Check console for details.</td></tr>';
+                    return;
+                }
+                
+                // Detect new orders by comparing with previous order IDs
+                if (previousOrderIds.size > 0) {
+                    const currentOrderIds = new Set();
+                    let hasNewOrders = false;
+                    
+                    orders.forEach(order => {
+                        const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
+                        if (orderId) {
+                            currentOrderIds.add(orderId);
+                            // If this order ID wasn't in the previous set, it's a new order
+                            if (!previousOrderIds.has(orderId)) {
+                                hasNewOrders = true;
+                            }
+                        }
+                    });
+                    
+                    // Start looping sound if new orders detected
+                    if (hasNewOrders) {
+                        startNotificationLoop();
+                    }
+                    
+                    // Update previous order IDs for next check
+                    previousOrderIds = currentOrderIds;
+                } else {
+                    // First load: just store the order IDs without playing sound
+                    const currentOrderIds = new Set();
+                    orders.forEach(order => {
+                        const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
+                        if (orderId) {
+                            currentOrderIds.add(orderId);
+                        }
+                    });
+                    previousOrderIds = currentOrderIds;
+                }
+                
+                if (orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">No orders found. Place an order from the website to see it here.</td></tr>';
+                    return;
+                }
+                
+                const ordersHTML = orders.map(order => {
+                    try {
+                        const items = Array.isArray(order.items) ? order.items : (typeof order.items === 'string' ? JSON.parse(order.items) : []);
+                        const itemCount = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+                        // MongoDB uses createdAt (camelCase) by default, but also check created_at
+                        const date = new Date(order.createdAt || order.created_at || order.date).toLocaleString();
+                        // MongoDB uses _id instead of id - convert to string
+                        const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
+                        const status = order.status || 'ordered';
+                        const paymentStatus = order.payment_status || 'pending';
+                        
+                        // Escape single quotes in onclick handlers
+                        const safeOrderId = orderId.replace(/'/g, "\\'");
+                        const safeStatus = status.replace(/'/g, "\\'");
+                        const safePaymentStatus = paymentStatus.replace(/'/g, "\\'");
+                        
+                        // Show Edit button only if order is not confirmed (status is 'ordered' or 'pending')
+                        const canEdit = status === 'ordered' || status === 'pending';
+                        const editButton = canEdit ? `<button class="action-btn btn-update" onclick="openEditModal('${safeOrderId}')" style="margin-right: 0.5rem; background: #28a745;">Edit</button>` : '';
+                        
+                        return `
+                            <tr style="display: table-row;">
+                                <td><strong>${order.order_number || 'N/A'}</strong></td>
+                                <td>${order.customer_name || 'N/A'}<br><small style="color: #666;">${order.customer_phone || ''}</small></td>
+                                <td>${order.branch || 'N/A'}</td>
+                                <td>${order.order_type ? (order.order_type.charAt(0).toUpperCase() + order.order_type.slice(1)) : 'N/A'}</td>
+                                <td>${itemCount} item(s)</td>
+                                <td><strong>Rs ${parseFloat(order.total || 0).toLocaleString()}</strong></td>
+                                <td><span class="status-badge status-${status}">${formatStatus(status)}</span></td>
+                                <td><small>${date}</small></td>
+                                <td>
+                                    <button class="action-btn btn-view" onclick="window.location.href='/order-detail?id=${safeOrderId}'" style="margin-right: 0.5rem;">View</button>
+                                    <button class="action-btn btn-update" onclick="openUpdateModal('${safeOrderId}', '${safeStatus}', '${safePaymentStatus}')">Update</button>
+                                </td>
+                            </tr>
+                        `;
+                    } catch (err) {
+                        console.error('Error rendering order:', order, err);
+                        return `<tr style="display: table-row;"><td colspan="9" style="color: red;">Error rendering order: ${err.message}</td></tr>`;
+                    }
+                }).join('');
+                
+                tbody.innerHTML = ordersHTML;
+                console.log('Orders rendered successfully:', orders.length, 'orders');
+                console.log('Table body innerHTML length:', tbody.innerHTML.length);
+                console.log('Table body children count:', tbody.children.length);
+                
+                // Force table visibility - check all parent elements
+                const table = tbody.closest('table');
+                if (table) {
+                    table.style.display = 'table';
+                    table.style.visibility = 'visible';
+                    table.style.opacity = '1';
+                    console.log('Table element found, ensuring visibility');
+                    console.log('Table computed style:', window.getComputedStyle(table).display);
+                } else {
+                    console.error('Table element not found!');
+                }
+                
+                const tableWrapper = tbody.closest('div[style*="overflow"]');
+                if (tableWrapper) {
+                    tableWrapper.style.display = 'block';
+                    tableWrapper.style.visibility = 'visible';
+                    tableWrapper.style.opacity = '1';
+                    console.log('Table wrapper found and made visible');
+                }
+                
+                const ordersSection = document.querySelector('.orders-section');
+                if (ordersSection) {
+                    ordersSection.style.display = 'block';
+                    ordersSection.style.visibility = 'visible';
+                    ordersSection.style.opacity = '1';
+                    ordersSection.style.position = 'relative';
+                    ordersSection.style.zIndex = '1';
+                    console.log('Orders section found, ensuring visibility');
+                    console.log('Orders section computed style:', window.getComputedStyle(ordersSection).display);
+                } else {
+                    console.error('Orders section not found!');
+                }
+                
+                // Check if stats grid is covering the table
+                const statsGrid = document.getElementById('statsGrid');
+                if (statsGrid) {
+                    console.log('Stats grid height:', statsGrid.offsetHeight);
+                    console.log('Stats grid position:', window.getComputedStyle(statsGrid).position);
+                }
+                
+                // Verify table rows are actually in DOM
+                const rows = tbody.querySelectorAll('tr');
+                console.log('Number of rows in tbody:', rows.length);
+                if (rows.length > 0) {
+                    console.log('First row HTML:', rows[0].outerHTML.substring(0, 200));
+                    console.log('First row computed style:', window.getComputedStyle(rows[0]).display);
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                const tbody = document.getElementById('ordersTableBody');
+                if (tbody) {
+                    const errorMsg = error.message || 'Unknown error';
+                    const isFileProtocol = window.location.protocol === 'file:';
+                    const protocolWarning = isFileProtocol ? '<br><br><strong style="color: red;">⚠️ WARNING: You are opening this file directly. Please access it through http://localhost:3000/admin instead!</strong>' : '';
+                    
+                    tbody.innerHTML = 
+                        '<tr><td colspan="9" style="text-align: center; padding: 2rem; color: red; background: #ffe6e6; border: 2px solid red; border-radius: 5px;">' +
+                        '<strong>Error loading orders:</strong><br>' + errorMsg + 
+                        protocolWarning +
+                        '<br><br><strong>Make sure:</strong><br>' +
+                        '1. Backend is running on http://localhost:3000<br>' +
+                        '2. MongoDB is connected<br>' +
+                        '3. Access the page via http://localhost:3000/admin (not file://)<br>' +
+                        '4. Check browser console (F12) for details</td></tr>';
+                } else {
+                    console.error('ordersTableBody element not found in DOM!');
+                    alert('Critical Error: Table body element not found. Please refresh the page.');
+                }
+            }
+        }
+
+        // Filter tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentFilter = tab.dataset.status;
+                loadOrders(currentFilter);
+            });
+        });
+
+        // Update order status
+        function openUpdateModal(orderId, status, paymentStatus) {
+            document.getElementById('updateOrderId').value = orderId;
+            document.getElementById('updateStatus').value = status;
+            document.getElementById('updatePaymentStatus').value = paymentStatus;
+            document.getElementById('updateModal').classList.add('active');
+        }
+
+        function closeUpdateModal() {
+            document.getElementById('updateModal').classList.remove('active');
+        }
+
+        document.getElementById('updateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const orderId = document.getElementById('updateOrderId').value;
+            const status = document.getElementById('updateStatus').value;
+            const paymentStatus = document.getElementById('updatePaymentStatus').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({ status, payment_status: paymentStatus })
+                });
+                
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Order updated successfully!');
+                    closeUpdateModal();
+                    loadOrders(currentFilter);
+                    loadStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to update order'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to update order. Make sure the backend is running.');
+            }
+        });
+
+        // View order details
+        async function viewOrder(orderId) {
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                const order = await response.json();
+                
+                const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+                
+                document.getElementById('orderDetails').innerHTML = `
+                    <div style="margin-bottom: 1.5rem;">
+                        <h3 style="margin-bottom: 1rem;">Order #${order.order_number}</h3>
+                        <p><strong>Status:</strong> <span class="status-badge status-${order.status}">${order.status}</span></p>
+                        <p><strong>Payment Status:</strong> ${order.payment_status}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="margin-bottom: 0.5rem;">Customer Information</h4>
+                        <p><strong>Name:</strong> ${order.customer_name}</p>
+                        <p><strong>Phone:</strong> ${order.customer_phone}</p>
+                        ${order.customer_email ? `<p><strong>Email:</strong> ${order.customer_email}</p>` : ''}
+                        ${order.customer_address ? `<p><strong>Address:</strong> ${order.customer_address}</p>` : ''}
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="margin-bottom: 0.5rem;">Order Information</h4>
+                        <p><strong>Branch:</strong> ${order.branch}</p>
+                        <p><strong>Type:</strong> ${order.order_type}</p>
+                        <p><strong>Payment Method:</strong> ${order.payment_method}</p>
+                        <p><strong>Date:</strong> ${new Date(order.createdAt || order.created_at || order.date).toLocaleString()}</p>
+                        ${order.rider_name ? `
+                            <p><strong>Assigned Rider:</strong> ${order.rider_name}</p>
+                            ${order.accepted_at ? `<p><strong>Accepted At:</strong> ${new Date(order.accepted_at).toLocaleString()}</p>` : ''}
+                        ` : ''}
+                        ${order.delivery_location && order.delivery_location.latitude ? `
+                            <div style="margin-top: 1rem; padding: 1rem; background: #e8f5e9; border-radius: 5px; border-left: 4px solid #2e7d32;">
+                                <strong>📍 Delivery Location</strong>
+                                <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+                                    <strong>Coordinates:</strong><br>
+                                    Lat: ${order.delivery_location.latitude.toFixed(6)}<br>
+                                    Lng: ${order.delivery_location.longitude.toFixed(6)}<br>
+                                    ${order.delivery_location.accuracy ? `Accuracy: ${Math.round(order.delivery_location.accuracy)}m<br>` : ''}
+                                    ${order.delivery_location.timestamp ? `Delivered at: ${new Date(order.delivery_location.timestamp).toLocaleString()}<br>` : ''}
+                                    <a href="https://www.google.com/maps?q=${order.delivery_location.latitude},${order.delivery_location.longitude}" target="_blank" style="color: #2e7d32; text-decoration: underline; margin-top: 0.5rem; display: inline-block;">View on Google Maps</a>
+                                </p>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="margin-bottom: 0.5rem;">Items</h4>
+                        ${items.map(item => {
+                            const itemTotal = item.total || (item.price * (item.quantity || 1));
+                            const sizeInfo = item.size ? `
+                                <div style="margin-top: 0.5rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span style="font-size: 0.85rem; color: #666; font-weight: 600;">Size:</span>
+                                        <span style="display: inline-block; padding: 0.35rem 0.75rem; background: #fff5f5; color: var(--primary-color); border: 1.5px solid var(--primary-color); border-radius: 6px; font-size: 0.85rem; font-weight: 700;">
+                                            ${item.size}
+                                        </span>
+                                    </div>
+                                </div>
+                            ` : '';
+                            const addonsInfo = item.addons && item.addons.length > 0 
+                                ? `
+                                    <div style="margin-top: 0.75rem;">
+                                        <div style="font-size: 0.85rem; color: #666; font-weight: 600; margin-bottom: 0.5rem;">Add-ons:</div>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                            ${item.addons.map(a => `
+                                                <span style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.7rem; background: white; color: var(--dark-color); border: 1.5px solid #e0e0e0; border-radius: 6px; font-size: 0.8rem; font-weight: 600;">
+                                                    <span>${a.name}</span>
+                                                    <span style="color: var(--primary-color); font-weight: 700;">+Rs ${(a.price || 0).toLocaleString()}</span>
+                                                </span>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                ` 
+                                : '';
+                            const addonsPrice = item.addons && item.addons.length > 0 
+                                ? item.addons.reduce((sum, addon) => sum + (addon.price || 0), 0) 
+                                : 0;
+                            
+                            return `
+                                <div style="padding: 1rem; margin-bottom: 0.75rem; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 700; font-size: 1.05rem; color: var(--dark-color); margin-bottom: 0.5rem;">
+                                                ${item.name} × ${item.quantity || 1}
+                                            </div>
+                                            ${sizeInfo}
+                                            ${addonsInfo}
+                                        </div>
+                                        <div style="font-weight: 700; color: var(--primary-color); font-size: 1.1rem; margin-left: 1rem; white-space: nowrap;">
+                                            Rs ${itemTotal.toLocaleString()}
+                                        </div>
+                                    </div>
+                                    ${addonsPrice > 0 || item.size ? `
+                                        <div style="font-size: 0.8rem; color: #999; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #e0e0e0;">
+                                            Base Price: Rs ${item.price.toLocaleString()} 
+                                            ${item.size ? `× ${item.quantity || 1} = Rs ${((item.price || 0) * (item.quantity || 1)).toLocaleString()}` : ''}
+                                            ${addonsPrice > 0 ? ` + Add-ons: Rs ${addonsPrice.toLocaleString()} × ${item.quantity || 1} = Rs ${(addonsPrice * (item.quantity || 1)).toLocaleString()}` : ''}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <div style="border-top: 2px solid #eee; padding-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Subtotal:</span>
+                            <span>Rs ${parseFloat(order.subtotal).toLocaleString()}</span>
+                        </div>
+                        ${order.delivery_fee > 0 ? `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Delivery Fee:</span>
+                            <span>Rs ${parseFloat(order.delivery_fee).toLocaleString()}</span>
+                        </div>
+                        ` : ''}
+                        <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 700; color: var(--primary-color);">
+                            <span>Total:</span>
+                            <span>Rs ${parseFloat(order.total).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    ${order.notes ? `
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: #f9f9f9; border-radius: 5px;">
+                        <strong>Notes:</strong> ${order.notes}
+                    </div>
+                    ` : ''}
+                `;
+                
+                document.getElementById('viewModal').classList.add('active');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to load order details.');
+            }
+        }
+
+        function closeViewModal() {
+            document.getElementById('viewModal').classList.remove('active');
+        }
+
+        // Edit order functions
+        async function openEditModal(orderId) {
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                const order = await response.json();
+                
+                // Check if order can be edited (not confirmed)
+                if (order.status === 'confirmed' || order.status === 'awaiting_rider' || order.status === 'in_kitchen' || order.status === 'rider_on_way' || order.status === 'delivered') {
+                    alert('This order cannot be edited because it has already been confirmed or is in progress.');
+                    return;
+                }
+                
+                // Populate form fields
+                document.getElementById('editOrderId').value = orderId;
+                document.getElementById('editCustomerName').value = order.customer_name || '';
+                document.getElementById('editCustomerPhone').value = order.customer_phone || '';
+                document.getElementById('editCustomerEmail').value = order.customer_email || '';
+                document.getElementById('editCustomerAddress').value = order.customer_address || '';
+                document.getElementById('editBranch').value = order.branch || '';
+                document.getElementById('editOrderType').value = order.order_type || 'delivery';
+                document.getElementById('editPaymentMethod').value = order.payment_method || 'cash';
+                document.getElementById('editItems').value = JSON.stringify(order.items || [], null, 2);
+                document.getElementById('editSubtotal').value = order.subtotal || 0;
+                document.getElementById('editDeliveryFee').value = order.delivery_fee || 0;
+                document.getElementById('editTax').value = order.tax || 0;
+                document.getElementById('editTotal').value = order.total || 0;
+                document.getElementById('editNotes').value = order.notes || '';
+                
+                document.getElementById('editModal').classList.add('active');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to load order for editing.');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            document.getElementById('editForm').reset();
+        }
+
+        // Handle edit form submission
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const orderId = document.getElementById('editOrderId').value;
+            
+            // Parse items JSON
+            let items;
+            try {
+                items = JSON.parse(document.getElementById('editItems').value);
+                if (!Array.isArray(items)) {
+                    throw new Error('Items must be an array');
+                }
+            } catch (error) {
+                alert('Invalid JSON format for items. Please check the items field.');
+                return;
+            }
+            
+            const orderData = {
+                customer_name: document.getElementById('editCustomerName').value,
+                customer_phone: document.getElementById('editCustomerPhone').value,
+                customer_email: document.getElementById('editCustomerEmail').value,
+                customer_address: document.getElementById('editCustomerAddress').value,
+                branch: document.getElementById('editBranch').value,
+                order_type: document.getElementById('editOrderType').value,
+                payment_method: document.getElementById('editPaymentMethod').value,
+                items: items,
+                subtotal: parseFloat(document.getElementById('editSubtotal').value),
+                delivery_fee: parseFloat(document.getElementById('editDeliveryFee').value) || 0,
+                tax: parseFloat(document.getElementById('editTax').value) || 0,
+                total: parseFloat(document.getElementById('editTotal').value),
+                notes: document.getElementById('editNotes').value
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Order updated successfully!');
+                    closeEditModal();
+                    loadOrders(currentFilter);
+                    loadStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to update order'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to update order. Make sure the backend is running.');
+            }
+        });
+
+        function refreshOrders() {
+            loadOrders(currentFilter);
+            loadStats();
+        }
+
+        // Load customers
+        async function loadCustomers() {
+            try {
+                const tbody = document.getElementById('customersTableBody');
+                if (!tbody) {
+                    console.error('customersTableBody element not found!');
+                    return;
+                }
+                
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">Loading customers...</td></tr>';
+                
+                if (!currentUser) {
+                    console.error('Not authenticated');
+                    return;
+                }
+                
+                const response = await fetch(`${API_URL}/customers`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                }
+                
+                const customers = await response.json();
+                console.log('Received customers:', customers);
+                
+                if (!Array.isArray(customers)) {
+                    console.error('Expected array but got:', customers);
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: red;">Invalid response from server. Check console for details.</td></tr>';
+                    return;
+                }
+                
+                if (customers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">No customers found. Customers will appear here after orders are placed.</td></tr>';
+                    return;
+                }
+                
+                const customersHTML = customers.map(customer => {
+                    const firstOrderDate = customer.first_order_date ? new Date(customer.first_order_date).toLocaleDateString() : 'N/A';
+                    const lastOrderDate = customer.last_order_date ? new Date(customer.last_order_date).toLocaleDateString() : 'N/A';
+                    
+                    return `
+                        <tr style="display: table-row;">
+                            <td><strong>${customer.name || 'N/A'}</strong></td>
+                            <td>${customer.phone || 'N/A'}</td>
+                            <td>${customer.email || 'N/A'}</td>
+                            <td>${customer.address || 'N/A'}</td>
+                            <td>${customer.total_orders || 0}</td>
+                            <td><strong>Rs ${parseFloat(customer.total_spent || 0).toLocaleString()}</strong></td>
+                            <td><small>${firstOrderDate}</small></td>
+                            <td><small>${lastOrderDate}</small></td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                tbody.innerHTML = customersHTML;
+                console.log('Customers rendered successfully:', customers.length, 'customers');
+            } catch (error) {
+                console.error('Error loading customers:', error);
+                const tbody = document.getElementById('customersTableBody');
+                if (tbody) {
+                    const errorMsg = error.message || 'Unknown error';
+                    tbody.innerHTML = 
+                        '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: red; background: #ffe6e6; border: 2px solid red; border-radius: 5px;">' +
+                        '<strong>Error loading customers:</strong><br>' + errorMsg + 
+                        '<br><br><strong>Make sure:</strong><br>' +
+                        '1. Backend is running on http://localhost:3000<br>' +
+                        '2. MongoDB is connected<br>' +
+                        '3. Check browser console (F12) for details</td></tr>';
+                }
+            }
+        }
+
+        function refreshCustomers() {
+            loadCustomers();
+        }
+
+        // Load admin users
+        async function loadUsers() {
+            try {
+                const tbody = document.getElementById('usersTableBody');
+                if (!tbody) {
+                    console.error('usersTableBody element not found!');
+                    return;
+                }
+                
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">Loading users...</td></tr>';
+                
+                if (!currentUser) {
+                    console.error('Not authenticated');
+                    return;
+                }
+                
+                const response = await fetch(`${API_URL}/admin/users`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                }
+                
+                const users = await response.json();
+                console.log('Received users:', users);
+                
+                if (!Array.isArray(users)) {
+                    console.error('Expected array but got:', users);
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: red;">Invalid response from server. Check console for details.</td></tr>';
+                    return;
+                }
+                
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No admin users found. Click "Add User" to create one.</td></tr>';
+                    return;
+                }
+                
+                const usersHTML = users.map(user => {
+                    const createdAt = user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A';
+                    const updatedAt = user.updatedAt ? new Date(user.updatedAt).toLocaleString() : 'N/A';
+                    const isDefaultAdmin = user.username === 'admin';
+                    const userTypeLabel = {
+                        'gulberg': 'Gulberg',
+                        'jt': 'JT',
+                        'super_admin': 'Super Admin'
+                    };
+                    
+                    return `
+                        <tr style="display: table-row;">
+                            <td><strong>${user.username || 'N/A'}</strong></td>
+                            <td><span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: ${user.user_type === 'super_admin' ? '#cfe2ff' : user.user_type === 'gulberg' ? '#d1e7dd' : '#fff3cd'}; color: ${user.user_type === 'super_admin' ? '#084298' : user.user_type === 'gulberg' ? '#0f5132' : '#856404'};">${userTypeLabel[user.user_type] || user.user_type || 'N/A'}</span></td>
+                            <td><small>${createdAt}</small></td>
+                            <td><small>${updatedAt}</small></td>
+                            <td>
+                                <button class="action-btn btn-view" onclick="openEditUserModal('${user._id}', '${user.username.replace(/'/g, "\\'")}')" style="margin-right: 0.5rem;">Edit</button>
+                                ${!isDefaultAdmin ? `<button class="action-btn btn-delete" onclick="deleteUser('${user._id}', '${user.username.replace(/'/g, "\\'")}')">Delete</button>` : '<span style="color: #999; font-size: 0.85rem;">Protected</span>'}
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                tbody.innerHTML = usersHTML;
+                console.log('Users rendered successfully:', users.length, 'users');
+            } catch (error) {
+                console.error('Error loading users:', error);
+                const tbody = document.getElementById('usersTableBody');
+                if (tbody) {
+                    const errorMsg = error.message || 'Unknown error';
+                    tbody.innerHTML = 
+                        '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: red; background: #ffe6e6; border: 2px solid red; border-radius: 5px;">' +
+                        '<strong>Error loading users:</strong><br>' + errorMsg + 
+                        '<br><br><strong>Make sure:</strong><br>' +
+                        '1. Backend is running on http://localhost:3000<br>' +
+                        '2. MongoDB is connected<br>' +
+                        '3. Check browser console (F12) for details</td></tr>';
+                }
+            }
+        }
+
+        function refreshUsers() {
+            loadUsers();
+        }
+
+        function openAddUserModal() {
+            document.getElementById('userModalTitle').textContent = 'Add Admin User';
+            document.getElementById('userId').value = '';
+            document.getElementById('userUsername').value = '';
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userPassword').required = true;
+            document.getElementById('passwordHint').style.display = 'none';
+            document.getElementById('userTypeGroup').style.display = 'block';
+            document.getElementById('userType').required = true;
+            document.getElementById('userModal').classList.add('active');
+        }
+
+        async function openEditUserModal(userId, username) {
+            try {
+                // Fetch user details to get user_type
+                const response = await fetch(`${API_URL}/admin/users`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                
+                const users = await response.json();
+                const user = users.find(u => u._id === userId);
+                
+                document.getElementById('userModalTitle').textContent = 'Edit Admin User';
+                document.getElementById('userId').value = userId;
+                document.getElementById('userUsername').value = username;
+                document.getElementById('userPassword').value = '';
+                document.getElementById('userPassword').required = false;
+                document.getElementById('passwordHint').style.display = 'block';
+                document.getElementById('userTypeGroup').style.display = 'block';
+                document.getElementById('userType').required = true;
+                if (user && user.user_type) {
+                    document.getElementById('userType').value = user.user_type;
+                }
+                document.getElementById('userModal').classList.add('active');
+            } catch (error) {
+                console.error('Error loading user details:', error);
+                alert('Failed to load user details');
+            }
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').classList.remove('active');
+            document.getElementById('userForm').reset();
+        }
+
+        // Handle user form submission
+        document.getElementById('userForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('userId').value;
+            const username = document.getElementById('userUsername').value;
+            const password = document.getElementById('userPassword').value;
+            
+            try {
+                let response;
+                const userType = document.getElementById('userType').value;
+                
+                if (userId) {
+                    // Update existing user
+                    const updateData = { username };
+                    if (password) {
+                        updateData.password = password;
+                    }
+                    if (userType) {
+                        updateData.user_type = userType;
+                    }
+                    
+                    response = await fetch(`${API_URL}/admin/users/${userId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...getAuthHeaders()
+                        },
+                        body: JSON.stringify(updateData)
+                    });
+                    
+                    if (response.status === 401) {
+                        logout();
+                        return;
+                    }
+                } else {
+                    // Create new user
+                    if (!password) {
+                        alert('Password is required for new users');
+                        return;
+                    }
+                    
+                    if (!userType) {
+                        alert('User type is required');
+                        return;
+                    }
+                    
+                    response = await fetch(`${API_URL}/admin/users`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...getAuthHeaders()
+                        },
+                        body: JSON.stringify({ username, password, user_type: userType })
+                    });
+                    
+                    if (response.status === 401) {
+                        logout();
+                        return;
+                    }
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert(data.message || 'User saved successfully!');
+                    closeUserModal();
+                    loadUsers();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to save user'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to save user. Make sure the backend is running.');
+            }
+        });
+
+        // Delete user
+        async function deleteUser(userId, username) {
+            if (!confirm(`Are you sure you want to delete user "${username}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert(data.message || 'User deleted successfully!');
+                    loadUsers();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to delete user'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete user. Make sure the backend is running.');
+            }
+        }
+
+        // Test API connection
+        async function testAPIConnection() {
+            try {
+                const response = await fetch(`${API_URL}/orders?limit=1`);
+                if (response.ok) {
+                    console.log('✅ API connection successful');
+                    return true;
+                } else {
+                    console.error('❌ API returned error:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ API connection failed:', error);
+                return false;
+            }
+        }
+
+        // Initialize
+        console.log('Initializing admin dashboard...');
+        console.log('API_URL:', API_URL);
+        console.log('Current URL:', window.location.href);
+        console.log('Protocol:', window.location.protocol);
+        console.log('Table body element:', document.getElementById('ordersTableBody'));
+        
+        // Warn if accessing via file://
+        if (window.location.protocol === 'file:') {
+            console.warn('⚠️ WARNING: Page opened via file:// protocol. CORS will block API calls.');
+            console.warn('Please access via: http://localhost:3000/admin');
+        }
+        
+        // Make sure DOM is ready
+        const initDashboard = async () => {
+            // Check authentication first
+            if (!checkAuth()) {
+                return; // Show login screen
+            }
+            
+            const apiConnected = await testAPIConnection();
+            if (!apiConnected) {
+                const tbody = document.getElementById('ordersTableBody');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem; color: red; background: #ffe6e6;">⚠️ Cannot connect to backend API. Make sure the server is running on http://localhost:3000</td></tr>';
+                }
+            }
+            
+            loadStats().catch(err => {
+                console.error('Failed to load stats:', err);
+            });
+            loadOrders().catch(err => {
+                console.error('Failed to load orders:', err);
+            });
+        };
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDashboard);
+        } else {
+            initDashboard();
+        }
+
+        // Stop notification sound when user opens/interacts with the dashboard
+        // Listen for page visibility changes (when user switches to this tab/window)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                // Page became visible - user opened the dashboard
+                acknowledgeNewOrders();
+            }
+        });
+
+        // Stop notification sound on any user interaction
+        const stopOnInteraction = () => {
+            acknowledgeNewOrders();
+            // Remove listeners after first interaction to avoid unnecessary calls
+            document.removeEventListener('click', stopOnInteraction);
+            document.removeEventListener('keydown', stopOnInteraction);
+            document.removeEventListener('mousemove', stopOnInteraction);
+        };
+
+        // Listen for user interactions (click, keyboard, mouse movement)
+        document.addEventListener('click', stopOnInteraction, { once: true });
+        document.addEventListener('keydown', stopOnInteraction, { once: true });
+        document.addEventListener('mousemove', stopOnInteraction, { once: true });
+
+        // Auto-refresh every 5 seconds for real-time updates
+        setInterval(() => {
+            loadOrders(currentFilter).catch(err => console.error('Failed to refresh orders:', err));
+            loadStats().catch(err => console.error('Failed to refresh stats:', err));
+        }, 5000);
+
+        // Sidebar menu navigation
+        document.querySelectorAll('.sidebar-menu li').forEach(menuItem => {
+            menuItem.addEventListener('click', () => {
+                // Remove active class from all menu items
+                document.querySelectorAll('.sidebar-menu li').forEach(li => {
+                    li.classList.remove('active');
+                });
+                
+                // Add active class to clicked item
+                menuItem.classList.add('active');
+                
+                // Get the section to show
+                const section = menuItem.dataset.section;
+                
+                // Show/hide sections based on selection
+                const statsGrid = document.getElementById('statsGrid');
+                const ordersSection = document.getElementById('ordersSection');
+                const customersSection = document.getElementById('customersSection');
+                const usersSection = document.getElementById('usersSection');
+                
+                // Remove all hidden classes first
+                if (ordersSection) ordersSection.classList.remove('hidden');
+                if (customersSection) customersSection.classList.remove('hidden');
+                if (usersSection) usersSection.classList.remove('hidden');
+                
+                if (section === 'orders') {
+                    // Show orders section and stats
+                    if (ordersSection) {
+                        ordersSection.style.display = 'block';
+                        ordersSection.style.visibility = 'visible';
+                        ordersSection.classList.remove('hidden');
+                    }
+                    if (customersSection) {
+                        customersSection.style.display = 'none';
+                        customersSection.style.visibility = 'hidden';
+                        customersSection.classList.add('hidden');
+                    }
+                    if (usersSection) {
+                        usersSection.style.display = 'none';
+                        usersSection.style.visibility = 'hidden';
+                        usersSection.classList.add('hidden');
+                    }
+                    if (statsGrid) {
+                        statsGrid.style.display = 'grid';
+                        statsGrid.style.visibility = 'visible';
+                    }
+                    document.querySelector('.header h1').textContent = 'Orders Management';
+                } else if (section === 'stats') {
+                    // Only super admin can access stats tab (but it's hidden for gulberg/jt anyway)
+                    if (currentUser && currentUser.user_type !== 'super_admin') {
+                        alert('Access denied. Super admin only.');
+                        return;
+                    }
+                    if (ordersSection) {
+                        ordersSection.style.display = 'none';
+                        ordersSection.style.visibility = 'hidden';
+                        ordersSection.classList.add('hidden');
+                    }
+                    if (customersSection) {
+                        customersSection.style.display = 'none';
+                        customersSection.style.visibility = 'hidden';
+                        customersSection.classList.add('hidden');
+                    }
+                    if (usersSection) {
+                        usersSection.style.display = 'none';
+                        usersSection.style.visibility = 'hidden';
+                        usersSection.classList.add('hidden');
+                    }
+                    if (statsGrid) {
+                        statsGrid.style.display = 'grid';
+                        statsGrid.style.visibility = 'visible';
+                    }
+                    document.querySelector('.header h1').textContent = 'Statistics';
+                } else if (section === 'customers') {
+                    // Only super admin can access customers tab
+                    if (currentUser && currentUser.user_type !== 'super_admin') {
+                        alert('Access denied. Super admin only.');
+                        return;
+                    }
+                    if (ordersSection) {
+                        ordersSection.style.display = 'none';
+                        ordersSection.style.visibility = 'hidden';
+                        ordersSection.classList.add('hidden');
+                    }
+                    if (customersSection) {
+                        customersSection.style.display = 'block';
+                        customersSection.style.visibility = 'visible';
+                        customersSection.classList.remove('hidden');
+                    }
+                    if (usersSection) {
+                        usersSection.style.display = 'none';
+                        usersSection.style.visibility = 'hidden';
+                        usersSection.classList.add('hidden');
+                    }
+                    if (statsGrid) {
+                        statsGrid.style.display = 'none';
+                        statsGrid.style.visibility = 'hidden';
+                    }
+                    document.querySelector('.header h1').textContent = 'Customers Management';
+                    loadCustomers();
+                } else if (section === 'users') {
+                    // Only super admin can access users tab
+                    if (currentUser && currentUser.user_type !== 'super_admin') {
+                        alert('Access denied. Super admin only.');
+                        return;
+                    }
+                    if (ordersSection) {
+                        ordersSection.style.display = 'none';
+                        ordersSection.style.visibility = 'hidden';
+                        ordersSection.classList.add('hidden');
+                    }
+                    if (customersSection) {
+                        customersSection.style.display = 'none';
+                        customersSection.style.visibility = 'hidden';
+                        customersSection.classList.add('hidden');
+                    }
+                    if (usersSection) {
+                        usersSection.style.display = 'block';
+                        usersSection.style.visibility = 'visible';
+                        usersSection.classList.remove('hidden');
+                    }
+                    if (statsGrid) {
+                        statsGrid.style.display = 'none';
+                        statsGrid.style.visibility = 'hidden';
+                    }
+                    document.querySelector('.header h1').textContent = 'Users Management';
+                    loadUsers();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

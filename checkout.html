@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Zoro Burger</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍔</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .checkout-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        .checkout-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .order-summary {
+            background: white;
+            padding: 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            overflow: hidden;
+        }
+
+        .summary-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .summary-section:last-child {
+            border-bottom: none;
+        }
+
+        .summary-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 1rem;
+        }
+
+        .summary-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .summary-section-arrow {
+            font-size: 0.8rem;
+            color: #666;
+            transition: transform 0.3s;
+        }
+
+        .summary-section-arrow.expanded {
+            transform: rotate(180deg);
+        }
+
+        .summary-section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .summary-section-content.expanded {
+            max-height: 500px;
+            transition: max-height 0.3s ease-in;
+        }
+
+        .summary-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .summary-item-name {
+            color: var(--dark-color);
+        }
+
+        .summary-item-price {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .summary-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            font-size: 1rem;
+        }
+
+        .summary-total-label {
+            color: #666;
+        }
+
+        .summary-total-value {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .coupon-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .coupon-text {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .coupon-link {
+            color: var(--primary-color);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .place-order-btn {
+            width: 100%;
+            padding: 1.25rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 0 10px 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .place-order-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+        }
+
+        .place-order-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .order-type-selector {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .order-type-option {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .order-type-option:hover {
+            border-color: var(--primary-color);
+            background: #fff5f5;
+        }
+
+        .order-type-option.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .order-type-option input[type="radio"] {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .order-type-option label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .map-container {
+            margin-top: 1rem;
+            height: 300px;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-instructions {
+            background: #e3f2fd;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #1976d2;
+        }
+
+        .map-instructions strong {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .location-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .location-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .location-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item-name {
+            font-weight: 600;
+        }
+
+        .order-item-details {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .order-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .order-item-header-left {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .expand-arrow {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #666;
+            transition: all 0.3s;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .expand-arrow:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .expand-arrow.expanded {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .expand-arrow.expanded span {
+            transform: rotate(180deg);
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .order-item-details-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            margin-top: 0.5rem;
+        }
+
+        .order-item-details-section.expanded {
+            max-height: 500px;
+            transition: max-height 0.3s ease-in;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+        }
+
+        .summary-row.total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            border-top: 2px solid var(--border-color);
+            margin-top: 1rem;
+            padding-top: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1.5rem;
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: static;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html"><img src="zoroLogo.png" alt="Zoro Burger" class="logo-img"></a>
+            </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html#home">HOME</a></li>
+                <li><a href="menu.html">MENU</a></li>
+                <li><a href="index.html#locations">LOCATIONS</a></li>
+                <li><a href="contact.html">CONTACT US</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="checkout-container">
+        <div class="checkout-form">
+            <h2 style="margin-bottom: 2rem; color: var(--dark-color);">Checkout</h2>
+            
+            <form id="checkoutForm">
+                <input type="hidden" id="orderType" name="order_type" value="delivery">
+
+                <div class="form-group">
+                    <label>Branch *</label>
+                    <select id="branch" name="branch" required>
+                        <option value="">Select a branch</option>
+                        <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
+                        <option value="Johar Town, Lahore">Johar Town, Lahore</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="customerName" name="customer_name" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" id="customerPhone" name="customer_phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="customerEmail" name="customer_email">
+                    </div>
+                </div>
+
+                <div class="form-group" id="addressGroup">
+                    <label id="addressLabel">Delivery Address *</label>
+                    <div class="map-instructions">
+                        <strong>📍 Select your location on the map</strong>
+                        Click on the map to set your delivery address, or use the button below to use your current location.
+                    </div>
+                    <div class="map-container">
+                        <div id="map"></div>
+                    </div>
+                    <button type="button" class="location-btn" id="useCurrentLocationBtn">
+                        📍 Use My Current Location
+                    </button>
+                    <textarea id="customerAddress" name="customer_address" required placeholder="Address will be filled automatically when you select a location on the map" style="margin-top: 1rem;"></textarea>
+                    <input type="hidden" id="selectedLatitude" name="latitude">
+                    <input type="hidden" id="selectedLongitude" name="longitude">
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Method *</label>
+                    <select id="paymentMethod" name="payment_method" required>
+                        <option value="cash">Cash on Delivery</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Special Instructions</label>
+                    <textarea id="notes" name="notes" placeholder="Any special requests or instructions..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">Place Order</button>
+            </form>
+
+            <div class="loading" id="loading">
+                <p>Processing your order...</p>
+            </div>
+        </div>
+
+        <div class="order-summary">
+            <div class="summary-section">
+                <div class="summary-section-header" onclick="toggleSummarySection('orderSummary')">
+                    <div class="summary-section-title">Order summary</div>
+                    <div class="summary-section-arrow expanded" id="arrow-orderSummary">▲</div>
+                </div>
+                <div class="summary-section-content expanded" id="content-orderSummary">
+                    <div id="orderItems"></div>
+                </div>
+            </div>
+            
+            <div class="summary-section">
+                <div class="summary-section-header" onclick="toggleSummarySection('orderTotal')">
+                    <div class="summary-section-title">Order total</div>
+                    <div class="summary-section-arrow expanded" id="arrow-orderTotal">▲</div>
+                </div>
+                <div class="summary-section-content expanded" id="content-orderTotal">
+                    <div class="summary-total-row">
+                        <span class="summary-total-label">Subtotal (<span id="itemCount">0</span> Items)</span>
+                        <span class="summary-item-price" id="subtotal">Rs 0</span>
+                    </div>
+                </div>
+            </div>
+    
+            
+            <div class="summary-section" style="border-bottom: 2px solid #e0e0e0; padding-bottom: 1rem;">
+                <div class="summary-total-row">
+                    <span class="summary-total-label">Tax</span>
+                    <span class="summary-item-price" id="taxAmount">Rs 0</span>
+                </div>
+                <div class="summary-total-row" style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e0e0e0;">
+                    <span class="summary-total-label" style="font-weight: 700; font-size: 1.1rem;">Total</span>
+                    <span class="summary-total-value" id="total">Rs 0</span>
+                </div>
+            </div>
+            
+            <button type="button" class="place-order-btn" id="placeOrderBtn" onclick="document.getElementById('checkoutForm').dispatchEvent(new Event('submit'))">Place order</button>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const navMenu = document.getElementById('navMenu');
+            
+            if (mobileMenuToggle && navMenu) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    mobileMenuToggle.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                    document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+                });
+                
+                navMenu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenuToggle.classList.remove('active');
+                        navMenu.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                });
+                
+                document.addEventListener('click', (e) => {
+                    if (navMenu.classList.contains('active') && 
+                        !navMenu.contains(e.target) && 
+                        !mobileMenuToggle.contains(e.target)) {
+                        mobileMenuToggle.classList.remove('active');
+                        navMenu.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+        });
+
+        const API_URL = 'http://localhost:3000/api';
+        
+        // Get cart from localStorage
+        const cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
+        
+        // Map variables
+        let map;
+        let marker;
+        const defaultLocation = [31.5204, 74.3587]; // Lahore, Pakistan [lat, lng]
+        
+        // Initialize map
+        function initMap() {
+            // Check if order type is delivery before initializing map
+            const orderTypeEl = document.getElementById('orderType');
+            if (orderTypeEl && orderTypeEl.value === 'delivery') {
+                setupMap();
+            }
+        }
+        
+        function setupMap() {
+            const mapContainer = document.getElementById('map');
+            if (!mapContainer || map) return; // Don't reinitialize if map exists
+            
+            // Initialize Leaflet map centered on Lahore
+            map = L.map('map').setView(defaultLocation, 13);
+            
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+            
+            // Add click listener to map
+            map.on('click', (e) => {
+                placeMarker([e.latlng.lat, e.latlng.lng]);
+                updateAddressFromCoordinates(e.latlng.lat, e.latlng.lng);
+            });
+            
+            // Try to get user's current location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLocation = [position.coords.latitude, position.coords.longitude];
+                        map.setView(userLocation, 15);
+                        placeMarker(userLocation);
+                        updateAddressFromCoordinates(userLocation[0], userLocation[1]);
+                    },
+                    () => {
+                        // If geolocation fails, use default location
+                        placeMarker(defaultLocation);
+                    }
+                );
+            } else {
+                placeMarker(defaultLocation);
+            }
+        }
+        
+        function placeMarker(location) {
+            if (marker) {
+                marker.setLatLng(location);
+            } else {
+                // Create a custom icon
+                const customIcon = L.icon({
+                    iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#d32f2f">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    `),
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32],
+                    popupAnchor: [0, -32]
+                });
+                
+                marker = L.marker(location, { 
+                    draggable: true,
+                    icon: customIcon
+                }).addTo(map);
+                
+                // Update address when marker is dragged
+                marker.on('dragend', (e) => {
+                    const position = marker.getLatLng();
+                    updateAddressFromCoordinates(position.lat, position.lng);
+                });
+            }
+            
+            // Center map on marker
+            map.setView(location, map.getZoom());
+        }
+        
+        function updateAddressFromCoordinates(lat, lng) {
+            document.getElementById('selectedLatitude').value = lat;
+            document.getElementById('selectedLongitude').value = lng;
+            
+            // Use Nominatim (OpenStreetMap) geocoding service
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        document.getElementById('customerAddress').value = data.display_name;
+                    } else {
+                        document.getElementById('customerAddress').value = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Geocoding error:', error);
+                    document.getElementById('customerAddress').value = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+                });
+        }
+        
+        // Use current location button
+        document.addEventListener('DOMContentLoaded', () => {
+            const useCurrentLocationBtn = document.getElementById('useCurrentLocationBtn');
+            if (useCurrentLocationBtn) {
+                useCurrentLocationBtn.addEventListener('click', () => {
+                    if (!navigator.geolocation) {
+                        alert('Geolocation is not supported by your browser.');
+                        return;
+                    }
+                    
+                    useCurrentLocationBtn.disabled = true;
+                    useCurrentLocationBtn.textContent = 'Getting location...';
+                    
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const location = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            };
+                            
+                            if (map) {
+                                map.setCenter(location);
+                                map.setZoom(15);
+                                placeMarker(location);
+                                updateAddressFromCoordinates(location.lat, location.lng);
+                            }
+                            
+                            useCurrentLocationBtn.disabled = false;
+                            useCurrentLocationBtn.textContent = '📍 Use My Current Location';
+                        },
+                        (error) => {
+                            alert('Unable to get your location. Please select a location on the map instead.');
+                            useCurrentLocationBtn.disabled = false;
+                            useCurrentLocationBtn.textContent = '📍 Use My Current Location';
+                        }
+                    );
+                });
+            }
+        });
+        
+        // Display order items
+        function displayOrderItems() {
+            const orderItemsDiv = document.getElementById('orderItems');
+            const subtotalEl = document.getElementById('subtotal');
+            const totalEl = document.getElementById('total');
+            const deliveryRow = document.getElementById('deliveryRow');
+            const deliveryFeeEl = document.getElementById('deliveryFee');
+            
+            if (cart.length === 0) {
+                orderItemsDiv.innerHTML = '<p>Your cart is empty. <a href="menu.html">Browse menu</a></p>';
+                return;
+            }
+            
+            let subtotal = 0;
+            const itemCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            document.getElementById('itemCount').textContent = itemCount;
+            
+            orderItemsDiv.innerHTML = cart.map((item, index) => {
+                // Use item.total if available (includes addons), otherwise calculate
+                const itemTotal = item.total || (item.price * (item.quantity || 1));
+                subtotal += itemTotal;
+                
+                // Create unique ID for this item
+                const itemKey = item.key || `${item.id}-${item.size || 'default'}-${(item.addons || []).map(a => a.name).join(',')}-${index}`;
+                const safeItemKey = itemKey.replace(/[^a-zA-Z0-9-]/g, '-');
+                
+                // Build size info
+                const sizeInfo = item.size ? `
+                    <div style="margin-top: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 0.85rem; color: #666; font-weight: 600;">Size:</span>
+                            <span style="display: inline-block; padding: 0.35rem 0.75rem; background: #fff5f5; color: var(--primary-color); border: 1.5px solid var(--primary-color); border-radius: 6px; font-size: 0.85rem; font-weight: 700;">
+                                ${item.size}
+                            </span>
+                        </div>
+                    </div>
+                ` : '';
+                
+                // Build add-ons info
+                const addonsInfo = item.addons && item.addons.length > 0 
+                    ? `
+                        <div style="margin-top: 0.75rem;">
+                            <div style="font-size: 0.85rem; color: #666; font-weight: 600; margin-bottom: 0.5rem;">Add-ons:</div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                ${item.addons.map(a => `
+                                    <span style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.7rem; background: white; color: var(--dark-color); border: 1.5px solid #e0e0e0; border-radius: 6px; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;">
+                                        <span>${a.name}</span>
+                                        <span style="color: var(--primary-color); font-weight: 700;">+Rs ${(a.price || 0).toLocaleString()}</span>
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` 
+                    : '';
+                
+                const hasDetails = item.size || (item.addons && item.addons.length > 0);
+                
+                return `
+                    <div class="summary-item-row">
+                        <span class="summary-item-name">${item.quantity || 1}x ${item.name}</span>
+                        <span class="summary-item-price">Rs ${itemTotal.toLocaleString()}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            // Always delivery, so delivery fee is always 200
+            const deliveryFee = 200;
+            const tax = Math.round(subtotal * 0.16); // 16% tax
+            const total = subtotal + deliveryFee + tax;
+            
+            subtotalEl.textContent = `Rs ${subtotal.toLocaleString()}`;
+            document.getElementById('taxAmount').textContent = `Rs ${tax.toLocaleString()}`;
+            totalEl.textContent = `Rs ${total.toLocaleString()}`;
+        }
+        
+        // Toggle summary section
+        function toggleSummarySection(sectionId) {
+            const content = document.getElementById(`content-${sectionId}`);
+            const arrow = document.getElementById(`arrow-${sectionId}`);
+            
+            if (content && arrow) {
+                const isExpanded = content.classList.contains('expanded');
+                
+                if (isExpanded) {
+                    content.classList.remove('expanded');
+                    arrow.classList.remove('expanded');
+                } else {
+                    content.classList.add('expanded');
+                    arrow.classList.add('expanded');
+                }
+            }
+        }
+        
+        // Always show address field and map for delivery
+        document.addEventListener('DOMContentLoaded', () => {
+            const addressGroup = document.getElementById('addressGroup');
+            const addressInput = document.getElementById('customerAddress');
+            const addressLabel = document.getElementById('addressLabel');
+            
+            if (addressGroup) {
+                addressGroup.style.display = 'block';
+                addressInput.required = true;
+                addressLabel.textContent = 'Delivery Address *';
+            }
+            
+            // Initialize map
+            if (typeof L !== 'undefined') {
+                setTimeout(() => {
+                    initMap();
+                }, 500);
+            }
+        });
+        
+        // Handle form submission
+        document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            
+            submitBtn.disabled = true;
+            loading.classList.add('active');
+            
+            const subtotal = cart.reduce((sum, item) => {
+                // Use item.total if available (includes addons), otherwise calculate
+                return sum + (item.total || (item.price * (item.quantity || 1)));
+            }, 0);
+            const deliveryFee = 200;
+            const tax = Math.round(subtotal * 0.16); // 16% tax
+            
+            // Get coordinates if available
+            const latitude = document.getElementById('selectedLatitude').value;
+            const longitude = document.getElementById('selectedLongitude').value;
+            
+            const formData = {
+                customer_name: document.getElementById('customerName').value,
+                customer_email: document.getElementById('customerEmail').value,
+                customer_phone: document.getElementById('customerPhone').value,
+                customer_address: document.getElementById('customerAddress').value || '',
+                branch: document.getElementById('branch').value,
+                order_type: 'delivery',
+                payment_method: document.getElementById('paymentMethod').value,
+                notes: document.getElementById('notes').value,
+                items: cart,
+                subtotal: subtotal,
+                delivery_fee: deliveryFee,
+                tax: tax,
+                total: subtotal + deliveryFee + tax,
+                delivery_location: (latitude && longitude) ? {
+                    latitude: parseFloat(latitude),
+                    longitude: parseFloat(longitude),
+                    timestamp: new Date().toISOString()
+                } : null
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Clear cart
+                    localStorage.removeItem('zoroCart');
+                    // Redirect to confirmation page
+                    window.location.href = `order-confirmation.html?order=${data.order_number}`;
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to place order'));
+                    submitBtn.disabled = false;
+                    loading.classList.remove('active');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to connect to server. Please make sure the backend is running.');
+                submitBtn.disabled = false;
+                loading.classList.remove('active');
+            }
+        });
+        
+        // Toggle order item details
+        function toggleOrderItemDetails(itemKey) {
+            const detailsSection = document.getElementById(`details-${itemKey}`);
+            const arrow = document.getElementById(`arrow-${itemKey}`);
+            
+            if (detailsSection && arrow) {
+                const isExpanded = detailsSection.classList.contains('expanded');
+                
+                if (isExpanded) {
+                    detailsSection.classList.remove('expanded');
+                    arrow.classList.remove('expanded');
+                } else {
+                    detailsSection.classList.add('expanded');
+                    arrow.classList.add('expanded');
+                }
+            }
+        }
+        
+        // Initialize
+        displayOrderItems();
+    </script>
+</body>
+</html>
+

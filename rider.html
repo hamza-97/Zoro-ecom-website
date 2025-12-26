@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#d32f2f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Zoro Rider">
+    <meta name="description" content="Rider app for Zoro Burger delivery service">
+    <title>Rider App - Zoro Burger</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚴</text></svg>">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23d32f2f'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='white'>🚴</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .rider-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+
+        .login-card {
+            background: white;
+            color: var(--dark-color);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-card h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Main App Screen */
+        .app-screen {
+            display: none;
+        }
+
+        .app-screen.active {
+            display: block;
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            font-size: 1.2rem;
+        }
+
+        .rider-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .availability-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .notification-settings {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .order-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .order-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .order-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-awaiting_rider {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-in_kitchen {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .status-rider_on_way {
+            background: #0dcaf0;
+            color: #000;
+        }
+
+        .status-delivered {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .order-details {
+            margin-bottom: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .order-items {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: right;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--border-color);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-accept {
+            background: #28a745;
+        }
+
+        .btn-accept:hover {
+            background: #218838;
+        }
+
+        .btn-update {
+            background: var(--primary-color);
+        }
+
+        .btn-view {
+            background: #6c757d;
+        }
+
+        .btn-view:hover {
+            background: #5a6268;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .notification-badge {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: #28a745;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification-badge.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .location-loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: #e3f2fd;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+
+        .location-error {
+            padding: 1rem;
+            background: #ffebee;
+            color: #c62828;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+
+        .location-success {
+            padding: 1rem;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .install-prompt {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1500;
+            display: none;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        .install-prompt-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .install-prompt-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-install {
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-dismiss {
+            padding: 0.5rem 1rem;
+            background: #ccc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <h1>🚴 Rider Login</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="phone" placeholder="03001234567" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn" id="loginBtn">Login</button>
+            </form>
+            <p style="margin-top: 1rem; text-align: center; font-size: 0.85rem; color: #666;">
+                Default: Phone: 03001234567, Password: rider123
+            </p>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div class="app-screen" id="appScreen">
+        <div class="rider-container">
+            <div class="header">
+                <div>
+                    <h2 id="riderName">Rider</h2>
+                    <div class="rider-info" id="riderPhone"></div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button class="btn" onclick="checkAndShowInstallPrompt()" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: #6c757d; display: none;" id="manualInstallBtn" title="Install App">
+                        📱 Install
+                    </button>
+                <button class="btn" onclick="logout()" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Logout</button>
+                </div>
+            </div>
+
+            <div class="availability-toggle">
+                <span style="flex: 1; font-weight: 600;">Available for Orders</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="availabilityToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Notification Settings -->
+            <div class="notification-settings" id="notificationSettings" style="display: none;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="font-weight: 600; color: #d32f2f;">🔔 Notifications</span>
+                    <button class="btn" id="enableNotificationsBtn" type="button" style="padding: 0.5rem 1rem; font-size: 0.9rem; background: #28a745;">
+                        Enable Notifications
+                    </button>
+                </div>
+                <p style="font-size: 0.85rem; color: #666; margin: 0;">
+                    Get notified when new orders are available
+                </p>
+                <!-- <div id="notificationInstructions" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: #fff3cd; border-left: 3px solid #ffc107; border-radius: 4px;"> -->
+                    <!-- Instructions will be dynamically inserted here -->
+                </div>
+    
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="available">Available Orders</div>
+                <div class="tab" data-tab="my-orders">My Orders</div>
+            </div>
+
+            <div id="availableOrders" class="orders-list">
+                <!-- Available orders will be loaded here -->
+            </div>
+
+            <div id="myOrders" class="orders-list" style="display: none;">
+                <!-- Rider's assigned orders will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Badge -->
+    <div class="notification-badge" id="notificationBadge">
+        🎉 New order available!
+    </div>
+
+    <!-- Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-prompt-content">
+            <div>
+                <strong>Install Zoro Rider App</strong>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #666;">
+                    Install for a better experience and offline access
+                </p>
+            </div>
+            <div class="install-prompt-actions">
+                <button class="btn-install" onclick="installPWA()">Install</button>
+                <button class="btn-dismiss" onclick="dismissInstallPrompt()">Later</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalOrderNumber">Order Details</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalOrderDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://192.168.100.134:3000/api'; 
+        let currentRider = null;
+        let currentTab = 'available';
+        let pollInterval = null;
+        let availableOrdersCount = 0;
+
+        // Setup enable notifications button IMMEDIATELY when DOM is ready
+        // This must be done before any async operations for Android compatibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const enableBtn = document.getElementById('enableNotificationsBtn');
+            if (enableBtn) {
+                setupNotificationButton(enableBtn);
+                enableBtn.setAttribute('data-handler-setup', 'true');
+            }
+        });
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+            
+            try {
+                const response = await fetch(`${API_URL}/riders/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ phone, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentRider = data.rider;
+                    localStorage.setItem('riderData', JSON.stringify(currentRider));
+                    
+                    document.getElementById('riderName').textContent = currentRider.name;
+                    document.getElementById('riderPhone').textContent = currentRider.phone;
+                    document.getElementById('availabilityToggle').checked = currentRider.is_available;
+                    
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('appScreen').classList.add('active');
+                    
+                    // Request notification permission and subscribe to push
+                    await requestNotificationPermission();
+                    
+                    // Check notification status
+                    checkNotificationStatus();
+                    
+                    loadAvailableOrders();
+                    loadMyOrders();
+                    startPolling();
+                } else {
+                    alert('Error: ' + (data.error || 'Login failed'));
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Login';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to connect to server. Make sure the backend is running. at port');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            }
+        });
+
+        // Check if already logged in
+        const savedRider = localStorage.getItem('riderData');
+        if (savedRider) {
+            try {
+                currentRider = JSON.parse(savedRider);
+                document.getElementById('riderName').textContent = currentRider.name;
+                document.getElementById('riderPhone').textContent = currentRider.phone;
+                document.getElementById('availabilityToggle').checked = currentRider.is_available || true;
+                
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appScreen').classList.add('active');
+                
+                // Request notification permission and subscribe to push
+                requestNotificationPermission();
+                
+                loadAvailableOrders();
+                loadMyOrders();
+                startPolling();
+            } catch (e) {
+                localStorage.removeItem('riderData');
+            }
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                
+                if (currentTab === 'available') {
+                    document.getElementById('availableOrders').style.display = 'flex';
+                    document.getElementById('myOrders').style.display = 'none';
+                } else {
+                    document.getElementById('availableOrders').style.display = 'none';
+                    document.getElementById('myOrders').style.display = 'flex';
+                    loadMyOrders();
+                }
+            });
+        });
+
+        // Availability toggle
+        document.getElementById('availabilityToggle').addEventListener('change', async (e) => {
+            if (!currentRider) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/riders/${currentRider.id}/availability`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ is_available: e.target.checked })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    currentRider.is_available = data.rider.is_available;
+                    localStorage.setItem('riderData', JSON.stringify(currentRider));
+                }
+            } catch (error) {
+                console.error('Error updating availability:', error);
+                e.target.checked = !e.target.checked; // Revert on error
+            }
+        });
+
+        // Load available orders
+        async function loadAvailableOrders() {
+            if (!currentRider) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/riders/available-orders`);
+                const orders = await response.json();
+                
+                const container = document.getElementById('availableOrders');
+                
+                if (orders.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <h3>No orders available</h3>
+                            <p>New orders will appear here when head office confirms them.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = orders.map(order => renderOrderCard(order, true)).join('');
+                }
+                
+                // Check for new orders and show notification
+                if (orders.length > availableOrdersCount && availableOrdersCount > 0) {
+                    showNotification();
+                }
+                availableOrdersCount = orders.length;
+            } catch (error) {
+                console.error('Error loading available orders:', error);
+            }
+        }
+
+        // Load my orders
+        async function loadMyOrders() {
+            if (!currentRider) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/riders/my-orders/${currentRider.id}`);
+                const orders = await response.json();
+                
+                const container = document.getElementById('myOrders');
+                
+                if (orders.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📦</div>
+                            <h3>No assigned orders</h3>
+                            <p>Accepted orders will appear here.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = orders.map(order => renderOrderCard(order, false)).join('');
+                }
+            } catch (error) {
+                console.error('Error loading my orders:', error);
+            }
+        }
+
+        // Render order card
+        function renderOrderCard(order, isAvailable) {
+            const items = Array.isArray(order.items) ? order.items : [];
+            const itemCount = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+            const statusClass = `status-${order.status}`;
+            const statusText = order.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            
+            let actionsHTML = '';
+            if (isAvailable) {
+                actionsHTML = `
+                    <button class="btn btn-accept" onclick="acceptOrder('${order._id}')">Accept Order</button>
+                    <button class="btn btn-view" onclick="viewOrder('${order._id}')">View Details</button>
+                `;
+            } else {
+                actionsHTML = `
+                    <button class="btn btn-update" onclick="updateOrderStatus('${order._id}', '${order.status}')">Update Status</button>
+                    <button class="btn btn-view" onclick="viewOrder('${order._id}')">View Details</button>
+                `;
+            }
+            
+            return `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-number">${order.order_number}</div>
+                        <span class="order-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Customer:</span>
+                            <span>${order.customer_name}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Phone:</span>
+                            <span>${order.customer_phone}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Address:</span>
+                            <span>${order.customer_address || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Branch:</span>
+                            <span>${order.branch}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Items:</span>
+                            <span>${itemCount} item(s)</span>
+                        </div>
+                    </div>
+                    <div class="order-total">Total: Rs ${parseFloat(order.total || 0).toLocaleString()}</div>
+                    <div class="order-actions">
+                        ${actionsHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Accept order
+        async function acceptOrder(orderId) {
+            if (!currentRider) return;
+            
+            if (!confirm('Accept this order? (First come first serve)')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/riders/accept-order/${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        rider_id: currentRider.id,
+                        rider_name: currentRider.name
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Order accepted successfully!');
+                    loadAvailableOrders();
+                    loadMyOrders();
+                    // Switch to my orders tab
+                    document.querySelector('.tab[data-tab="my-orders"]').click();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to accept order'));
+                    loadAvailableOrders(); // Refresh in case order was taken
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to accept order. Please try again.');
+            }
+        }
+
+        // Get current location
+        function getCurrentLocation() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocation is not supported by your browser'));
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        resolve({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        });
+                    },
+                    (error) => {
+                        reject(error);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            });
+        }
+
+        // Update order status
+        async function updateOrderStatus(orderId, currentStatus) {
+            if (!currentRider) return;
+            
+            const statuses = {
+                'in_kitchen': 'rider_on_way',
+                'rider_on_way': 'delivered'
+            };
+            
+            const nextStatus = statuses[currentStatus];
+            if (!nextStatus) {
+                alert('Order is already completed!');
+                return;
+            }
+            
+            const statusText = nextStatus.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            
+            // If marking as delivered, we need location verification
+            if (nextStatus === 'delivered') {
+                // Show delivery modal
+                showDeliveryModal(orderId);
+            } else {
+                // For non-delivery status updates, proceed normally
+                if (!confirm(`Update order status to "${statusText}"?`)) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_URL}/riders/orders/${orderId}/status`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: nextStatus,
+                            rider_id: currentRider.id
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        alert('Order status updated successfully!');
+                        loadMyOrders();
+                    } else {
+                        alert('Error: ' + (data.error || 'Failed to update order'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to update order. Please try again.');
+                }
+            }
+        }
+
+        // Show delivery modal with location tracking
+        async function showDeliveryModal(orderId) {
+            const modal = document.getElementById('orderModal');
+            const modalContent = document.getElementById('modalOrderDetails');
+            
+            modalContent.innerHTML = `
+                <div style="text-align: center;">
+                    <h2 style="margin-bottom: 1rem;">Mark Order as Delivered</h2>
+                    <p style="margin-bottom: 1.5rem; color: #666;">We need your current location to confirm delivery.</p>
+                    <div id="locationStatus" class="location-loading">
+                        <div class="spinner"></div>
+                        <span>Getting your location...</span>
+                    </div>
+                    <div id="locationInfo" style="display: none;">
+                        <div class="location-success" style="margin: 1rem 0;">
+                            <strong>📍 Location Captured</strong>
+                            <div id="locationCoords" style="margin-top: 0.5rem; font-size: 0.9rem;"></div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button class="btn" onclick="confirmDelivery('${orderId}')" id="confirmDeliveryBtn" style="flex: 1;">Confirm Delivery</button>
+                            <button class="btn" onclick="closeModal()" style="flex: 1; background: #6c757d;">Cancel</button>
+                        </div>
+                    </div>
+                    <div id="locationError" class="location-error" style="display: none;"></div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+            
+            // Get location
+            try {
+                const location = await getCurrentLocation();
+                
+                // Show location info
+                document.getElementById('locationStatus').style.display = 'none';
+                document.getElementById('locationInfo').style.display = 'block';
+                document.getElementById('locationCoords').textContent = 
+                    `Lat: ${location.latitude.toFixed(6)}, Lng: ${location.longitude.toFixed(6)}`;
+                
+                // Store location for confirmation
+                window.pendingDeliveryLocation = {
+                    orderId: orderId,
+                    location: location
+                };
+            } catch (locationError) {
+                console.error('Location error:', locationError);
+                document.getElementById('locationStatus').style.display = 'none';
+                const errorDiv = document.getElementById('locationError');
+                errorDiv.style.display = 'block';
+                
+                let errorMsg = 'Failed to get your location. ';
+                if (locationError.code === 1) {
+                    errorMsg += 'Please enable location access in your browser settings and try again.';
+                } else if (locationError.code === 2) {
+                    errorMsg += 'Location is unavailable. Please check your GPS and try again.';
+                } else if (locationError.code === 3) {
+                    errorMsg += 'Location request timed out. Please try again.';
+                } else {
+                    errorMsg += locationError.message || 'Please try again.';
+                }
+                
+                errorDiv.textContent = errorMsg;
+            }
+        }
+
+        // Confirm delivery with location
+        async function confirmDelivery(orderId) {
+            if (!window.pendingDeliveryLocation || window.pendingDeliveryLocation.orderId !== orderId) {
+                alert('Please wait for location to be captured.');
+                return;
+            }
+            
+            const location = window.pendingDeliveryLocation.location;
+            const confirmBtn = document.getElementById('confirmDeliveryBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = 'Processing...';
+            
+            try {
+                const response = await fetch(`${API_URL}/riders/orders/${orderId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: 'delivered',
+                        rider_id: currentRider.id,
+                        delivery_location: {
+                            latitude: location.latitude,
+                            longitude: location.longitude,
+                            accuracy: location.accuracy,
+                            timestamp: new Date().toISOString()
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    closeModal();
+                    alert('✅ Order marked as delivered!\n\nLocation recorded: ' + 
+                          location.latitude.toFixed(6) + ', ' + location.longitude.toFixed(6));
+                    loadMyOrders();
+                    // Also refresh available orders in case it affects the list
+                    if (currentTab === 'available') {
+                        loadAvailableOrders();
+                    }
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to update order'));
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = 'Confirm Delivery';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to update order. Please try again.');
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Confirm Delivery';
+            } finally {
+                window.pendingDeliveryLocation = null;
+            }
+        }
+
+        // View order details
+        async function viewOrder(orderId) {
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}`);
+                const order = await response.json();
+                
+                const items = Array.isArray(order.items) ? order.items : [];
+                
+                document.getElementById('modalOrderNumber').textContent = `Order ${order.order_number}`;
+                document.getElementById('modalOrderDetails').innerHTML = `
+                    <div class="order-details">
+                        <h3 style="margin-bottom: 1rem;">Customer Information</h3>
+                        <div class="detail-row">
+                            <span class="detail-label">Name:</span>
+                            <span>${order.customer_name}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Phone:</span>
+                            <span><a href="tel:${order.customer_phone}" style="color: var(--primary-color); text-decoration: none;">${order.customer_phone}</a></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Address:</span>
+                            <span>${order.customer_address || 'N/A'}</span>
+                        </div>
+                        ${order.delivery_location && order.delivery_location.latitude && order.delivery_location.longitude ? `
+                            <div class="detail-row" style="margin-top: 0.75rem; padding: 0.75rem; background: #e8f5e9; border-radius: 5px; border-left: 4px solid #2e7d32;">
+                                <div style="width: 100%;">
+                                    <span class="detail-label" style="display: block; margin-bottom: 0.5rem;">📍 Delivery Location:</span>
+                                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">
+                                        Lat: ${order.delivery_location.latitude.toFixed(6)}, Lng: ${order.delivery_location.longitude.toFixed(6)}
+                                    </div>
+                                    <a href="https://www.google.com/maps?q=${order.delivery_location.latitude},${order.delivery_location.longitude}" 
+                                       target="_blank" 
+                                       style="display: inline-block; padding: 0.5rem 1rem; background: #2e7d32; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; margin-top: 0.5rem;">
+                                        🗺️ Open in Google Maps
+                                    </a>
+                                </div>
+                            </div>
+                        ` : ''}
+                        <div class="detail-row">
+                            <span class="detail-label">Branch:</span>
+                            <span>${order.branch}</span>
+                        </div>
+                    </div>
+                    <div class="order-items" style="margin-top: 1.5rem;">
+                        <h3 style="margin-bottom: 1rem;">Order Items</h3>
+                        ${items.map(item => {
+                            const itemTotal = item.total || (item.price * (item.quantity || 1));
+                            const sizeInfo = item.size ? `
+                                <div style="margin-top: 0.5rem;">
+                                    <span style="font-size: 0.85rem; color: #666; font-weight: 600;">Size: </span>
+                                    <span style="display: inline-block; padding: 0.25rem 0.5rem; background: #fff5f5; color: var(--primary-color); border: 1px solid var(--primary-color); border-radius: 4px; font-size: 0.85rem; font-weight: 600;">
+                                        ${item.size}
+                                    </span>
+                                </div>
+                            ` : '';
+                            const addonsInfo = item.addons && item.addons.length > 0 
+                                ? `
+                                    <div style="margin-top: 0.5rem;">
+                                        <div style="font-size: 0.85rem; color: #666; font-weight: 600; margin-bottom: 0.25rem;">Add-ons:</div>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                                            ${item.addons.map(a => `
+                                                <span style="display: inline-block; padding: 0.25rem 0.5rem; background: white; color: var(--dark-color); border: 1px solid #e0e0e0; border-radius: 4px; font-size: 0.8rem;">
+                                                    ${a.name} <span style="color: var(--primary-color); font-weight: 600;">+Rs ${(a.price || 0).toLocaleString()}</span>
+                                                </span>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                ` 
+                                : '';
+                            
+                            return `
+                                <div style="padding: 0.75rem; margin-bottom: 0.75rem; background: #f9f9f9; border-radius: 6px; border-left: 3px solid var(--primary-color);">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 700; font-size: 1rem; color: var(--dark-color); margin-bottom: 0.25rem;">
+                                                ${item.name} × ${item.quantity || 1}
+                                            </div>
+                                            ${sizeInfo}
+                                            ${addonsInfo}
+                                        </div>
+                                        <div style="font-weight: 700; color: var(--primary-color); font-size: 1rem; margin-left: 1rem; white-space: nowrap;">
+                                            Rs ${itemTotal.toLocaleString()}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div class="order-total" style="margin-top: 1rem; padding-top: 1rem; border-top: 2px solid #eee;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Subtotal:</span>
+                            <span>Rs ${parseFloat(order.subtotal || 0).toLocaleString()}</span>
+                        </div>
+                        ${order.delivery_fee > 0 ? `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Delivery Fee:</span>
+                                <span>Rs ${parseFloat(order.delivery_fee || 0).toLocaleString()}</span>
+                            </div>
+                        ` : ''}
+                        ${order.tax > 0 ? `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Tax:</span>
+                                <span>Rs ${parseFloat(order.tax || 0).toLocaleString()}</span>
+                            </div>
+                        ` : ''}
+                        <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 700; color: var(--primary-color); margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #eee;">
+                            <span>Total:</span>
+                            <span>Rs ${parseFloat(order.total || 0).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    ${order.notes ? `
+                        <div style="margin-top: 1rem; padding: 1rem; background: #f9f9f9; border-radius: 5px;">
+                            <strong>Notes:</strong> ${order.notes}
+                        </div>
+                    ` : ''}
+                `;
+                
+                document.getElementById('orderModal').classList.add('active');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to load order details.');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').classList.remove('active');
+        }
+
+        function showNotification() {
+            const badge = document.getElementById('notificationBadge');
+            badge.classList.add('show');
+            setTimeout(() => {
+                badge.classList.remove('show');
+            }, 3000);
+        }
+
+        // Start polling for new orders
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            
+            pollInterval = setInterval(() => {
+                if (currentTab === 'available' && currentRider && currentRider.is_available) {
+                    loadAvailableOrders();
+                }
+            }, 5000); // Poll every 5 seconds
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                currentRider = null;
+                localStorage.removeItem('riderData');
+                if (pollInterval) clearInterval(pollInterval);
+                
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('appScreen').classList.remove('active');
+                document.getElementById('loginForm').reset();
+            }
+        }
+
+        // Close modal on outside click
+        document.getElementById('orderModal').addEventListener('click', (e) => {
+            if (e.target.id === 'orderModal') {
+                closeModal();
+            }
+        });
+
+        // ==================== PWA Functionality ====================
+
+        // Register Service Worker
+        let serviceWorkerRegistration = null;
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    console.log('✅ Service Worker registered:', registration.scope);
+                    serviceWorkerRegistration = registration;
+                    
+                    // Wait for service worker to be ready (important for HTTP sites)
+                    await navigator.serviceWorker.ready;
+                    console.log('✅ Service Worker ready');
+                    
+                    // Check for updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // New service worker available
+                                if (confirm('New version available! Reload to update?')) {
+                                    window.location.reload();
+                                }
+                            }
+                        });
+                    });
+
+                    // If already logged in, try to request notification permission
+                    // On HTTP sites, requesting after service worker is ready works better
+                    if (currentRider) {
+                        // Wait a bit for service worker to fully activate
+                        setTimeout(async () => {
+                            await requestNotificationPermission();
+                        }, 500);
+                    }
+                    
+                    // Check notification status on page load
+                    checkNotificationStatus();
+                } catch (error) {
+                    console.log('❌ Service Worker registration failed:', error);
+                }
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        const installPrompt = document.getElementById('installPrompt');
+        let installPromptShown = false;
+
+        // Listen for the beforeinstallprompt event
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('📱 beforeinstallprompt event fired');
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install prompt if not dismissed before
+            const installPromptDismissed = localStorage.getItem('installPromptDismissed');
+            if (!installPromptDismissed && !installPromptShown) {
+                showInstallPrompt();
+            }
+        });
+
+        // Function to show install prompt
+        function showInstallPrompt() {
+            if (!installPrompt) return;
+            
+            // Check if already installed
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+                console.log('App already installed, hiding prompt');
+                return;
+            }
+            
+            installPrompt.classList.add('show');
+            installPromptShown = true;
+            console.log('✅ Install prompt shown');
+        }
+
+        // Function to check if app is installable and show prompt manually
+        function checkAndShowInstallPrompt() {
+            // Check if already installed
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+                alert('✅ App is already installed!');
+                return;
+            }
+
+            // Check if deferredPrompt is available
+            if (deferredPrompt) {
+                showInstallPrompt();
+            } else {
+                // Show manual install instructions
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                const isAndroid = /Android/.test(navigator.userAgent);
+                
+                let instructions = '';
+                if (isIOS) {
+                    instructions = 'To install on iOS:\n\n1. Tap the Share button (□↑)\n2. Scroll and tap "Add to Home Screen"\n3. Tap "Add"';
+                } else if (isAndroid) {
+                    instructions = 'To install on Android:\n\n1. Tap the 3-dot menu (⋮)\n2. Tap "Add to Home screen" or "Install app"\n3. Tap "Add" or "Install"';
+                } else {
+                    instructions = 'To install:\n\n1. Look for the install icon in your browser address bar\n2. Or use the browser menu to "Install app"';
+                }
+                
+                alert('Install prompt not available yet.\n\n' + instructions + '\n\nOr wait a few seconds and try again.');
+            }
+        }
+
+        function installPWA() {
+            if (!deferredPrompt) {
+                // Fallback: show manual instructions
+                checkAndShowInstallPrompt();
+                return;
+            }
+
+            console.log('📱 Showing native install prompt...');
+            // Show the install prompt
+            deferredPrompt.prompt();
+
+            // Wait for the user to respond to the prompt
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('✅ User accepted the install prompt');
+                } else {
+                    console.log('❌ User dismissed the install prompt');
+                }
+                
+                deferredPrompt = null;
+                installPrompt.classList.remove('show');
+            }).catch((error) => {
+                console.error('Error showing install prompt:', error);
+                alert('Failed to show install prompt. Please use the browser menu to install.');
+            });
+        }
+
+        function dismissInstallPrompt() {
+            installPrompt.classList.remove('show');
+            localStorage.setItem('installPromptDismissed', 'true');
+        }
+
+        // Check if app is already installed
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('✅ App installed successfully');
+            installPrompt.classList.remove('show');
+            localStorage.setItem('installPromptDismissed', 'true');
+        });
+
+        // Check if running as PWA
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+            console.log('✅ Running as PWA - already installed');
+            // Hide install prompt if already installed
+            if (installPrompt) {
+            installPrompt.classList.remove('show');
+        }
+            // Hide manual install button
+            const manualBtn = document.getElementById('manualInstallBtn');
+            if (manualBtn) manualBtn.style.display = 'none';
+        } else {
+            // Show manual install button if not installed
+            const manualBtn = document.getElementById('manualInstallBtn');
+            if (manualBtn) {
+                manualBtn.style.display = 'block';
+            }
+            
+            // Not installed yet - try to show prompt after a delay
+            // Sometimes beforeinstallprompt fires after page load
+            setTimeout(() => {
+                if (deferredPrompt && !installPromptShown) {
+                    const installPromptDismissed = localStorage.getItem('installPromptDismissed');
+                    if (!installPromptDismissed) {
+                        console.log('📱 Showing install prompt after delay');
+                        showInstallPrompt();
+                    }
+                }
+            }, 3000); // Show after 3 seconds if event already fired
+        }
+
+        // Make checkAndShowInstallPrompt available globally for manual trigger
+        window.checkAndShowInstallPrompt = checkAndShowInstallPrompt;
+
+        // Request notification permission and subscribe to push notifications
+        // On HTTP sites, we need to ensure service worker is ready first
+        async function requestNotificationPermission() {
+            console.log('🔔 requestNotificationPermission() called');
+            console.log('Notification API available:', 'Notification' in window);
+            console.log('Service Worker available:', 'serviceWorker' in navigator);
+            console.log('Current permission:', Notification.permission);
+            console.log('Protocol:', window.location.protocol);
+            console.log('Is HTTPS:', window.location.protocol === 'https:');
+            
+            if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+                console.log('❌ Notifications or Service Workers not supported');
+                showNotificationSettingsUI();
+                return;
+            }
+
+            // Ensure service worker is ready (critical for HTTP sites)
+            try {
+                if (serviceWorkerRegistration) {
+                    await serviceWorkerRegistration.update();
+                    await navigator.serviceWorker.ready;
+                    console.log('✅ Service Worker confirmed ready');
+                }
+            } catch (swError) {
+                console.log('⚠️ Service Worker not ready yet:', swError);
+            }
+
+            // Check current permission status
+            const currentPermission = Notification.permission;
+            console.log('Current permission status:', currentPermission);
+
+            if (currentPermission === 'granted') {
+                console.log('✅ Notification permission already granted');
+                hideNotificationSettingsUI();
+                // Subscribe to push notifications
+                await subscribeToPushNotifications();
+                return;
+            }
+
+            if (currentPermission === 'denied') {
+                console.log('❌ Notification permission was denied');
+                console.log('⚠️ On HTTP sites, even if denied, we can try again after service worker is ready');
+                showNotificationSettingsUI();
+                return;
+            }
+
+            // Permission is 'default' - show UI for manual request
+            // On HTTP sites, automatic requests may be blocked, but manual clicks work
+            console.log('⚠️ Permission is default - showing UI for manual request');
+            console.log('ℹ️ On HTTP sites, permission can be requested via user click after service worker is ready');
+            showNotificationSettingsUI();
+        }
+
+        // Show notification settings UI
+        function showNotificationSettingsUI() {
+            const settingsDiv = document.getElementById('notificationSettings');
+            if (settingsDiv && Notification.permission !== 'granted') {
+                settingsDiv.style.display = 'block';
+                
+                // Always show instructions if permission is denied or blocked
+                const instructionsDiv = document.getElementById('notificationInstructions');
+                if (instructionsDiv) {
+                    if (Notification.permission === 'denied' || Notification.permission === 'default') {
+                        instructionsDiv.style.display = 'block';
+                        // Update instructions based on permission state
+                        if (Notification.permission === 'denied') {
+                            const siteUrl = window.location.origin;
+                            instructionsDiv.innerHTML = `
+                                <p style="font-size: 0.8rem; color: #856404; margin: 0 0 0.5rem 0; font-weight: 600;">
+                                    🔒 Notifications are BLOCKED - Enable in Chrome Settings:
+                                </p>
+                                <ol style="font-size: 0.75rem; color: #856404; margin: 0; padding-left: 1.25rem;">
+                                    <li>Tap the 3-dot menu (⋮) in Chrome</li>
+                                    <li>Tap "Settings" → "Site settings" → "Notifications"</li>
+                                    <li>Find "${siteUrl}" in the list</li>
+                                    <li>Tap on it to open site settings</li>
+                                    <li>Tap "Permissions" → "Notifications"</li>
+                                    <li>Change dropdown from "Block" to "Allow"</li>
+                                    <li>Go back and refresh this page</li>
+                                </ol>
+                                <p style="font-size: 0.7rem; color: #856404; margin: 0.5rem 0 0 0;">
+                                    Or tap "Reset permissions" button in site settings to reset all permissions
+                                </p>
+                            `;
+                        }
+                    } else {
+                        instructionsDiv.style.display = 'none';
+                    }
+                }
+                
+                // Ensure button handler is set up when UI is shown (fallback)
+                const enableBtn = document.getElementById('enableNotificationsBtn');
+                if (enableBtn && !enableBtn.hasAttribute('data-handler-setup')) {
+                    setupNotificationButton(enableBtn);
+                    enableBtn.setAttribute('data-handler-setup', 'true');
+                }
+            }
+        }
+
+        // Setup notification button handler
+        function setupNotificationButton(btn) {
+            if (!btn) return;
+            
+            // Remove any existing handlers
+            btn.onclick = null;
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            // Set up click handler directly - critical for Android
+            // Make it async to allow service worker ready check (helps on HTTP)
+            newBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('🔔 Enable notifications button clicked');
+                console.log('Notification support:', 'Notification' in window);
+                console.log('Current permission:', Notification.permission);
+                
+                if (!('Notification' in window)) {
+                    alert('Notifications are not supported on this device/browser.\n\nFor Android:\n1. Use Chrome browser\n2. Install the app to home screen\n3. Grant notification permissions');
+                    return false;
+                }
+
+                if (Notification.permission === 'granted') {
+                    alert('Notifications are already enabled!');
+                    hideNotificationSettingsUI();
+                    subscribeToPushNotifications();
+                    return false;
+                }
+
+                // Ensure service worker is ready before requesting (critical for HTTP sites)
+                console.log('📱 Ensuring service worker is ready...');
+                try {
+                    if ('serviceWorker' in navigator) {
+                        await navigator.serviceWorker.ready;
+                        console.log('✅ Service Worker ready before permission request');
+                    }
+                } catch (swError) {
+                    console.log('⚠️ Service Worker not ready, continuing anyway:', swError);
+                }
+
+                if (Notification.permission === 'denied') {
+                    // Even if denied, try to request again after service worker is ready
+                    // On HTTP sites, this sometimes works after service worker activation
+                    const isHTTP = window.location.protocol === 'http:';
+                    const siteUrl = window.location.origin;
+                    
+                    let message = 'Notifications are currently blocked.\n\n';
+                    message += 'On HTTP sites, we can try again after service worker is ready.\n\n';
+                    message += 'Would you like to try requesting permission again?\n\n';
+                    message += '(If it still doesn\'t work, enable manually in Chrome settings)';
+                    
+                    if (!confirm(message)) {
+                        return false;
+                    }
+                    console.log('User wants to try requesting permission even though it was denied');
+                }
+
+                // CRITICAL: Call Notification.requestPermission() DIRECTLY in the click handler
+                // On HTTP sites, this should work if service worker is ready
+                console.log('📱 Requesting notification permission...');
+                console.log('Protocol:', window.location.protocol);
+                console.log('Service Worker ready:', 'serviceWorker' in navigator && navigator.serviceWorker.controller);
+                
+                try {
+                    // Request permission - on HTTP sites this works if service worker is ready
+                    const permissionPromise = Notification.requestPermission();
+                    console.log('Permission promise:', permissionPromise);
+                    
+                    if (permissionPromise && typeof permissionPromise.then === 'function') {
+                        permissionPromise.then(function(permission) {
+                            console.log('✅ Permission result:', permission);
+                            if (permission === 'granted') {
+                                alert('✅ Notifications enabled! You will now receive alerts for new orders.');
+                                hideNotificationSettingsUI();
+                                subscribeToPushNotifications();
+                            } else if (permission === 'denied') {
+                                // Show detailed instructions
+                                const siteUrl = window.location.origin;
+                                const message = 'Notifications are blocked.\n\n' +
+                                    'To enable manually:\n\n' +
+                                    '1. Tap the 3-dot menu (⋮) in Chrome\n' +
+                                    '2. Tap "Settings"\n' +
+                                    '3. Tap "Site settings"\n' +
+                                    '4. Tap "Notifications"\n' +
+                                    `5. Find "${siteUrl}"\n` +
+                                    '6. Change to "Allow"\n' +
+                                    '7. Refresh this page\n\n' +
+                                    'Or try:\n' +
+                                    '• Install the app as PWA first\n' +
+                                    '• Use HTTPS instead of HTTP';
+                                alert(message);
+                                // Show instructions in UI
+                                const instructionsDiv = document.getElementById('notificationInstructions');
+                                if (instructionsDiv) {
+                                    instructionsDiv.style.display = 'block';
+                                }
+                            } else {
+                                alert('Notification permission request was dismissed.\n\nPlease try again or enable in browser settings.');
+                            }
+                        }).catch(function(error) {
+                            console.error('❌ Error requesting notification permission:', error);
+                            const siteUrl = window.location.origin;
+                            alert('Failed to enable notifications.\n\nError: ' + (error.message || error) + '\n\nTo enable manually:\n1. Chrome menu (⋮) → Settings → Site Settings → Notifications\n2. Find "' + siteUrl + '" and allow\n3. Refresh page');
+                            // Show instructions in UI
+                            const instructionsDiv = document.getElementById('notificationInstructions');
+                            if (instructionsDiv) {
+                                instructionsDiv.style.display = 'block';
+                            }
+                        });
+                    } else {
+                        // Fallback for older browsers (synchronous API)
+                        const permission = permissionPromise;
+                        console.log('Permission (sync):', permission);
+                        if (permission === 'granted') {
+                            alert('✅ Notifications enabled! You will now receive alerts for new orders.');
+                            hideNotificationSettingsUI();
+                            subscribeToPushNotifications();
+                        } else {
+                            const siteUrl = window.location.origin;
+                            alert('Notification permission denied.\n\nTo enable:\n1. Chrome menu (⋮) → Settings → Site Settings → Notifications\n2. Find "' + siteUrl + '" and allow\n3. Refresh page');
+                            // Show instructions in UI
+                            const instructionsDiv = document.getElementById('notificationInstructions');
+                            if (instructionsDiv) {
+                                instructionsDiv.style.display = 'block';
+                            }
+                        }
+                }
+            } catch (error) {
+                    console.error('❌ Exception requesting notification permission:', error);
+                    const siteUrl = window.location.origin;
+                    alert('Failed to enable notifications.\n\nError: ' + (error.message || error) + '\n\nTo enable manually:\n1. Chrome menu (⋮) → Settings → Site Settings → Notifications\n2. Find "' + siteUrl + '" and allow\n3. Refresh page');
+                    // Show instructions in UI
+                    const instructionsDiv = document.getElementById('notificationInstructions');
+                    if (instructionsDiv) {
+                        instructionsDiv.style.display = 'block';
+                    }
+                }
+                
+                return false;
+            }, { capture: true, passive: false });
+            
+            console.log('✅ Enable notifications button handler set up');
+        }
+
+        // Hide notification settings UI
+        function hideNotificationSettingsUI() {
+            const settingsDiv = document.getElementById('notificationSettings');
+            if (settingsDiv) {
+                settingsDiv.style.display = 'none';
+            }
+        }
+
+        // Enable notifications function (kept for backward compatibility, but button uses direct handler)
+        function enableNotifications() {
+            // This function is kept for compatibility but the button now uses direct handler
+            // The actual permission request is handled directly in the button click event
+            console.log('enableNotifications() called - redirecting to direct handler');
+        }
+
+        // Subscribe to push notifications
+        async function subscribeToPushNotifications() {
+            if (!currentRider) {
+                console.log('No rider logged in');
+                return;
+            }
+
+            try {
+                // Get VAPID public key
+                const vapidResponse = await fetch(`${API_URL}/push/vapid-public-key`);
+                const { publicKey } = await vapidResponse.json();
+
+                if (!publicKey) {
+                    console.error('VAPID public key not available');
+                    return;
+                }
+
+                // Register service worker if not already registered
+                const registration = await navigator.serviceWorker.ready;
+
+                // Subscribe to push notifications
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(publicKey)
+                });
+
+                // Save subscription to backend
+                const saveResponse = await fetch(`${API_URL}/riders/${currentRider.id}/push-subscription`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subscription: {
+                            endpoint: subscription.endpoint,
+                            keys: {
+                                p256dh: arrayBufferToBase64(subscription.getKey('p256dh')),
+                                auth: arrayBufferToBase64(subscription.getKey('auth'))
+                            }
+                        }
+                    })
+                });
+
+                if (saveResponse.ok) {
+                    console.log('✅ Push subscription saved successfully');
+                } else {
+                    console.error('Failed to save push subscription');
+                }
+            } catch (error) {
+                console.error('Error subscribing to push notifications:', error);
+            }
+        }
+
+        // Helper function to convert VAPID key
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding)
+                .replace(/\-/g, '+')
+                .replace(/_/g, '/');
+
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        // Helper function to convert ArrayBuffer to Base64
+        function arrayBufferToBase64(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return window.btoa(binary);
+        }
+
+        // Check notification status and show/hide settings UI
+        function checkNotificationStatus() {
+            console.log('🔍 Checking notification status...');
+            console.log('Notification API available:', 'Notification' in window);
+            console.log('Service Worker available:', 'serviceWorker' in navigator);
+            console.log('Current permission:', Notification.permission);
+            console.log('Protocol:', window.location.protocol);
+            console.log('Is HTTPS/localhost:', window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+            
+            if (Notification.permission === 'granted') {
+                console.log('✅ Notifications already granted');
+                hideNotificationSettingsUI();
+            } else {
+                console.log('⚠️ Notifications not granted, showing settings UI');
+                showNotificationSettingsUI();
+            }
+        }
+    </script>
+</body>
+</html>
