@@ -415,7 +415,6 @@ let orderType = localStorage.getItem('orderType') || null; // 'delivery' or 'pic
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    setupLoadingVideo();
     // Check if we're on the home page (index.html)
     const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
     
@@ -437,46 +436,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeBranchSelection();
 });
 
-// Setup Loading Video
-function setupLoadingVideo() {
-    const loadingVideo = document.getElementById('loadingVideo');
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const mainContent = document.getElementById('mainContent');
-    
-    if (!loadingVideo || !loadingOverlay || !mainContent) return;
-    
-    // Show main content when video ends
-    loadingVideo.addEventListener('ended', () => {
-        loadingOverlay.classList.add('hidden');
-        mainContent.style.display = 'block';
-        setTimeout(() => {
-            mainContent.classList.add('visible');
-        }, 50);
-    });
-    
-    // Fallback: if video fails to load or play, show content after 3 seconds
-    loadingVideo.addEventListener('error', () => {
-        setTimeout(() => {
-            loadingOverlay.classList.add('hidden');
-            mainContent.style.display = 'block';
-            setTimeout(() => {
-                mainContent.classList.add('visible');
-            }, 50);
-        }, 1000);
-    });
-    
-    // Also handle case where video might not autoplay (some browsers)
-    setTimeout(() => {
-        if (loadingOverlay && !loadingOverlay.classList.contains('hidden')) {
-            // If video is still showing after 10 seconds, show content anyway
-            loadingOverlay.classList.add('hidden');
-            mainContent.style.display = 'block';
-            setTimeout(() => {
-                mainContent.classList.add('visible');
-            }, 50);
-        }
-    }, 10000);
-}
 
 // Setup Event Listeners
 function setupEventListeners() {

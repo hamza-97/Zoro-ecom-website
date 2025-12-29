@@ -40,6 +40,12 @@ const riderSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    location: {
+        type: String,
+        required: true,
+        enum: ['gulberg', 'jt'],
+        default: 'gulberg'
+    },
     push_subscriptions: [{
         endpoint: String,
         keys: {

@@ -46,16 +46,27 @@ webpush.setVapidDetails(
 // Helper function to send push notifications to all available riders
 async function notifyAllRiders(orderData) {
     try {
+        // Determine location based on branch
+        let riderLocation = 'gulberg'; // default
+        if (orderData.branch && orderData.branch.toLowerCase().includes('johar')) {
+            riderLocation = 'jt';
+        } else if (orderData.branch && orderData.branch.toLowerCase().includes('gulberg')) {
+            riderLocation = 'gulberg';
+        }
+
         const availableRiders = await Rider.find({ 
             is_active: true, 
             is_available: true,
+            location: riderLocation, // Filter by location
             'push_subscriptions.0': { $exists: true } // Has at least one subscription
         });
 
         if (availableRiders.length === 0) {
-            console.log('No riders with push subscriptions available');
+            console.log(`No riders with push subscriptions available for location: ${riderLocation}`);
             return;
         }
+
+        console.log(`Notifying ${availableRiders.length} riders in ${riderLocation} for order ${orderData.order_number}`);
 
         const notificationPayload = JSON.stringify({
             title: 'New Order Available! 🚴',
@@ -149,33 +160,48 @@ async function initializeRiders() {
         }
         
         const riders = [
-            { phone: '03001234567', password: 'rider123', name: 'Ahmed Khan', username: 'ahmed_khan' },
-            { phone: '03001234568', password: 'rider123', name: 'Ali Hassan', username: 'ali_hassan' },
-            { phone: '03001234569', password: 'rider123', name: 'Usman Malik', username: 'usman_malik' }
+            { phone: '03001234567', password: 'rider123', name: 'Ahmed Khan', username: 'ahmed_khan', location: 'gulberg' },
+            { phone: '03001234568', password: 'rider123', name: 'Ali Hassan', username: 'ali_hassan', location: 'jt' },
+            { phone: '03001234569', password: 'rider123', name: 'Usman Malik', username: 'usman_malik', location: 'gulberg' }
         ];
         
-        // Update existing riders that don't have usernames
-        const existingRidersWithoutUsername = await Rider.find({ 
+        // Update existing riders that don't have usernames or location
+        const existingRidersNeedingUpdate = await Rider.find({ 
             $or: [
                 { username: { $exists: false } },
                 { username: null },
-                { username: '' }
+                { username: '' },
+                { location: { $exists: false } },
+                { location: null },
+                { location: '' }
             ]
         });
-        for (const rider of existingRidersWithoutUsername) {
-            // Generate username from name or phone, ensuring uniqueness
-            let baseUsername = rider.name ? rider.name.toLowerCase().replace(/\s+/g, '_') : `rider_${rider.phone}`;
-            let username = baseUsername;
-            let counter = 1;
+        for (const rider of existingRidersNeedingUpdate) {
+            const updateData = {};
             
-            // Ensure username is unique
-            while (await Rider.findOne({ username, _id: { $ne: rider._id } })) {
-                username = `${baseUsername}_${counter}`;
-                counter++;
+            // Generate username if needed
+            if (!rider.username) {
+                let baseUsername = rider.name ? rider.name.toLowerCase().replace(/\s+/g, '_') : `rider_${rider.phone}`;
+                let username = baseUsername;
+                let counter = 1;
+                
+                // Ensure username is unique
+                while (await Rider.findOne({ username, _id: { $ne: rider._id } })) {
+                    username = `${baseUsername}_${counter}`;
+                    counter++;
+                }
+                updateData.username = username;
             }
             
-            await Rider.findByIdAndUpdate(rider._id, { username }, { runValidators: false });
-            console.log(`✅ Updated existing rider with username: ${username}`);
+            // Set default location if missing
+            if (!rider.location) {
+                updateData.location = 'gulberg'; // default location
+            }
+            
+            if (Object.keys(updateData).length > 0) {
+                await Rider.findByIdAndUpdate(rider._id, updateData, { runValidators: false });
+                console.log(`✅ Updated existing rider: ${rider.name}`, updateData);
+            }
         }
         
         for (const riderData of riders) {
@@ -188,13 +214,23 @@ async function initializeRiders() {
                     password: riderData.password,
                     vehicle_type: 'bike',
                     is_active: true,
-                    is_available: true
+                    is_available: true,
+                    location: riderData.location
                 });
-                console.log(`✅ Default rider created: ${riderData.name}`);
-            } else if (!riderExists.username) {
-                // Update existing rider if it doesn't have username
-                await Rider.findByIdAndUpdate(riderExists._id, { username: riderData.username });
-                console.log(`✅ Updated rider with username: ${riderData.username}`);
+                console.log(`✅ Default rider created: ${riderData.name} (${riderData.location})`);
+            } else {
+                // Update existing rider if missing username or location
+                const updateData = {};
+                if (!riderExists.username) {
+                    updateData.username = riderData.username;
+                }
+                if (!riderExists.location) {
+                    updateData.location = riderData.location;
+                }
+                if (Object.keys(updateData).length > 0) {
+                    await Rider.findByIdAndUpdate(riderExists._id, updateData);
+                    console.log(`✅ Updated rider: ${riderData.name}`, updateData);
+                }
             }
         }
     } catch (error) {
@@ -854,7 +890,8 @@ app.post('/api/riders/login', async (req, res) => {
                 phone: rider.phone,
                 email: rider.email,
                 vehicle_type: rider.vehicle_type,
-                is_available: rider.is_available
+                is_available: rider.is_available,
+                location: rider.location
             },
             message: 'Login successful'
         });
@@ -866,6 +903,17 @@ app.post('/api/riders/login', async (req, res) => {
 // Get available orders (awaiting rider assignment)
 app.get('/api/riders/available-orders', async (req, res) => {
     try {
+        const { rider_id } = req.query;
+        
+        // Get rider's location
+        let riderLocation = null;
+        if (rider_id) {
+            const rider = await Rider.findById(rider_id);
+            if (rider) {
+                riderLocation = rider.location;
+            }
+        }
+        
         const orders = await Order.find({
             status: 'awaiting_rider',
             order_type: 'delivery',
@@ -873,8 +921,24 @@ app.get('/api/riders/available-orders', async (req, res) => {
         })
         .sort({ createdAt: 1 }) // Oldest first (first come first serve)
         .lean();
+        
+        // Filter orders by location if rider location is available
+        let filteredOrders = orders;
+        if (riderLocation) {
+            filteredOrders = orders.filter(order => {
+                if (!order.branch) return false;
+                const branchLower = order.branch.toLowerCase();
+                
+                if (riderLocation === 'jt') {
+                    return branchLower.includes('johar');
+                } else if (riderLocation === 'gulberg') {
+                    return branchLower.includes('gulberg');
+                }
+                return false;
+            });
+        }
 
-        res.json(orders);
+        res.json(filteredOrders);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -906,6 +970,20 @@ app.post('/api/riders/accept-order/:orderId', async (req, res) => {
 
         if (!order) {
             return res.status(404).json({ error: 'Order not found' });
+        }
+
+        // Check if order location matches rider location
+        if (rider.location && order.branch) {
+            const branchLower = order.branch.toLowerCase();
+            const isJoharOrder = branchLower.includes('johar');
+            const isGulbergOrder = branchLower.includes('gulberg');
+            
+            if ((rider.location === 'jt' && !isJoharOrder) || 
+                (rider.location === 'gulberg' && !isGulbergOrder)) {
+                return res.status(403).json({ 
+                    error: 'You can only accept orders from your assigned location' 
+                });
+            }
         }
 
         // Check if order is still available (first come first serve)

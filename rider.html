@@ -637,11 +637,15 @@
     </div>
 
     <script>
-        const API_URL = 'http://192.168.100.134:3000/api'; 
+        const API_URL = 'http://77.42.76.37/api'; 
         let currentRider = null;
         let currentTab = 'available';
         let pollInterval = null;
         let availableOrdersCount = 0;
+        let previousOrderIds = new Set(); // Track previous order IDs to detect new orders
+        let notificationInterval = null; // Track the looping sound interval
+        let hasUnacknowledgedOrders = false; // Track if there are unacknowledged new orders
+        let audioContext = null; // Store audio context for reuse
 
         // Setup enable notifications button IMMEDIATELY when DOM is ready
         // This must be done before any async operations for Android compatibility
@@ -773,12 +777,85 @@
             }
         });
 
+        // Stop the looping notification sound
+        function acknowledgeNewOrders() {
+            if (notificationInterval) {
+                clearInterval(notificationInterval);
+                notificationInterval = null;
+            }
+            hasUnacknowledgedOrders = false;
+            console.log('🔇 Notification sound stopped');
+        }
+
+        // Play a single notification sound
+        function playNotificationSound() {
+            try {
+                // Create or reuse audio context
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                // Resume audio context if suspended (browser autoplay policy)
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                // Create a pleasant two-tone notification sound
+                const playTone = (frequency, duration, startTime) => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = frequency;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.3, startTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+                    
+                    oscillator.start(startTime);
+                    oscillator.stop(startTime + duration);
+                };
+                
+                // Play two tones: a higher tone followed by a lower tone (like a doorbell)
+                const now = audioContext.currentTime;
+                playTone(800, 0.15, now); // First tone (higher)
+                playTone(600, 0.15, now + 0.2); // Second tone (lower, slightly delayed)
+            } catch (error) {
+                console.error('Error playing notification sound:', error);
+            }
+        }
+
+        // Start looping notification sound when new order arrives
+        function startNotificationLoop() {
+            // Don't start if already looping
+            if (notificationInterval) {
+                return;
+            }
+            
+            hasUnacknowledgedOrders = true;
+            
+            // Play immediately
+            playNotificationSound();
+            
+            // Then play every 3 seconds
+            notificationInterval = setInterval(() => {
+                if (hasUnacknowledgedOrders) {
+                    playNotificationSound();
+                    console.log('🔔 Notification sound playing...');
+                }
+            }, 3000);
+            
+            console.log('🔔 Notification sound loop started');
+        }
+
         // Load available orders
         async function loadAvailableOrders() {
             if (!currentRider) return;
             
             try {
-                const response = await fetch(`${API_URL}/riders/available-orders`);
+                const response = await fetch(`${API_URL}/riders/available-orders?rider_id=${currentRider.id}`);
                 const orders = await response.json();
                 
                 const container = document.getElementById('availableOrders');
@@ -795,10 +872,41 @@
                     container.innerHTML = orders.map(order => renderOrderCard(order, true)).join('');
                 }
                 
-                // Check for new orders and show notification
-                if (orders.length > availableOrdersCount && availableOrdersCount > 0) {
-                    showNotification();
+                // Check for new orders and play notification sound
+                if (previousOrderIds.size > 0) {
+                    // Create set of current order IDs
+                    const currentOrderIds = new Set();
+                    let hasNewOrders = false;
+                    
+                    orders.forEach(order => {
+                        const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
+                        currentOrderIds.add(orderId);
+                        
+                        // Check if this is a new order
+                        if (!previousOrderIds.has(orderId)) {
+                            hasNewOrders = true;
+                            console.log('🆕 New order detected:', order.order_number);
+                        }
+                    });
+                    
+                    // Start looping sound if new orders detected
+                    if (hasNewOrders) {
+                        showNotification(); // Show visual badge
+                        startNotificationLoop(); // Play sound loop
+                    }
+                    
+                    // Update previous order IDs for next check
+                    previousOrderIds = currentOrderIds;
+                } else {
+                    // First load: just store the order IDs without playing sound
+                    const currentOrderIds = new Set();
+                    orders.forEach(order => {
+                        const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
+                        currentOrderIds.add(orderId);
+                    });
+                    previousOrderIds = currentOrderIds;
                 }
+                
                 availableOrdersCount = orders.length;
             } catch (error) {
                 console.error('Error loading available orders:', error);
@@ -1281,6 +1389,7 @@
                 currentRider = null;
                 localStorage.removeItem('riderData');
                 if (pollInterval) clearInterval(pollInterval);
+                acknowledgeNewOrders(); // Stop notification sound
                 
                 document.getElementById('loginScreen').style.display = 'flex';
                 document.getElementById('appScreen').classList.remove('active');
@@ -1831,6 +1940,36 @@
                 showNotificationSettingsUI();
             }
         }
+
+        // Stop notification sound when user opens/interacts with the app
+        // Listen for page visibility changes (when user switches to this tab/window)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                // User is viewing the tab - stop notification sound
+                acknowledgeNewOrders();
+            }
+        });
+
+        // Stop notification sound on any user interaction
+        const stopOnInteraction = () => {
+            acknowledgeNewOrders();
+            // Remove listeners after first interaction to avoid unnecessary calls
+            document.removeEventListener('click', stopOnInteraction);
+            document.removeEventListener('touchstart', stopOnInteraction);
+            document.removeEventListener('keydown', stopOnInteraction);
+        };
+
+        // Add event listeners for user interactions
+        document.addEventListener('click', stopOnInteraction);
+        document.addEventListener('touchstart', stopOnInteraction, { passive: true });
+        document.addEventListener('keydown', stopOnInteraction);
+
+        // Also stop notification sound when accepting an order
+        const originalLoadMyOrders = loadMyOrders;
+        loadMyOrders = function() {
+            acknowledgeNewOrders();
+            return originalLoadMyOrders.apply(this, arguments);
+        };
     </script>
 </body>
 </html>
