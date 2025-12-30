@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Zoro Burger</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍔</text></svg>">
+    <link rel="icon" href="favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1412,18 +1412,28 @@
                             <p><strong>Assigned Rider:</strong> ${order.rider_name}</p>
                             ${order.accepted_at ? `<p><strong>Accepted At:</strong> ${new Date(order.accepted_at).toLocaleString()}</p>` : ''}
                         ` : ''}
-                        ${order.delivery_location && order.delivery_location.latitude ? `
-                            <div style="margin-top: 1rem; padding: 1rem; background: #e8f5e9; border-radius: 5px; border-left: 4px solid #2e7d32;">
-                                <strong>📍 Delivery Location</strong>
-                                <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
-                                    <strong>Coordinates:</strong><br>
-                                    Lat: ${order.delivery_location.latitude.toFixed(6)}<br>
-                                    Lng: ${order.delivery_location.longitude.toFixed(6)}<br>
-                                    ${order.delivery_location.accuracy ? `Accuracy: ${Math.round(order.delivery_location.accuracy)}m<br>` : ''}
-                                    ${order.delivery_location.timestamp ? `Delivered at: ${new Date(order.delivery_location.timestamp).toLocaleString()}<br>` : ''}
-                                    <a href="https://www.google.com/maps?q=${order.delivery_location.latitude},${order.delivery_location.longitude}" target="_blank" style="color: #2e7d32; text-decoration: underline; margin-top: 0.5rem; display: inline-block;">View on Google Maps</a>
-                                </p>
-                            </div>
+                        ${order.status === 'delivered' ? `
+                            ${order.delivery_location && order.delivery_location.latitude ? `
+                                <div style="margin-top: 1rem; padding: 1rem; background: #e8f5e9; border-radius: 5px; border-left: 4px solid #2e7d32;">
+                                    <strong>📍 Delivery Location</strong>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+                                        <strong>Coordinates:</strong><br>
+                                        Lat: ${order.delivery_location.latitude.toFixed(6)}<br>
+                                        Lng: ${order.delivery_location.longitude.toFixed(6)}<br>
+                                        ${order.delivery_location.accuracy ? `Accuracy: ${Math.round(order.delivery_location.accuracy)}m<br>` : ''}
+                                        ${order.delivery_location.timestamp ? `Delivered at: ${new Date(order.delivery_location.timestamp).toLocaleString()}<br>` : ''}
+                                        <a href="https://www.google.com/maps?q=${order.delivery_location.latitude},${order.delivery_location.longitude}" target="_blank" style="color: #2e7d32; text-decoration: underline; margin-top: 0.5rem; display: inline-block;">View on Google Maps</a>
+                                    </p>
+                                </div>
+                            ` : `
+                                <div style="margin-top: 1rem; padding: 1rem; background: #fff3cd; border-radius: 5px; border-left: 4px solid #ff9800;">
+                                    <strong>⚠️ Location Not Provided</strong>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #856404;">
+                                        The rider marked this order as delivered but did not provide location information.
+                                        ${order.delivery_location && order.delivery_location.timestamp ? `Delivered at: ${new Date(order.delivery_location.timestamp).toLocaleString()}` : ''}
+                                    </p>
+                                </div>
+                            `}
                         ` : ''}
                     </div>
                     

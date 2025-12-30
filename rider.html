@@ -646,6 +646,351 @@
         let notificationInterval = null; // Track the looping sound interval
         let hasUnacknowledgedOrders = false; // Track if there are unacknowledged new orders
         let audioContext = null; // Store audio context for reuse
+        let syncInterval = null; // Track sync interval for offline updates
+
+        // ==================== OFFLINE STORAGE SYSTEM ====================
+        
+        // Initialize IndexedDB for offline storage
+        function initOfflineStorage() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('RiderOfflineDB', 1);
+                
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => resolve(request.result);
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    
+                    // Create object store for pending status updates
+                    if (!db.objectStoreNames.contains('pendingUpdates')) {
+                        const store = db.objectStore.createObjectStore('pendingUpdates', { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('orderId', 'orderId', { unique: false });
+                        store.createIndex('timestamp', 'timestamp', { unique: false });
+                    }
+                };
+            });
+        }
+
+        // Store status update locally when offline
+        async function storePendingUpdate(orderId, status, deliveryLocation, riderId) {
+            try {
+                const db = await initOfflineStorage();
+                const transaction = db.transaction(['pendingUpdates'], 'readwrite');
+                const store = transaction.objectStore('pendingUpdates');
+                
+                const updateData = {
+                    orderId: orderId,
+                    status: status,
+                    delivery_location: deliveryLocation,
+                    rider_id: riderId,
+                    timestamp: new Date().toISOString(),
+                    synced: false
+                };
+                
+                await store.add(updateData);
+                console.log('✅ Status update stored locally:', updateData);
+                updateOfflineIndicator();
+                return true;
+            } catch (error) {
+                console.error('Error storing pending update:', error);
+                return false;
+            }
+        }
+
+        // Get all pending updates
+        async function getPendingUpdates() {
+            try {
+                const db = await initOfflineStorage();
+                const transaction = db.transaction(['pendingUpdates'], 'readonly');
+                const store = transaction.objectStore('pendingUpdates');
+                const index = store.index('timestamp');
+                
+                return new Promise((resolve, reject) => {
+                    const request = index.getAll();
+                    request.onsuccess = () => resolve(request.result.filter(u => !u.synced));
+                    request.onerror = () => reject(request.error);
+                });
+            } catch (error) {
+                console.error('Error getting pending updates:', error);
+                return [];
+            }
+        }
+
+        // Mark update as synced
+        async function markUpdateAsSynced(updateId) {
+            try {
+                const db = await initOfflineStorage();
+                const transaction = db.transaction(['pendingUpdates'], 'readwrite');
+                const store = transaction.objectStore('pendingUpdates');
+                
+                const update = await store.get(updateId);
+                if (update) {
+                    update.synced = true;
+                    await store.put(update);
+                }
+            } catch (error) {
+                console.error('Error marking update as synced:', error);
+            }
+        }
+
+        // Delete synced updates
+        async function deleteSyncedUpdates() {
+            try {
+                const db = await initOfflineStorage();
+                const transaction = db.transaction(['pendingUpdates'], 'readwrite');
+                const store = transaction.objectStore('pendingUpdates');
+                const index = store.index('timestamp');
+                
+                const allUpdates = await new Promise((resolve, reject) => {
+                    const request = index.getAll();
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+                
+                for (const update of allUpdates) {
+                    if (update.synced) {
+                        await store.delete(update.id);
+                    }
+                }
+            } catch (error) {
+                console.error('Error deleting synced updates:', error);
+            }
+        }
+
+        // Check if online
+        function isOnline() {
+            return navigator.onLine;
+        }
+
+        // Update order status with offline support
+        async function updateOrderStatusWithOfflineSupport(orderId, status, deliveryLocation) {
+            const updateData = {
+                status: status,
+                rider_id: currentRider.id
+            };
+            
+            if (deliveryLocation) {
+                updateData.delivery_location = {
+                    latitude: deliveryLocation.latitude,
+                    longitude: deliveryLocation.longitude,
+                    accuracy: deliveryLocation.accuracy,
+                    timestamp: new Date().toISOString()
+                };
+            }
+            
+            if (!isOnline()) {
+                // Store locally and show message
+                const stored = await storePendingUpdate(orderId, status, deliveryLocation ? updateData.delivery_location : null, currentRider.id);
+                if (stored) {
+                    if (status === 'delivered') {
+                        closeModal();
+                    }
+                    const locationMsg = deliveryLocation 
+                        ? `\nLocation recorded: ${deliveryLocation.latitude.toFixed(6)}, ${deliveryLocation.longitude.toFixed(6)}`
+                        : status === 'delivered' ? '\n⚠️ Location not provided' : '';
+                    alert('📱 Status update saved locally (offline mode).\n\nIt will be synced automatically when internet connection is restored.' + locationMsg);
+                    loadMyOrders();
+                    return;
+                } else {
+                    alert('Failed to save update locally. Please try again.');
+                    return;
+                }
+            }
+            
+            // Try to send to server
+            try {
+                const response = await fetch(`${API_URL}/riders/orders/${orderId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (status === 'delivered') {
+                        closeModal();
+                    }
+                    const locationMsg = deliveryLocation 
+                        ? `\nLocation recorded: ${deliveryLocation.latitude.toFixed(6)}, ${deliveryLocation.longitude.toFixed(6)}`
+                        : status === 'delivered' ? '\n⚠️ Location not provided' : '';
+                    const successMsg = status === 'delivered' 
+                        ? '✅ Order marked as delivered!' + locationMsg
+                        : '✅ Order status updated successfully!';
+                    alert(successMsg);
+                    loadMyOrders();
+                    if (currentTab === 'available') {
+                        loadAvailableOrders();
+                    }
+                } else {
+                    // If server error, store locally
+                    const stored = await storePendingUpdate(orderId, status, deliveryLocation ? updateData.delivery_location : null, currentRider.id);
+                    if (stored) {
+                        if (status === 'delivered') {
+                            closeModal();
+                        }
+                        alert('⚠️ Server error. Status update saved locally and will be synced when connection is restored.');
+                        loadMyOrders();
+                    } else {
+                        alert('Error: ' + (data.error || 'Failed to update order'));
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Network error - store locally
+                const stored = await storePendingUpdate(orderId, status, deliveryLocation ? updateData.delivery_location : null, currentRider.id);
+                if (stored) {
+                    if (status === 'delivered') {
+                        closeModal();
+                    }
+                    alert('📱 No internet connection. Status update saved locally and will be synced automatically when connection is restored.');
+                    loadMyOrders();
+                } else {
+                    alert('Failed to update order. Please check your connection and try again.');
+                }
+            }
+        }
+
+        // Sync pending updates to server
+        async function syncPendingUpdates() {
+            if (!isOnline() || !currentRider) {
+                return;
+            }
+            
+            try {
+                const pendingUpdates = await getPendingUpdates();
+                
+                if (pendingUpdates.length === 0) {
+                    updateOfflineIndicator();
+                    return;
+                }
+                
+                console.log(`🔄 Syncing ${pendingUpdates.length} pending update(s)...`);
+                
+                let syncedCount = 0;
+                for (const update of pendingUpdates) {
+                    try {
+                        const updateData = {
+                            status: update.status,
+                            rider_id: update.rider_id
+                        };
+                        
+                        if (update.delivery_location) {
+                            updateData.delivery_location = update.delivery_location;
+                        }
+                        
+                        const response = await fetch(`${API_URL}/riders/orders/${update.orderId}/status`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(updateData)
+                        });
+                        
+                        if (response.ok) {
+                            await markUpdateAsSynced(update.id);
+                            syncedCount++;
+                            console.log(`✅ Synced update for order ${update.orderId}`);
+                        } else {
+                            console.error(`❌ Failed to sync update for order ${update.orderId}`);
+                        }
+                    } catch (error) {
+                        console.error(`❌ Error syncing update for order ${update.orderId}:`, error);
+                    }
+                }
+                
+                // Delete synced updates
+                await deleteSyncedUpdates();
+                
+                if (syncedCount > 0) {
+                    console.log(`✅ Successfully synced ${syncedCount} update(s)`);
+                    loadMyOrders();
+                    if (currentTab === 'available') {
+                        loadAvailableOrders();
+                    }
+                }
+                
+                updateOfflineIndicator();
+            } catch (error) {
+                console.error('Error syncing pending updates:', error);
+            }
+        }
+
+        // Update offline indicator in UI
+        async function updateOfflineIndicator() {
+            const pendingUpdates = await getPendingUpdates();
+            const pendingCount = pendingUpdates.length;
+            
+            // Create or update offline indicator
+            let indicator = document.getElementById('offlineIndicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'offlineIndicator';
+                indicator.style.cssText = `
+                    position: fixed;
+                    bottom: 1rem;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: ${pendingCount > 0 ? '#ff9800' : '#4caf50'};
+                    color: white;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 25px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    z-index: 1500;
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    display: none;
+                    max-width: 90%;
+                    text-align: center;
+                `;
+                document.body.appendChild(indicator);
+            }
+            
+            if (!isOnline()) {
+                indicator.textContent = '📱 Offline Mode - Updates will sync when connection is restored';
+                indicator.style.background = '#ff9800';
+                indicator.style.display = 'block';
+            } else if (pendingCount > 0) {
+                indicator.textContent = `🔄 ${pendingCount} update(s) pending sync...`;
+                indicator.style.background = '#ff9800';
+                indicator.style.display = 'block';
+            } else {
+                indicator.style.display = 'none';
+            }
+        }
+
+        // Start automatic sync when online
+        function startAutoSync() {
+            if (syncInterval) clearInterval(syncInterval);
+            
+            // Sync immediately if online
+            if (isOnline()) {
+                syncPendingUpdates();
+            }
+            
+            // Sync every 10 seconds when online
+            syncInterval = setInterval(() => {
+                if (isOnline()) {
+                    syncPendingUpdates();
+                } else {
+                    updateOfflineIndicator();
+                }
+            }, 10000);
+            
+            // Listen for online/offline events
+            window.addEventListener('online', () => {
+                console.log('🌐 Internet connection restored');
+                updateOfflineIndicator();
+                syncPendingUpdates();
+            });
+            
+            window.addEventListener('offline', () => {
+                console.log('📴 Internet connection lost');
+                updateOfflineIndicator();
+            });
+        }
 
         // Setup enable notifications button IMMEDIATELY when DOM is ready
         // This must be done before any async operations for Android compatibility
@@ -696,6 +1041,12 @@
                     // Check notification status
                     checkNotificationStatus();
                     
+                    // Initialize offline storage and start auto-sync
+                    initOfflineStorage().then(() => {
+                        startAutoSync();
+                        updateOfflineIndicator();
+                    }).catch(err => console.error('Error initializing offline storage:', err));
+                    
                     loadAvailableOrders();
                     loadMyOrders();
                     startPolling();
@@ -726,6 +1077,12 @@
                 
                 // Request notification permission and subscribe to push
                 requestNotificationPermission();
+                
+                // Initialize offline storage and start auto-sync
+                initOfflineStorage().then(() => {
+                    startAutoSync();
+                    updateOfflineIndicator();
+                }).catch(err => console.error('Error initializing offline storage:', err));
                 
                 loadAvailableOrders();
                 loadMyOrders();
@@ -1088,30 +1445,7 @@
                     return;
                 }
 
-                try {
-                    const response = await fetch(`${API_URL}/riders/orders/${orderId}/status`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            status: nextStatus,
-                            rider_id: currentRider.id
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (response.ok) {
-                        alert('Order status updated successfully!');
-                        loadMyOrders();
-                    } else {
-                        alert('Error: ' + (data.error || 'Failed to update order'));
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Failed to update order. Please try again.');
-                }
+                await updateOrderStatusWithOfflineSupport(orderId, nextStatus, null);
             }
         }
 
@@ -1123,7 +1457,7 @@
             modalContent.innerHTML = `
                 <div style="text-align: center;">
                     <h2 style="margin-bottom: 1rem;">Mark Order as Delivered</h2>
-                    <p style="margin-bottom: 1.5rem; color: #666;">We need your current location to confirm delivery.</p>
+                    <p style="margin-bottom: 1.5rem; color: #666;">We'll try to get your location to confirm delivery.</p>
                     <div id="locationStatus" class="location-loading">
                         <div class="spinner"></div>
                         <span>Getting your location...</span>
@@ -1138,7 +1472,16 @@
                             <button class="btn" onclick="closeModal()" style="flex: 1; background: #6c757d;">Cancel</button>
                         </div>
                     </div>
-                    <div id="locationError" class="location-error" style="display: none;"></div>
+                    <div id="locationError" class="location-error" style="display: none;">
+                        <div style="margin-bottom: 1rem;">
+                            <strong>⚠️ Location Not Available</strong>
+                            <p style="margin-top: 0.5rem; font-size: 0.9rem;" id="locationErrorMessage"></p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button class="btn" onclick="confirmDeliveryWithoutLocation('${orderId}')" id="confirmWithoutLocationBtn" style="flex: 1; background: #ff9800;">Continue Without Location</button>
+                            <button class="btn" onclick="closeModal()" style="flex: 1; background: #6c757d;">Cancel</button>
+                        </div>
+                    </div>
                 </div>
             `;
             
@@ -1165,18 +1508,24 @@
                 const errorDiv = document.getElementById('locationError');
                 errorDiv.style.display = 'block';
                 
-                let errorMsg = 'Failed to get your location. ';
+                let errorMsg = 'Location access is not available. ';
                 if (locationError.code === 1) {
-                    errorMsg += 'Please enable location access in your browser settings and try again.';
+                    errorMsg += 'Location permission denied. You can still mark the order as delivered without location.';
                 } else if (locationError.code === 2) {
-                    errorMsg += 'Location is unavailable. Please check your GPS and try again.';
+                    errorMsg += 'GPS is unavailable. You can still mark the order as delivered without location.';
                 } else if (locationError.code === 3) {
-                    errorMsg += 'Location request timed out. Please try again.';
+                    errorMsg += 'Location request timed out. You can still mark the order as delivered without location.';
                 } else {
-                    errorMsg += locationError.message || 'Please try again.';
+                    errorMsg += 'You can still mark the order as delivered without location.';
                 }
                 
-                errorDiv.textContent = errorMsg;
+                document.getElementById('locationErrorMessage').textContent = errorMsg;
+                
+                // Store that location is not available
+                window.pendingDeliveryLocation = {
+                    orderId: orderId,
+                    location: null
+                };
             }
         }
 
@@ -1192,48 +1541,28 @@
             confirmBtn.disabled = true;
             confirmBtn.textContent = 'Processing...';
             
-            try {
-                const response = await fetch(`${API_URL}/riders/orders/${orderId}/status`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        status: 'delivered',
-                        rider_id: currentRider.id,
-                        delivery_location: {
-                            latitude: location.latitude,
-                            longitude: location.longitude,
-                            accuracy: location.accuracy,
-                            timestamp: new Date().toISOString()
-                        }
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    closeModal();
-                    alert('✅ Order marked as delivered!\n\nLocation recorded: ' + 
-                          location.latitude.toFixed(6) + ', ' + location.longitude.toFixed(6));
-                    loadMyOrders();
-                    // Also refresh available orders in case it affects the list
-                    if (currentTab === 'available') {
-                        loadAvailableOrders();
-                    }
-                } else {
-                    alert('Error: ' + (data.error || 'Failed to update order'));
-                    confirmBtn.disabled = false;
-                    confirmBtn.textContent = 'Confirm Delivery';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to update order. Please try again.');
-                confirmBtn.disabled = false;
-                confirmBtn.textContent = 'Confirm Delivery';
-            } finally {
-                window.pendingDeliveryLocation = null;
+            await updateOrderStatusWithOfflineSupport(orderId, 'delivered', location);
+            
+            window.pendingDeliveryLocation = null;
+        }
+
+        // Confirm delivery without location
+        async function confirmDeliveryWithoutLocation(orderId) {
+            const confirmBtn = document.getElementById('confirmWithoutLocationBtn');
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Processing...';
             }
+            
+            // Set pending location to null explicitly
+            window.pendingDeliveryLocation = {
+                orderId: orderId,
+                location: null
+            };
+            
+            await updateOrderStatusWithOfflineSupport(orderId, 'delivered', null);
+            
+            window.pendingDeliveryLocation = null;
         }
 
         // View order details
@@ -1389,7 +1718,12 @@
                 currentRider = null;
                 localStorage.removeItem('riderData');
                 if (pollInterval) clearInterval(pollInterval);
+                if (syncInterval) clearInterval(syncInterval);
                 acknowledgeNewOrders(); // Stop notification sound
+                
+                // Hide offline indicator
+                const indicator = document.getElementById('offlineIndicator');
+                if (indicator) indicator.style.display = 'none';
                 
                 document.getElementById('loginScreen').style.display = 'flex';
                 document.getElementById('appScreen').classList.remove('active');
@@ -1970,6 +2304,9 @@
             acknowledgeNewOrders();
             return originalLoadMyOrders.apply(this, arguments);
         };
+
+        // Make functions globally accessible
+        window.confirmDeliveryWithoutLocation = confirmDeliveryWithoutLocation;
     </script>
 </body>
 </html>

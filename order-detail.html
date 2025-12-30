@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Details - Zoro Burger</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍔</text></svg>">
+    <link rel="icon" href="favicon.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1126,16 +1126,32 @@
                 formatStatus(currentOrder.status || 'pending');
 
             // Map
-            if (currentOrder.delivery_location && currentOrder.delivery_location.latitude) {
-                const lat = currentOrder.delivery_location.latitude;
-                const lng = currentOrder.delivery_location.longitude;
-                document.getElementById('mapContainer').style.display = 'block';
-                document.getElementById('mapCoordinates').textContent = 
-                    `${lat.toFixed(6)}°N ${lng.toFixed(6)}°E`;
-                document.getElementById('mapLink').href = 
-                    `https://www.google.com/maps?q=${lat},${lng}`;
-                document.getElementById('mapEmbed').src = 
-                    `https://www.google.com/maps?q=${lat},${lng}&output=embed`;
+            if (currentOrder.status === 'delivered') {
+                if (currentOrder.delivery_location && currentOrder.delivery_location.latitude) {
+                    const lat = currentOrder.delivery_location.latitude;
+                    const lng = currentOrder.delivery_location.longitude;
+                    document.getElementById('mapContainer').style.display = 'block';
+                    document.getElementById('mapCoordinates').textContent = 
+                        `${lat.toFixed(6)}°N ${lng.toFixed(6)}°E`;
+                    document.getElementById('mapLink').href = 
+                        `https://www.google.com/maps?q=${lat},${lng}`;
+                    document.getElementById('mapEmbed').src = 
+                        `https://www.google.com/maps?q=${lat},${lng}&output=embed`;
+                } else {
+                    // Show location not provided message
+                    const mapContainer = document.getElementById('mapContainer');
+                    mapContainer.style.display = 'block';
+                    mapContainer.innerHTML = `
+                        <div class="map-title">⚠️ Location Not Provided</div>
+                        <div style="padding: 1rem; background: #fff3cd; border-radius: 5px; margin-top: 1rem; color: #856404;">
+                            <p style="margin: 0; font-size: 0.9rem;">
+                                The rider marked this order as delivered but did not provide location information.
+                                ${currentOrder.delivery_location && currentOrder.delivery_location.timestamp ? 
+                                    `<br><small>Delivered at: ${new Date(currentOrder.delivery_location.timestamp).toLocaleString()}</small>` : ''}
+                            </p>
+                        </div>
+                    `;
+                }
             }
         }
 

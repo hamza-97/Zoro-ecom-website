@@ -1077,12 +1077,22 @@ app.patch('/api/riders/orders/:orderId/status', async (req, res) => {
         order.status = status;
         
         // If delivery location is provided (when marking as delivered), save it
+        // If status is delivered but no location is provided, that's okay - location is optional
         if (delivery_location && status === 'delivered') {
             order.delivery_location = {
                 latitude: delivery_location.latitude,
                 longitude: delivery_location.longitude,
                 accuracy: delivery_location.accuracy || null,
                 timestamp: delivery_location.timestamp ? new Date(delivery_location.timestamp) : new Date()
+            };
+        } else if (status === 'delivered' && !delivery_location) {
+            // Mark that location was not provided - set delivery_location to null explicitly
+            // This allows us to distinguish between "not delivered yet" and "delivered without location"
+            order.delivery_location = {
+                latitude: null,
+                longitude: null,
+                accuracy: null,
+                timestamp: new Date()
             };
         }
         
