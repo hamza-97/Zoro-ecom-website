@@ -1,387 +1,193 @@
-// Products Data with images
+// Products Data - Updated with ZoroImages folder
 const products = [
-    // Shakes
-    {
-        id: 1,
-        name: 'Oreo Crush Shake',
-        category: 'shakes',
-        price: 695,
-        image: 'Zoro Products/Shake1.png',
-        description: 'Creamy milkshake with crushed Oreo cookies'
-    },
-    {
-        id: 2,
-        name: 'Caramel Walnut Shake',
-        category: 'shakes',
-        price: 795,
-        image: 'Zoro Products/Shake2.png',
-        description: 'Rich caramel shake topped with crunchy walnuts'
-    },
-    {
-        id: 3,
-        name: 'Strawberry Pavlova Shake',
-        category: 'shakes',
-        price: 895,
-        image: 'Zoro Products/Shake3.png',
-        description: 'Delicious strawberry shake with pavlova crumbles'
-    },
-    {
-        id: 4,
-        name: 'Butter Pecan Shake',
-        category: 'shakes',
-        price: 895,
-        image: 'Zoro Products/Shake4.png',
-        description: 'Smooth butter pecan flavored milkshake'
-    },
-    {
-        id: 5,
-        name: 'Hazel Dream Shake',
-        category: 'shakes',
-        price: 895,
-        image: 'Zoro Products/Shake5.png',
-        description: 'Dreamy hazelnut shake that melts in your mouth'
-    },
-    {
-        id: 6,
-        name: 'Lotus Swirl Shake',
-        category: 'shakes',
-        price: 895,
-        image: 'Zoro Products/Shake6.png',
-        description: 'Biscoff lotus cookies blended into creamy perfection'
-    },
-    {
-        id: 7,
-        name: 'Pistachio Cream Shake',
-        category: 'shakes',
-        price: 1095,
-        image: 'Zoro Products/Shake7.png',
-        description: 'Premium pistachio cream shake'
-    },
-    {
-        id: 8,
-        name: 'Chocolate Delight Shake',
-        category: 'shakes',
-        price: 695,
-        image: 'Zoro Products/Shake8.png',
-        description: 'Classic chocolate shake for chocolate lovers'
-    },
-    {
-        id: 9,
-        name: 'Vanilla Bean Shake',
-        category: 'shakes',
-        price: 695,
-        image: 'Zoro Products/Shake9.png',
-        description: 'Smooth vanilla bean milkshake'
-    },
-    {
-        id: 10,
-        name: 'Mint Chocolate Shake',
-        category: 'shakes',
-        price: 795,
-        image: 'Zoro Products/Shake10.png',
-        description: 'Refreshing mint chocolate shake'
-    },
-    // Burgers - using product images
     // BEEF SMASHERS
     {
-        id: 11,
-        name: 'Classic American Burger',
+        id: 1,
+        name: 'Classic American',
         category: 'beef-smashers',
         price: 895,
-        image: 'Zoro Products/SHD_3168.png',
+        image: 'ZoroImages/ClassicAmerican.png',
         description: 'Pickles, Onions, Cheese, Ketchup, Mayo'
     },
     {
-        id: 12,
-        name: 'Onion Melt Burger',
+        id: 2,
+        name: 'Onion Melt',
         category: 'beef-smashers',
         price: 895,
-        image: 'Zoro Products/SHD_3181.png',
+        image: 'ZoroImages/OnionMelt.png',
         description: 'Grilled Onions, Cheese, Lettuce, Crispy Onions, Garlic Aioli'
     },
     {
-        id: 13,
-        name: 'Frankie Burger',
+        id: 3,
+        name: 'Frankie',
         category: 'beef-smashers',
         price: 895,
-        image: 'Zoro Products/SHD_3188.png',
+        image: 'ZoroImages/Frankie.png',
         description: 'Pickled Red Onions, Cheese, Tomatoes, Lettuce, Secret Sauce'
     },
     {
-        id: 14,
-        name: 'Big Ben Burger',
+        id: 4,
+        name: 'Big Ben',
         category: 'beef-smashers',
         price: 895,
-        image: 'Zoro Products/SHD_3198.png',
+        image: 'ZoroImages/BigBen.png',
         description: 'Grilled Onions, Cheese, Crispy Onions, Jalapeno Mayo'
     },
     // BEEF SPECIALITY
     {
-        id: 15,
-        name: 'Truffle Royal Burger',
+        id: 5,
+        name: 'Truffle Royal',
         category: 'beef-speciality',
         price: 995,
-        image: 'Zoro Products/SHD_3245.png',
+        image: 'ZoroImages/TruffleRoyal.png',
         description: 'Cheese, Tomatoes, Lettuce, Mustard, Truffle Mayo'
     },
     {
-        id: 16,
-        name: 'Bangkok Burger',
+        id: 6,
+        name: 'Bangkok',
         category: 'beef-speciality',
         price: 995,
-        image: 'Zoro Products/SHD_3250.jpg',
+        image: 'ZoroImages/Bangkok.png',
         description: 'Lettuce, Jalapenos, Cheese, Chilli Mayo'
     },
     {
-        id: 17,
-        name: 'BLT Classic Burger',
+        id: 7,
+        name: 'BLT Classic',
         category: 'beef-speciality',
         price: 995,
-        image: 'Zoro Products/SHD_3254.png',
-        description: 'Cheese, Bacon, Tomatoes, Lettuce, Ketchup, Mayo, Mustard Sauce'
+        image: 'ZoroImages/BltClassic.png',
+        description: 'Classic BLT: Cheese, Bacon, Tomatoes, Lettuce, Ketchup, Mayo, Mustard Sauce Texas BLT: Bacon, Tomatoes, Lettuce, Cheese, BBQ Sauce, Mustard'
     },
     {
-        id: 18,
-        name: 'Swiss Mushroom Burger',
+        id: 8,
+        name: 'Swiss Mushroom',
         category: 'beef-speciality',
         price: 1295,
-        image: 'Zoro Products/SHD_3256.jpg',
+        image: 'ZoroImages/SwissMushroom.png',
         description: 'Swiss Mushroom Sauce, Cheese, Mayo'
     },
     // CHICKEN BURGERS
     {
-        id: 19,
-        name: 'Pepper Chicken Burger',
+        id: 9,
+        name: 'Pepper Chicken',
         category: 'chicken-burgers',
         price: 895,
-        image: 'Zoro Products/SHD_3265.png',
+        image: 'ZoroImages/PepperChicken.png',
         description: 'Chicken Minced Patty, Cheese, Mayo, Ketchup, Lettuce'
     },
     {
-        id: 20,
-        name: 'Tangy Crunch Burger',
+        id: 10,
+        name: 'Tangy Crunch',
         category: 'chicken-burgers',
         price: 895,
-        image: 'Zoro Products/SHD_3278.jpg',
+        image: 'ZoroImages/TangyCrunch.png',
         description: 'Breast Fillet, Cheese, Honey Mustard Coleslaw, Mayo'
     },
     {
-        id: 21,
-        name: 'Asian Fusion Burger',
+        id: 11,
+        name: 'Asian Fusion',
         category: 'chicken-burgers',
         price: 995,
-        image: 'Zoro Products/SHD_3285.png',
+        image: 'ZoroImages/AsianFusion.png',
         description: 'Breast Fillet, Cheese, Sweet & Spicy Asian Sauce, Crispy Onions, Chilli Mayo'
     },
     {
-        id: 22,
-        name: 'Mexicana Burger',
+        id: 12,
+        name: 'Mexicana',
         category: 'chicken-burgers',
         price: 995,
-        image: 'Zoro Products/SHD_3295.jpg',
+        image: 'ZoroImages/Mexicana.png',
         description: 'Chicken Breast Fillet, Nacho Chips, Lettuce, Jalapenos, Onions, Salsa Mayo, Cheese'
     },
-    // Desserts
+    // DESSERTS
     {
-        id: 23,
+        id: 13,
         name: 'Plain Funnel Cake',
         category: 'desserts',
         price: 395,
-        image: 'Zoro Products/SHD_3299.png',
-        description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream'
+        image: 'ZoroImages/PlainFunnelCake.png',
+        description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream.'
     },
     {
-        id: 24,
+        id: 14,
         name: 'Chocolate Funnel Cake',
         category: 'desserts',
         price: 495,
-        image: 'Zoro Products/SHD_3313.png',
-        description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream and Chocolate Sauce'
+        image: 'ZoroImages/ChocolateFunnelCake.png',
+        description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream and Chocolate Sauce.'
     },
     {
-        id: 25,
+        id: 15,
         name: 'Strawberry Funnel Cake',
         category: 'desserts',
         price: 595,
-        image: 'Zoro Products/SHD_3318.jpg',
-        description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream and housemade Strawberry Sauce'
+        image: 'ZoroImages/StrawberryFunnelCake.png',
+        description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream and housemade Strawberry Sauce.'
     },
     {
-        id: 26,
+        id: 16,
         name: 'Benzo Cake',
         category: 'desserts',
         price: 795,
-        image: 'Zoro Products/SHD_3329.png',
-        description: 'Decadent chocolate and vanilla layered cake'
+        image: 'ZoroImages/BenzoCake.png',
+        description: 'Decadent layered cake'
     },
-    // Additional products using remaining images
+    // PREMIUM SHAKES
     {
-        id: 27,
-        name: 'Special Burger Deluxe',
-        category: 'beef-speciality',
-        price: 1195,
-        image: 'Zoro Products/SHD_3334.jpg',
-        description: 'Premium beef patty with special sauce and fresh vegetables'
-    },
-    {
-        id: 28,
-        name: 'Cheese Lovers Burger',
-        category: 'beef-speciality',
-        price: 1095,
-        image: 'Zoro Products/SHD_3336.jpg',
-        description: 'Triple cheese with caramelized onions and special sauce'
+        id: 17,
+        name: 'Oreo Crush',
+        category: 'premium-shakes',
+        price: 695,
+        image: 'ZoroImages/OreoCrushShake.png',
+        description: 'Creamy milkshake with crushed Oreo cookies'
     },
     {
-        id: 29,
-        name: 'Spicy Chicken Burger',
-        category: 'chicken-burgers',
-        price: 895,
-        image: 'Zoro Products/SHD_3345.png',
-        description: 'Spicy chicken fillet with jalapenos and special hot sauce'
-    },
-    {
-        id: 30,
-        name: 'Mushroom Swiss Deluxe',
-        category: 'beef-speciality',
-        price: 1295,
-        image: 'Zoro Products/SHD_3363.png',
-        description: 'Grilled mushrooms with Swiss cheese and garlic aioli'
-    },
-    {
-        id: 31,
-        name: 'BBQ Bacon Burger',
-        category: 'beef-speciality',
-        price: 1095,
-        image: 'Zoro Products/SHD_3368.png',
-        description: 'Crispy bacon with BBQ sauce and onion rings'
-    },
-    {
-        id: 32,
-        name: 'Veggie Supreme Burger',
-        category: 'beef-speciality',
+        id: 18,
+        name: 'Caramel Walnut',
+        category: 'premium-shakes',
         price: 795,
-        image: 'Zoro Products/SHD_3377.png',
-        description: 'Fresh vegetables with special veggie patty and sauces'
+        image: 'ZoroImages/CaramelWalnutShake.png',
+        description: 'Rich caramel shake topped with crunchy walnuts'
     },
     {
-        id: 33,
-        name: 'Crispy Chicken Burger',
-        category: 'chicken-burgers',
+        id: 19,
+        name: 'Stawberry Pavlova',
+        category: 'premium-shakes',
         price: 895,
-        image: 'Zoro Products/SHD_3388.png',
-        description: 'Crispy fried chicken with coleslaw and mayo'
+        image: 'ZoroImages/StrawberryPalovaShake.png',
+        description: 'Delicious strawberry shake with pavlova crumbles'
     },
     {
-        id: 34,
-        name: 'Double Cheese Burger',
-        category: 'beef-speciality',
-        price: 995,
-        image: 'Zoro Products/SHD_3403.png',
-        description: 'Double beef patties with double cheese'
-    },
-    {
-        id: 35,
-        name: 'Classic Cheeseburger',
-        category: 'beef-speciality',
+        id: 20,
+        name: 'Butter Pecan',
+        category: 'premium-shakes',
         price: 895,
-        image: 'Zoro Products/SHD_3409.png',
-        description: 'Classic beef patty with cheese, lettuce, and special sauce'
+        image: 'ZoroImages/ButterPecanShake.png',
+        description: 'Smooth butter pecan flavored milkshake'
     },
     {
-        id: 36,
-        name: 'Hawaiian Burger',
-        category: 'beef-speciality',
-        price: 995,
-        image: 'Zoro Products/SHD_3420.png',
-        description: 'Beef patty with pineapple, teriyaki sauce, and special toppings'
+        id: 21,
+        name: 'Hazel Dream',
+        category: 'premium-shakes',
+        price: 895,
+        image: 'ZoroImages/HazelDreamShake.png',
+        description: 'Dreamy hazelnut shake that melts in your mouth'
     },
     {
-        id: 37,
-        name: 'Bacon Cheeseburger',
-        category: 'beef-speciality',
+        id: 22,
+        name: 'Lotus Swirl',
+        category: 'premium-shakes',
+        price: 895,
+        image: 'ZoroImages/LotusSwirlShake.png',
+        description: 'Biscoff lotus cookies blended into creamy perfection'
+    },
+    {
+        id: 23,
+        name: 'Pistachio Cream',
+        category: 'premium-shakes',
         price: 1095,
-        image: 'Zoro Products/SHD_3422.png',
-        description: 'Beef patty with crispy bacon and melted cheese'
-    },
-    {
-        id: 38,
-        name: 'Spicy Deluxe Burger',
-        category: 'beef-speciality',
-        price: 1095,
-        image: 'Zoro Products/SHD_3430.jpg',
-        description: 'Spicy beef patty with jalapenos and chipotle sauce'
-    },
-    {
-        id: 39,
-        name: 'Gourmet Burger',
-        category: 'beef-speciality',
-        price: 1295,
-        image: 'Zoro Products/SHD_3436.jpg',
-        description: 'Premium ingredients with gourmet sauces and fresh vegetables'
-    },
-    {
-        id: 40,
-        name: 'Crispy Delight Burger',
-        category: 'chicken-burgers',
-        price: 995,
-        image: 'Zoro Products/SHD_3444.jpg',
-        description: 'Crispy chicken with fresh lettuce and special sauce'
-    },
-    {
-        id: 41,
-        name: 'Signature Burger',
-        category: 'beef-speciality',
-        price: 1195,
-        image: 'Zoro Products/SHD_3454.png',
-        description: 'Our signature blend with special seasonings and premium toppings'
-    },
-    {
-        id: 42,
-        name: 'Ultimate Burger',
-        category: 'beef-speciality',
-        price: 1295,
-        image: 'Zoro Products/SHD_3460.png',
-        description: 'Everything you love in one ultimate burger experience'
-    },
-    {
-        id: 43,
-        name: 'Loaded Burger',
-        category: 'beef-speciality',
-        price: 1195,
-        image: 'Zoro Products/SHD_3464.png',
-        description: 'Loaded with all your favorite toppings and extra cheese'
-    },
-    {
-        id: 44,
-        name: 'Supreme Burger',
-        category: 'beef-speciality',
-        price: 1295,
-        image: 'Zoro Products/SHD_3472.png',
-        description: 'Supreme quality ingredients with premium sauces'
-    },
-    {
-        id: 45,
-        name: 'Mega Burger',
-        category: 'beef-speciality',
-        price: 1195,
-        image: 'Zoro Products/SHD_3484.png',
-        description: 'Mega sized burger with double patties and all toppings'
-    },
-    {
-        id: 46,
-        name: 'Gourmet Deluxe Burger',
-        category: 'beef-speciality',
-        price: 1295,
-        image: 'Zoro Products/SHD_3486.jpg',
-        description: 'Gourmet experience with premium ingredients'
-    },
-    {
-        id: 47,
-        name: 'Special Edition Burger',
-        category: 'beef-speciality',
-        price: 1195,
-        image: 'Zoro Products/SHD_3517.jpg',
-        description: 'Limited edition burger with unique flavors'
+        image: 'ZoroImages/PistachioCreamShake.png',
+        description: 'Premium pistachio cream shake'
     }
 ];
 
@@ -1154,4 +960,3 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-

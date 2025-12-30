@@ -6,7 +6,7 @@ const products = [
         name: 'Classic American',
         category: 'beef-smashers',
         price: 895,
-        image: 'Zoro Products/SHD_3168.png',
+        image: 'ZoroImages/ClassicAmerican.png',
         description: 'Pickles, Onions, Cheese, Ketchup, Mayo'
     },
     {
@@ -14,7 +14,7 @@ const products = [
         name: 'Onion Melt',
         category: 'beef-smashers',
         price: 895,
-        image: 'Zoro Products/SHD_3181.png',
+        image: 'ZoroImages/OnionMelt.png',
         description: 'Grilled Onions, Cheese, Lettuce, Crispy Onions, Garlic Aioli'
     },
     {
@@ -22,7 +22,7 @@ const products = [
         name: 'Frankie',
         category: 'beef-smashers',
         price: 895,
-        image: 'Zoro Products/SHD_3188.png',
+        image: 'ZoroImages/Frankie.png',
         description: 'Pickled Red Onions, Cheese, Tomatoes, Lettuce, Secret Sauce'
     },
     {
@@ -30,7 +30,7 @@ const products = [
         name: 'Big Ben',
         category: 'beef-smashers',
         price: 895,
-        image: 'Zoro Products/SHD_3198.png',
+        image: 'ZoroImages/BigBen.png',
         description: 'Grilled Onions, Cheese, Crispy Onions, Jalapeno Mayo'
     },
     
@@ -40,7 +40,7 @@ const products = [
         name: 'Tokyo',
         category: 'beef-speciality',
         price: 995,
-        image: 'Zoro Products/SHD_3403.png',
+        image: 'ZoroImages/Tokyo.png',
         description: 'Onion jam, fried onion, garlic aioli, cheese'
     },
     {
@@ -48,7 +48,7 @@ const products = [
         name: 'Truffle Royal',
         category: 'beef-speciality',
         price: 995,
-        image: 'Zoro Products/SHD_3245.png',
+        image: 'ZoroImages/TruffleRoyal.png',
         description: 'Cheese, Tomatoes, Lettuce, Mustard, Truffle Mayo'
     },
     {
@@ -56,7 +56,7 @@ const products = [
         name: 'BLT Texas',
         category: 'beef-speciality',
         price: 995,
-        image: 'Zoro Products/SHD_3422.png',
+        image: 'ZoroImages/BltTexas.png',
         description: 'Bacon, Tomatoes, Lettuce, Cheese, BBQ Sauce, Mustard'
     },
     {
@@ -64,7 +64,7 @@ const products = [
         name: 'Bangkok',
         category: 'beef-speciality',
         price: 995,
-        image: 'Zoro Products/SHD_3250.jpg',
+        image: 'ZoroImages/Bangkok.png',
         description: 'Lettuce, Jalapenos, Cheese, Chilli Mayo'
     },
     {
@@ -72,7 +72,7 @@ const products = [
         name: 'BLT Classic',
         category: 'beef-speciality',
         price: 995,
-        image: 'Zoro Products/SHD_3254.png',
+        image: 'ZoroImages/BltClassic.png',
         description: 'Classic BLT: Cheese, Bacon, Tomatoes, Lettuce, Ketchup, Mayo, Mustard Sauce'
     },
     {
@@ -80,7 +80,7 @@ const products = [
         name: 'Swiss Mushroom',
         category: 'beef-speciality',
         price: 1295,
-        image: 'Zoro Products/SHD_3256.jpg',
+        image: 'ZoroImages/SwissMushroom.png',
         description: 'Swiss Mushroom Sauce, Cheese, Mayo'
     },
     
@@ -90,7 +90,7 @@ const products = [
         name: 'Classic Chicken',
         category: 'chicken-burgers',
         price: 695,
-        image: 'Zoro Products/SHD_3388.png',
+        image: 'ZoroImages/ClassicChicken.png',
         description: 'Classic chicken burger with fresh ingredients'
     },
     {
@@ -98,7 +98,7 @@ const products = [
         name: 'Pepper Chicken',
         category: 'chicken-burgers',
         price: 895,
-        image: 'Zoro Products/SHD_3265.png',
+        image: 'ZoroImages/PepperChicken.png',
         description: 'Chicken Minced Patty, Cheese, Mayo, Ketchup, Lettuce'
     },
     {
@@ -106,7 +106,7 @@ const products = [
         name: 'Tangy Crunch',
         category: 'chicken-burgers',
         price: 895,
-        image: 'Zoro Products/SHD_3278.jpg',
+        image: 'ZoroImages/TangyCrunch.png',
         description: 'Breast Fillet, Cheese, Honey Mustard Coleslaw, Mayo'
     },
     {
@@ -114,7 +114,7 @@ const products = [
         name: 'Roost',
         category: 'chicken-burgers',
         price: 895,
-        image: 'Zoro Products/SHD_3409.png',
+        image: 'ZoroImages/Roost.png',
         description: 'Breast Fillet, Cheese, Lettuce, Tomatoes, Zesty Chick Sauce'
     },
     {
@@ -122,7 +122,7 @@ const products = [
         name: 'Asian Fusion',
         category: 'chicken-burgers',
         price: 995,
-        image: 'Zoro Products/SHD_3285.png',
+        image: 'ZoroImages/AsianFusion.png',
         description: 'Breast Fillet, Cheese, Sweet & Spicy Asian Sauce, Crispy Onions, Chilli Mayo'
     },
     {
@@ -130,7 +130,7 @@ const products = [
         name: 'Mexicana',
         category: 'chicken-burgers',
         price: 995,
-        image: 'Zoro Products/SHD_3295.jpg',
+        image: 'ZoroImages/Mexicana.png',
         description: 'Chicken Breast Fillet, Nacho Chips, Lettuce, Jalapenos, Onions, Salsa Mayo, Cheese'
     },
     {
@@ -138,7 +138,7 @@ const products = [
         name: 'Hell Fire',
         category: 'chicken-burgers',
         price: 995,
-        image: 'Zoro Products/SHD_3345.png',
+        image: 'ZoroImages/Hellfire.png',
         description: 'Breast Fillet, Cheese, Fiery Buffalo Sauce, Lettuce, Jalapeno, Chilli Mayo'
     },
     
@@ -148,7 +148,7 @@ const products = [
         name: 'Carolina Reaper Wings',
         category: 'wings',
         price: 895,
-        image: 'Zoro Products/SHD_3334.jpg',
+        image: 'ZoroImages/CarolinaReaperWings.png',
         description: 'Extremely spicy wings with Carolina Reaper sauce'
     },
     {
@@ -156,7 +156,7 @@ const products = [
         name: 'Korean BBQ',
         category: 'wings',
         price: 895,
-        image: 'Zoro Products/SHD_3430.jpg',
+        image: 'ZoroImages/KoreanBbqWings.png',
         description: 'Crispy Chicken Wings glazed in Korean BBQ Sauce'
     },
     {
@@ -164,7 +164,7 @@ const products = [
         name: 'Buffalo',
         category: 'wings',
         price: 895,
-        image: 'Zoro Products/SHD_3436.jpg',
+        image: 'ZoroImages/BuffaloWings.png',
         description: 'Crispy Chicken Wings tossed in Tangy Buffalo Hot Sauce'
     },
     {
@@ -172,7 +172,7 @@ const products = [
         name: 'Thai',
         category: 'wings',
         price: 895,
-        image: 'Zoro Products/SHD_3444.jpg',
+        image: 'ZoroImages/ThaiWings.png',
         description: 'Chicken Wings coated in a flavorful blend of Thai Sweet and Spicy Sauce'
     },
     
@@ -182,7 +182,7 @@ const products = [
         name: 'French Truffle',
         category: 'loaded-fries',
         price: 1295,
-        image: 'Zoro Products/SHD_3363.png',
+        image: 'ZoroImages/FrenchTruffleLoadedFries.png',
         description: 'Australian Beef, Melted Cheese, Truffle Mayo'
     },
     {
@@ -190,7 +190,7 @@ const products = [
         name: 'Chicken Parma',
         category: 'loaded-fries',
         price: 1295,
-        image: 'Zoro Products/SHD_3368.png',
+        image: 'ZoroImages/ChickenParmaLoadedFries.png',
         description: 'Chicken Fillet, Onions, Tomato Relish, Melted Cheese'
     },
     {
@@ -198,7 +198,7 @@ const products = [
         name: 'Funky Cheese',
         category: 'loaded-fries',
         price: 1295,
-        image: 'Zoro Products/SHD_3377.png',
+        image: 'ZoroImages/FunkyCheeseLoadedFries.png',
         description: 'Chicken Cubes, Spicy Fries, Chilly Mayo, Melted Cheese, Jalapenos'
     },
     {
@@ -206,7 +206,7 @@ const products = [
         name: 'Philly Cheese',
         category: 'loaded-fries',
         price: 1295,
-        image: 'Zoro Products/SHD_3454.png',
+        image: 'ZoroImages/PhillyCheeseLoadedFries.png',
         description: 'Beef, Grilled Onions, Melted Cheese'
     },
     
@@ -216,7 +216,7 @@ const products = [
         name: 'Chicken Crunchers',
         category: 'appetizers',
         price: 595,
-        image: 'Zoro Products/SHD_3460.png',
+        image: 'ZoroImages/ChickenCrunchers.png',
         description: 'Crispy chicken bites perfect for sharing'
     },
     {
@@ -224,7 +224,7 @@ const products = [
         name: 'Plain Fries',
         category: 'appetizers',
         price: 495,
-        image: 'Zoro Products/SHD_3464.png',
+        image: 'ZoroImages/PlainFries.png',
         description: 'Classic crispy golden fries'
     },
     {
@@ -232,7 +232,7 @@ const products = [
         name: 'Spicy Fries',
         category: 'appetizers',
         price: 499,
-        image: 'Zoro Products/SHD_3472.png',
+        image: 'ZoroImages/SpicyFries.png',
         description: 'Fries with a spicy kick'
     },
     
@@ -242,7 +242,7 @@ const products = [
         name: 'Plain Funnel Cake',
         category: 'desserts',
         price: 395,
-        image: 'Zoro Products/SHD_3299.png',
+        image: 'ZoroImages/PlainFunnelCake.png',
         description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream'
     },
     {
@@ -250,7 +250,7 @@ const products = [
         name: 'Chocolate Funnel Cake',
         category: 'desserts',
         price: 495,
-        image: 'Zoro Products/SHD_3313.png',
+        image: 'ZoroImages/ChocolateFunnelCake.png',
         description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream and Chocolate Sauce'
     },
     {
@@ -258,7 +258,7 @@ const products = [
         name: 'Strawberry Funnel Cake',
         category: 'desserts',
         price: 595,
-        image: 'Zoro Products/SHD_3318.jpg',
+        image: 'ZoroImages/StrawberryFunnelCake.png',
         description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream and housemade Strawberry Sauce'
     },
     {
@@ -266,7 +266,7 @@ const products = [
         name: 'Benzo Cake',
         category: 'desserts',
         price: 795,
-        image: 'Zoro Products/SHD_3329.png',
+        image: 'ZoroImages/BenzoCake.png',
         description: 'Decadent layered cake'
     },
     
@@ -276,7 +276,7 @@ const products = [
         name: 'Oreo Crush',
         category: 'premium-shakes',
         price: 695,
-        image: 'Zoro Products/Shake1.png',
+        image: 'ZoroImages/OreoCrushShake.png',
         description: 'Creamy milkshake with crushed Oreo cookies'
     },
     {
@@ -284,7 +284,7 @@ const products = [
         name: 'Strawberry Oreo',
         category: 'premium-shakes',
         price: 795,
-        image: 'Zoro Products/Shake2.png',
+        image: 'ZoroImages/StrawberryOreoShake.png',
         description: 'Strawberry shake with Oreo crumbles'
     },
     {
@@ -292,7 +292,7 @@ const products = [
         name: 'Caramel Walnut',
         category: 'premium-shakes',
         price: 795,
-        image: 'Zoro Products/Shake3.png',
+        image: 'ZoroImages/CaramelWalnutShake.png',
         description: 'Rich caramel shake topped with crunchy walnuts'
     },
     {
@@ -300,7 +300,7 @@ const products = [
         name: 'Strawberry Pavlova',
         category: 'premium-shakes',
         price: 895,
-        image: 'Zoro Products/Shake4.png',
+        image: 'ZoroImages/StrawberryPalovaShake.png',
         description: 'Delicious strawberry shake with pavlova crumbles'
     },
     {
@@ -308,7 +308,7 @@ const products = [
         name: 'Butter Pecan',
         category: 'premium-shakes',
         price: 895,
-        image: 'Zoro Products/Shake5.png',
+        image: 'ZoroImages/ButterPecanShake.png',
         description: 'Smooth butter pecan flavored milkshake'
     },
     {
@@ -316,7 +316,7 @@ const products = [
         name: 'Hazel Dream',
         category: 'premium-shakes',
         price: 895,
-        image: 'Zoro Products/Shake6.png',
+        image: 'ZoroImages/HazelDreamShake.png',
         description: 'Dreamy hazelnut shake that melts in your mouth'
     },
     {
@@ -324,7 +324,7 @@ const products = [
         name: 'Lotus Swirl',
         category: 'premium-shakes',
         price: 895,
-        image: 'Zoro Products/Shake7.png',
+        image: 'ZoroImages/LotusSwirlShake.png',
         description: 'Biscoff lotus cookies blended into creamy perfection'
     },
     {
@@ -332,7 +332,7 @@ const products = [
         name: 'Pistachio Cream',
         category: 'premium-shakes',
         price: 1095,
-        image: 'Zoro Products/Shake8.png',
+        image: 'ZoroImages/PistachioCreamShake.png',
         description: 'Premium pistachio cream shake'
     },
     
@@ -342,7 +342,7 @@ const products = [
         name: 'Coke',
         category: 'soft-drinks',
         price: 195,
-        image: 'Zoro Products/Shake9.png',
+        image: 'ZoroImages/Coke.png',
         description: 'Refreshing Coca-Cola'
     },
     {
@@ -350,7 +350,7 @@ const products = [
         name: 'Sprite',
         category: 'soft-drinks',
         price: 195,
-        image: 'Zoro Products/Shake10.png',
+        image: 'ZoroImages/Sprite.png',
         description: 'Crisp and refreshing Sprite'
     },
     {
@@ -358,7 +358,7 @@ const products = [
         name: 'Fanta',
         category: 'soft-drinks',
         price: 195,
-        image: 'Zoro Products/SHD_3484.png',
+        image: 'ZoroImages/Fanta.png',
         description: 'Fruity Fanta'
     },
     {
@@ -366,7 +366,7 @@ const products = [
         name: 'Coke Zero',
         category: 'soft-drinks',
         price: 195,
-        image: 'Zoro Products/SHD_3486.jpg',
+        image: 'ZoroImages/CokeZero.png',
         description: 'Zero sugar Coca-Cola'
     },
     {
@@ -374,7 +374,7 @@ const products = [
         name: 'Sprite Zero',
         category: 'soft-drinks',
         price: 195,
-        image: 'Zoro Products/SHD_3517.jpg',
+        image: 'ZoroImages/SpriteZero.png',
         description: 'Zero sugar Sprite'
     },
     {
@@ -382,7 +382,7 @@ const products = [
         name: 'Dasani Water',
         category: 'soft-drinks',
         price: 125,
-        image: 'Zoro Products/SHD_3484(1).png',
+        image: 'ZoroImages/DasaniWater.png',
         description: 'Pure bottled water'
     }
 ];

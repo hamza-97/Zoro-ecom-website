@@ -21,6 +21,10 @@ body {
     overflow-x: hidden;
 }
 
+/* Main Content */
+.main-content {
+    opacity: 1;
+}
 
 .container {
     max-width: 1200px;
