@@ -27,7 +27,7 @@ Zoro/
 │   ├── server.js          # Express server
 │   ├── package.json       # Dependencies
 │   └── database.sqlite    # SQLite database (auto-created)
-└── Zoro Products/        # Product images
+└── ZoroImages/        # Product images
 ```
 
 ## Getting Started
