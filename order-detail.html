@@ -1032,6 +1032,9 @@
         </div>
     </div>
 
+    <!-- Load menu-script.js to get products -->
+    <script src="menu-script.js"></script>
+
     <script>
         const API_URL = 'http://localhost:3000/api';
         let currentOrder = null;
@@ -1072,8 +1075,57 @@
         // Load all products for item selection
         async function loadProducts() {
             try {
-                const response = await fetch(`${API_URL}/products`);
-                allProducts = await response.json();
+                // First, try to load from menu-script.js (if available)
+                if (typeof products !== 'undefined' && products && Array.isArray(products) && products.length > 0) {
+                    allProducts = products.map(p => ({
+                        _id: p.id,
+                        id: p.id,
+                        name: p.name,
+                        category: p.category,
+                        price: p.price,
+                        image: p.image,
+                        description: p.description
+                    }));
+                    console.log('✓ Loaded products from menu-script.js:', allProducts.length);
+                    return;
+                }
+                
+                // Fallback: try to fetch from API
+                try {
+                    const response = await fetch(`${API_URL}/products`);
+                    if (response.ok) {
+                        allProducts = await response.json();
+                        console.log('✓ Loaded products from API:', allProducts.length);
+                    } else {
+                        throw new Error('API response not ok');
+                    }
+                } catch (apiError) {
+                    console.warn('API fetch failed, trying to parse menu-script.js directly...', apiError);
+                    // Last resort: try to read from menu-script.js file directly
+                    try {
+                        const response = await fetch('menu-script.js');
+                        const text = await response.text();
+                        // Try to extract products array from the file
+                        const match = text.match(/const products = (\[[\s\S]*?\]);/);
+                        if (match) {
+                            const productsArray = new Function('return ' + match[1])();
+                            if (Array.isArray(productsArray) && productsArray.length > 0) {
+                                allProducts = productsArray.map(p => ({
+                                    _id: p.id,
+                                    id: p.id,
+                                    name: p.name,
+                                    category: p.category,
+                                    price: p.price,
+                                    image: p.image,
+                                    description: p.description
+                                }));
+                                console.log('✓ Loaded products from file parsing:', allProducts.length);
+                            }
+                        }
+                    } catch (fileError) {
+                        console.error('Error loading products from file:', fileError);
+                    }
+                }
             } catch (error) {
                 console.error('Error loading products:', error);
             }
@@ -1392,7 +1444,8 @@
             }
         }
 
-        function openAddItemModal() {
+        // Make function globally accessible for onclick handlers
+        window.openAddItemModal = async function openAddItemModal() {
             if (currentOrder.status === 'confirmed' || currentOrder.status === 'awaiting_rider' || 
                 currentOrder.status === 'in_kitchen' || currentOrder.status === 'rider_on_way' || 
                 currentOrder.status === 'delivered') {
@@ -1400,10 +1453,37 @@
                 return;
             }
 
+            // Ensure products are loaded
+            if (allProducts.length === 0) {
+                // Try to load from global products first
+                if (typeof products !== 'undefined' && products && Array.isArray(products) && products.length > 0) {
+                    allProducts = products.map(p => ({
+                        _id: p.id,
+                        id: p.id,
+                        name: p.name,
+                        category: p.category,
+                        price: p.price,
+                        image: p.image,
+                        description: p.description
+                    }));
+                    console.log('Loaded products on modal open:', allProducts.length);
+                } else {
+                    await loadProducts();
+                    if (allProducts.length === 0) {
+                        alert('Products not loaded. Please refresh the page.');
+                        console.error('Products still not loaded after retry');
+                        return;
+                    }
+                }
+            }
+
+            // Reset selected product when opening modal
+            selectedProductForModal = null;
+            
             document.getElementById('itemModalTitle').textContent = 'Add Item';
             renderItemModal(null);
             document.getElementById('itemModal').classList.add('active');
-        }
+        };
 
         function openItemModal(item, index) {
             const productName = item ? item.name : 'Edit Item';
@@ -1411,6 +1491,9 @@
             renderItemModal(item, index);
             document.getElementById('itemModal').classList.add('active');
         }
+
+        // Store selected product for modal rendering
+        let selectedProductForModal = null;
 
         function renderItemModal(item, index) {
             const modalBody = document.getElementById('itemModalBody');
@@ -1421,7 +1504,11 @@
             
             const isEdit = item !== null && index !== undefined && index >= 0;
             let product = null;
-            if (item) {
+            
+            // First, check if we have a selected product from dropdown
+            if (selectedProductForModal) {
+                product = selectedProductForModal;
+            } else if (item) {
                 product = allProducts.find(p => p.name === item.name);
                 // If product not found, create a product object from item data
                 if (!product && item) {
@@ -1437,7 +1524,19 @@
                 }
             }
             
-            console.log('Rendering modal:', { item, product, isEdit });
+            console.log('Rendering modal:', { item, product, isEdit, selectedProductForModal });
+
+            // Check if products are loaded
+            if (allProducts.length === 0) {
+                console.error('No products available! allProducts length:', allProducts.length);
+                modalBody.innerHTML = `
+                    <div style="padding: 2rem; text-align: center;">
+                        <p style="color: #dc3545; margin-bottom: 1rem;">Products not loaded. Please refresh the page.</p>
+                        <button onclick="location.reload()" style="padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;">Refresh Page</button>
+                    </div>
+                `;
+                return;
+            }
 
             // Get available products for selection
             const productsHTML = allProducts.map(p => {
@@ -1447,7 +1546,7 @@
             }).join('');
 
             // Get size options
-            // Default sizes for burgers if product exists
+            // Show sizes only if a product is selected (or if editing an existing item)
             let sizes = [];
             if (product) {
                 const isBurger = product.category && (
@@ -1460,25 +1559,36 @@
                 if (product.sizes && Array.isArray(product.sizes)) {
                     sizes = product.sizes;
                 } else if (isBurger) {
-                    // Default burger sizes
+                    // Default burger sizes - use the pricing from menu-script.js logic
                     sizes = [
                         { name: 'Single', price: product.price },
-                        { name: 'Double', price: Math.round(product.price * 1.4) },
-                        { name: 'Triple', price: Math.round(product.price * 1.8) }
+                        { name: 'Double', price: Math.round(product.price * 1.447) }, // 895 -> 1295
+                        { name: 'Triple', price: Math.round(product.price * 1.894) }  // 895 -> 1695
                     ];
                 } else {
-                    // Default for non-burgers
+                    // Default for non-burgers (wings, fries, shakes, etc.)
                     sizes = [{ name: 'Regular', price: product.price }];
                 }
             } else if (item) {
-                // If no product found but we have item data, use item's size info
+                // If editing existing item, use item's size info
                 const basePrice = item.price || 0;
-                sizes = [
-                    { name: 'Single', price: basePrice },
-                    { name: 'Double', price: Math.round(basePrice * 1.4) },
-                    { name: 'Triple', price: Math.round(basePrice * 1.8) }
-                ];
+                const itemSize = item.size || 'Regular';
+                if (itemSize === 'Regular' || itemSize === 'Single') {
+                    sizes = [
+                        { name: 'Single', price: basePrice },
+                        { name: 'Double', price: Math.round(basePrice * 1.447) },
+                        { name: 'Triple', price: Math.round(basePrice * 1.894) }
+                    ];
+                } else {
+                    // If item has a specific size, show all options with that one selected
+                    sizes = [
+                        { name: 'Single', price: basePrice },
+                        { name: 'Double', price: Math.round(basePrice * 1.447) },
+                        { name: 'Triple', price: Math.round(basePrice * 1.894) }
+                    ];
+                }
             }
+            // If no product and no item, sizes array stays empty (sizes won't show until product is selected)
 
             // Initialize selected size and quantity
             window.selectedSize = null;
@@ -1579,6 +1689,7 @@
                             <option value="">Select a product...</option>
                             ${productsHTML}
                         </select>
+                        ${!product ? '<p style="margin-top: 0.5rem; font-size: 0.85rem; color: #666;">Please select a product to see size and addon options.</p>' : ''}
                     </div>
                     ` : ''}
                     ${sizes.length > 0 ? `
@@ -1643,19 +1754,46 @@
         }
 
         function onProductSelect() {
-            const productId = document.getElementById('productSelect').value;
-            const product = allProducts.find(p => (p._id && p._id === productId) || (p.id && p.id === productId));
+            const productSelect = document.getElementById('productSelect');
+            if (!productSelect) return;
+            
+            const productId = productSelect.value;
+            if (!productId) {
+                selectedProductForModal = null;
+                return;
+            }
+            
+            const product = allProducts.find(p => {
+                const pId = p._id || p.id;
+                return String(pId) === String(productId);
+            });
+            
             if (product) {
+                // Store the selected product
+                selectedProductForModal = product;
+                
                 // Reset selected size and quantity when product changes
                 window.selectedSize = null;
                 window.currentItemQuantity = 1;
+                
                 // Re-render modal with selected product
                 renderItemModal(null, -1);
-                // Set the product select to the selected value
+                
+                // Set the product select to the selected value after render
                 setTimeout(() => {
                     const select = document.getElementById('productSelect');
-                    if (select) select.value = productId;
-                }, 100);
+                    if (select) {
+                        select.value = productId;
+                        // Trigger size selection for the first size
+                        const firstSize = document.querySelector('.size-option');
+                        if (firstSize) {
+                            firstSize.click();
+                        }
+                    }
+                }, 50);
+            } else {
+                console.error('Product not found for ID:', productId);
+                selectedProductForModal = null;
             }
         }
 
@@ -1765,6 +1903,8 @@
 
         // Initialize
         (async () => {
+            // Wait a bit for menu-script.js to load
+            await new Promise(resolve => setTimeout(resolve, 200));
             await loadProducts();
             await loadOrderDetails();
         })();

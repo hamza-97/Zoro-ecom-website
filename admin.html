@@ -477,6 +477,85 @@
         .logout-btn:hover {
             background: #c82333 !important;
         }
+
+        /* Add Item Modal Styles */
+        .size-options {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .size-option {
+            flex: 1;
+            min-width: 120px;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+
+        .size-option:hover {
+            border-color: var(--primary-color);
+            background: #fff5f5;
+        }
+
+        .size-option.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .size-option-name {
+            font-weight: 600;
+        }
+
+        .size-option-price {
+            font-weight: 600;
+        }
+
+        .addons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .addon-option {
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .addon-option:hover {
+            border-color: var(--primary-color);
+            background: #fff5f5;
+        }
+
+        .addon-option.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .addon-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .addon-price {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
@@ -725,9 +804,15 @@
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
-                    <label>Order Items (JSON format) *</label>
-                    <textarea id="editItems" rows="8" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 0.9rem; font-family: monospace; resize: vertical;"></textarea>
-                    <small style="color: #666; font-size: 0.85rem;">Edit the JSON array of items. Make sure it's valid JSON format.</small>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="margin: 0;">Order Items *</label>
+                        <button type="button" class="action-btn btn-update" onclick="openAddItemModal()" style="padding: 0.5rem 1rem; font-size: 0.9rem;">+ Add Item</button>
+                    </div>
+                    <div id="editItemsList" style="margin-bottom: 1rem; padding: 1rem; background: #f9f9f9; border-radius: 5px; min-height: 100px; max-height: 300px; overflow-y: auto;">
+                        <p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>
+                    </div>
+                    <textarea id="editItems" rows="4" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 0.9rem; font-family: monospace; resize: vertical; display: none;"></textarea>
+                    <small style="color: #666; font-size: 0.85rem;">Items are stored as JSON. Use "Add Item" button to add items easily.</small>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
@@ -753,6 +838,22 @@
                 </div>
                 <button type="submit" class="action-btn btn-update" style="width: 100%; margin-top: 1rem; background: #28a745;">Save Changes</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div class="modal" id="addItemModal">
+        <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header" style="position: sticky; top: 0; background: white; z-index: 10; border-bottom: 1px solid #e0e0e0; padding-bottom: 1rem; margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button onclick="closeAddItemModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">←</button>
+                    <h2 id="addItemModalTitle" style="margin: 0;">Add Item</h2>
+                </div>
+                <button class="close-modal" onclick="closeAddItemModal()">&times;</button>
+            </div>
+            <div id="addItemModalBody">
+                <!-- Content will be dynamically generated -->
+            </div>
         </div>
     </div>
 
@@ -787,6 +888,9 @@
         </div>
     </div>
 
+    <!-- Load menu-script.js to get products -->
+    <script src="menu-script.js"></script>
+
     <script>
         const API_URL = 'http://localhost:3000/api';
         let currentFilter = 'all';
@@ -795,6 +899,103 @@
         let hasUnacknowledgedOrders = false; // Track if there are unacknowledged new orders
         let audioContext = null; // Store audio context for reuse
         let currentUser = null; // Store current logged-in user
+        let allProducts = []; // Store products from menu-script.js
+        let currentEditItems = []; // Store current items being edited
+        let editingItemIndex = -1; // Index of item being edited (-1 for new item)
+
+        // Load products from menu-script.js
+        function loadProducts() {
+            try {
+                // Check if products are already loaded from menu-script.js
+                if (typeof products !== 'undefined' && products && Array.isArray(products) && products.length > 0) {
+                    allProducts = products.map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        category: p.category,
+                        price: p.price,
+                        image: p.image,
+                        description: p.description
+                    }));
+                    console.log('✓ Loaded products from menu-script.js:', allProducts.length);
+                    return true;
+                } else {
+                    console.warn('Products not yet available. Type:', typeof products, 'Length:', typeof products !== 'undefined' ? products.length : 'N/A');
+                }
+                
+                // If products not available, try to fetch from API
+                console.warn('Products not found in menu-script.js, trying API...');
+                fetch(`${API_URL}/products`)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        throw new Error('API response not ok');
+                    })
+                    .then(apiProducts => {
+                        if (apiProducts && apiProducts.length > 0) {
+                            allProducts = apiProducts;
+                            console.log('✓ Loaded products from API:', allProducts.length);
+                        }
+                    })
+                    .catch(e => {
+                        console.error('Error fetching products from API:', e);
+                        // Last resort: try to read from menu-script.js file directly
+                        fetch('menu-script.js')
+                            .then(response => response.text())
+                            .then(text => {
+                                // Try to extract products array from the file
+                                const match = text.match(/const products = (\[[\s\S]*?\]);/);
+                                if (match) {
+                                    try {
+                                        // Use Function constructor instead of eval for safer parsing
+                                        const productsArray = new Function('return ' + match[1])();
+                                        if (Array.isArray(productsArray) && productsArray.length > 0) {
+                                            allProducts = productsArray.map(p => ({
+                                                id: p.id,
+                                                name: p.name,
+                                                category: p.category,
+                                                price: p.price,
+                                                image: p.image,
+                                                description: p.description
+                                            }));
+                                            console.log('✓ Loaded products from file parsing:', allProducts.length);
+                                        }
+                                    } catch (parseError) {
+                                        console.error('Error parsing products from file:', parseError);
+                                    }
+                                } else {
+                                    console.error('Could not find products array in menu-script.js');
+                                }
+                            })
+                            .catch(err => console.error('Error reading menu-script.js:', err));
+                    });
+                return false;
+            } catch (error) {
+                console.error('Error loading products:', error);
+                return false;
+            }
+        }
+
+        // Initialize products - wait for DOM and menu-script.js to load
+        function initProducts() {
+            // Wait a bit for menu-script.js to execute
+            setTimeout(() => {
+                loadProducts();
+                // Try again after a longer delay if still not loaded
+                if (allProducts.length === 0) {
+                    setTimeout(() => {
+                        loadProducts();
+                    }, 500);
+                }
+            }, 200);
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initProducts);
+        } else {
+            initProducts();
+        }
 
         // Check if user is logged in
         function checkAuth() {
@@ -1559,7 +1760,12 @@
                 document.getElementById('editBranch').value = order.branch || '';
                 document.getElementById('editOrderType').value = order.order_type || 'delivery';
                 document.getElementById('editPaymentMethod').value = order.payment_method || 'cash';
-                document.getElementById('editItems').value = JSON.stringify(order.items || [], null, 2);
+                
+                // Initialize items
+                currentEditItems = Array.isArray(order.items) ? order.items : [];
+                updateItemsList();
+                document.getElementById('editItems').value = JSON.stringify(currentEditItems, null, 2);
+                
                 document.getElementById('editSubtotal').value = order.subtotal || 0;
                 document.getElementById('editDeliveryFee').value = order.delivery_fee || 0;
                 document.getElementById('editTax').value = order.tax || 0;
@@ -1576,6 +1782,414 @@
         function closeEditModal() {
             document.getElementById('editModal').classList.remove('active');
             document.getElementById('editForm').reset();
+            currentEditItems = [];
+            editingItemIndex = -1;
+        }
+
+        // Update items list display
+        function updateItemsList() {
+            const itemsList = document.getElementById('editItemsList');
+            const itemsTextarea = document.getElementById('editItems');
+            
+            if (!itemsList) return;
+            
+            if (currentEditItems.length === 0) {
+                itemsList.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>';
+            } else {
+                itemsList.innerHTML = currentEditItems.map((item, index) => {
+                    const addonsPrice = (item.addons || []).reduce((sum, a) => sum + (a.price || 0), 0);
+                    const itemTotal = (item.total || ((item.price || 0) + addonsPrice) * (item.quantity || 1));
+                    const sizeInfo = item.size && item.size !== 'Regular' ? ` (${item.size})` : '';
+                    const addonsInfo = item.addons && item.addons.length > 0 
+                        ? ` + ${item.addons.map(a => a.name).join(', ')}` 
+                        : '';
+                    
+                    return `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; margin-bottom: 0.5rem; background: white; border-radius: 5px; border: 1px solid #e0e0e0;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; margin-bottom: 0.25rem;">${item.name}${sizeInfo}${addonsInfo}</div>
+                                <div style="font-size: 0.85rem; color: #666;">
+                                    Qty: ${item.quantity || 1} × Rs ${(item.price || 0).toLocaleString()}${addonsPrice > 0 ? ` + Addons: Rs ${addonsPrice.toLocaleString()}` : ''} = Rs ${itemTotal.toLocaleString()}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button onclick="editItemInModal(${index})" style="padding: 0.5rem; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">Edit</button>
+                                <button onclick="removeItemFromModal(${index})" style="padding: 0.5rem; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">Remove</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Update textarea
+            if (itemsTextarea) {
+                itemsTextarea.value = JSON.stringify(currentEditItems, null, 2);
+            }
+            
+            // Recalculate totals
+            recalculateOrderTotals();
+        }
+
+        function removeItemFromModal(index) {
+            currentEditItems.splice(index, 1);
+            updateItemsList();
+        }
+
+        function editItemInModal(index) {
+            editingItemIndex = index;
+            openAddItemModal(currentEditItems[index], index);
+        }
+
+        function recalculateOrderTotals() {
+            const subtotal = currentEditItems.reduce((sum, item) => {
+                return sum + (item.total || ((item.price || 0) + ((item.addons || []).reduce((aSum, a) => aSum + (a.price || 0), 0))) * (item.quantity || 1));
+            }, 0);
+            
+            const deliveryFee = parseFloat(document.getElementById('editDeliveryFee').value) || 0;
+            const discount = 0; // Can be added later
+            const tax = (subtotal - discount) * 0.16; // 16% tax
+            const total = subtotal - discount + deliveryFee + tax;
+            
+            document.getElementById('editSubtotal').value = subtotal.toFixed(2);
+            document.getElementById('editTax').value = tax.toFixed(2);
+            document.getElementById('editTotal').value = total.toFixed(2);
+        }
+
+        // Add Item Modal functions
+        function openAddItemModal(item = null, index = -1) {
+            // Ensure products are loaded - check both allProducts and global products
+            if (allProducts.length === 0) {
+                // Try to load from global products variable first
+                if (typeof products !== 'undefined' && products && Array.isArray(products) && products.length > 0) {
+                    allProducts = products.map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        category: p.category,
+                        price: p.price,
+                        image: p.image,
+                        description: p.description
+                    }));
+                    console.log('Loaded products on modal open:', allProducts.length);
+                } else {
+                    loadProducts();
+                    // Wait a moment and try again
+                    setTimeout(() => {
+                        if (allProducts.length === 0) {
+                            const errorMsg = `Products not loaded. 
+                            
+Debug info:
+- allProducts length: ${allProducts.length}
+- Global products type: ${typeof products}
+- Global products length: ${typeof products !== 'undefined' ? (Array.isArray(products) ? products.length : 'not an array') : 'undefined'}
+- Check browser console for more details.`;
+                            alert(errorMsg);
+                            console.error('Products loading failed. Debug info:', {
+                                allProductsLength: allProducts.length,
+                                globalProductsType: typeof products,
+                                globalProductsValue: typeof products !== 'undefined' ? products : 'undefined',
+                                menuScriptLoaded: document.querySelector('script[src="menu-script.js"]') !== null
+                            });
+                            return;
+                        }
+                        // Retry opening modal
+                        openAddItemModal(item, index);
+                    }, 300);
+                    return;
+                }
+            }
+            
+            editingItemIndex = index;
+            document.getElementById('addItemModalTitle').textContent = item ? 'Edit Item' : 'Add Item';
+            renderAddItemModal(item);
+            document.getElementById('addItemModal').classList.add('active');
+        }
+
+        function closeAddItemModal() {
+            document.getElementById('addItemModal').classList.remove('active');
+            editingItemIndex = -1;
+        }
+
+        function renderAddItemModal(item) {
+            const modalBody = document.getElementById('addItemModalBody');
+            if (!modalBody) return;
+            
+            const isEdit = item !== null;
+            let product = null;
+            
+            if (item) {
+                product = allProducts.find(p => p.name === item.name);
+            }
+            
+            // Product search/select
+            if (allProducts.length === 0) {
+                console.error('No products available! allProducts length:', allProducts.length);
+                modalBody.innerHTML = `
+                    <div style="padding: 2rem; text-align: center;">
+                        <p style="color: #dc3545; margin-bottom: 1rem;">Products not loaded. Please refresh the page.</p>
+                        <button onclick="location.reload()" style="padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;">Refresh Page</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const productsHTML = allProducts.map(p => {
+                const isSelected = product && product.id === p.id;
+                return `<option value="${p.id}" ${isSelected ? 'selected' : ''}>${p.name} - Rs ${p.price.toLocaleString()}</option>`;
+            }).join('');
+            
+            // Size options
+            let sizes = [];
+            if (product) {
+                const isBurger = product.category && (
+                    product.category.includes('beef') || 
+                    product.category.includes('chicken') ||
+                    product.category.includes('burger')
+                );
+                
+                if (isBurger) {
+                    sizes = [
+                        { name: 'Single', price: product.price },
+                        { name: 'Double', price: Math.round(product.price * 1.447) },
+                        { name: 'Triple', price: Math.round(product.price * 1.894) }
+                    ];
+                } else {
+                    sizes = [{ name: 'Regular', price: product.price }];
+                }
+            } else {
+                // Default sizes for when no product selected
+                sizes = [
+                    { name: 'Single', price: 0 },
+                    { name: 'Double', price: 0 },
+                    { name: 'Triple', price: 0 }
+                ];
+            }
+            
+            const selectedSize = item ? (item.size || 'Single') : 'Single';
+            const sizesHTML = sizes.map(size => {
+                const isSelected = selectedSize === size.name;
+                return `
+                    <div class="size-option ${isSelected ? 'selected' : ''}" data-size="${size.name}" data-price="${size.price}" onclick="selectSize(this)">
+                        <span class="size-option-name">${size.name}</span>
+                        <span class="size-option-price">Rs ${size.price.toLocaleString()}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            // Addons
+            let addons = [];
+            if (product) {
+                const category = product.category || '';
+                const isBeef = category === 'beef-smashers' || category === 'beef-speciality';
+                const isChicken = category === 'chicken-burgers';
+                const isWings = category === 'wings';
+                
+                if ((isBeef || isChicken) && !isWings) {
+                    addons = [
+                        { name: 'Pickles', price: 80 },
+                        { name: 'Onions', price: 80 },
+                        { name: 'Pickled Red Onions', price: 80 },
+                        { name: 'Tomatoes', price: 80 },
+                        { name: 'Crispy Onions', price: 100 },
+                        { name: 'Cheese Slice', price: 100 },
+                        { name: 'Bacon', price: 250 },
+                        { name: 'Double Cheese Slice', price: 200 },
+                        { name: 'Lettuce', price: 80 },
+                        { name: 'Grilled Onions', price: 100 },
+                        { name: 'Nachos', price: 80 },
+                        { name: 'Jalapenos', price: 80 }
+                    ];
+                }
+            }
+            
+            const selectedAddons = item ? (item.addons || []) : [];
+            const addonsHTML = addons.map(addon => {
+                const isSelected = selectedAddons.some(a => a.name === addon.name);
+                return `
+                    <div class="addon-option ${isSelected ? 'selected' : ''}" data-addon="${addon.name}" data-price="${addon.price}" onclick="toggleAddon(this)">
+                        <div class="addon-name">${addon.name}</div>
+                        <div class="addon-price">Rs ${addon.price}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            const quantity = item ? (item.quantity || 1) : 1;
+            
+            modalBody.innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Select Product</label>
+                    <input type="text" id="productSearch" placeholder="Search products..." oninput="filterProducts()" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; margin-bottom: 0.5rem;">
+                    <select id="productSelect" onchange="onProductSelectChange()" size="8" style="width: 100%; padding: 0.5rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; overflow-y: auto;">
+                        <option value="">Select a product...</option>
+                        ${productsHTML}
+                    </select>
+                </div>
+                
+                ${sizes.length > 0 ? `
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="font-weight: 600; margin: 0;">Choose Size</label>
+                        <span style="font-size: 0.85rem; color: #666;">Required</span>
+                    </div>
+                    <div class="size-options" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        ${sizesHTML}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${addons.length > 0 ? `
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="font-weight: 600; margin: 0;">Add Ons</label>
+                        <span style="font-size: 0.85rem; color: #666;">Optional</span>
+                    </div>
+                    <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.75rem;">
+                        ${addonsHTML}
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <label style="font-weight: 600; margin: 0;">Quantity:</label>
+                        <button onclick="changeQuantity(-1)" style="width: 35px; height: 35px; border: 2px solid var(--border-color); background: white; border-radius: 5px; cursor: pointer; font-size: 1.2rem;">−</button>
+                        <span id="itemQuantity" style="min-width: 40px; text-align: center; font-weight: 600;">${quantity}</span>
+                        <button onclick="changeQuantity(1)" style="width: 35px; height: 35px; border: 2px solid var(--border-color); background: white; border-radius: 5px; cursor: pointer; font-size: 1.2rem;">+</button>
+                    </div>
+                    <button onclick="saveItemToOrder()" style="flex: 1; padding: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-weight: 600; font-size: 1rem; cursor: pointer;">
+                        ${isEdit ? 'Update Item' : 'Add to Order'}
+                    </button>
+                </div>
+            `;
+            
+            // Initialize quantity
+            window.currentItemQuantity = quantity;
+        }
+
+        function filterProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const select = document.getElementById('productSelect');
+            if (!select) return;
+            
+            const options = Array.from(select.options);
+            options.forEach(option => {
+                if (option.value === '') {
+                    option.style.display = '';
+                    return;
+                }
+                const text = option.text.toLowerCase();
+                option.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        function onProductSelectChange() {
+            const productId = parseInt(document.getElementById('productSelect').value);
+            const product = allProducts.find(p => p.id === productId);
+            
+            if (product) {
+                // Create a temporary item object with the selected product to preserve selection
+                const tempItem = {
+                    name: product.name,
+                    category: product.category,
+                    price: product.price,
+                    size: 'Single', // Default size
+                    quantity: window.currentItemQuantity || 1,
+                    addons: []
+                };
+                
+                // Re-render with the selected product
+                renderAddItemModal(tempItem);
+                
+                // Set the selected product after a short delay to ensure DOM is updated
+                setTimeout(() => {
+                    const select = document.getElementById('productSelect');
+                    if (select) {
+                        select.value = productId;
+                        // Scroll to selected option
+                        const selectedOption = select.options[select.selectedIndex];
+                        if (selectedOption) {
+                            selectedOption.scrollIntoView({ block: 'nearest' });
+                        }
+                        // Trigger size selection for the first size
+                        const firstSize = document.querySelector('.size-option');
+                        if (firstSize) {
+                            firstSize.click();
+                        }
+                    }
+                }, 50);
+            }
+        }
+
+        function selectSize(element) {
+            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function toggleAddon(element) {
+            element.classList.toggle('selected');
+        }
+
+        function changeQuantity(delta) {
+            if (!window.currentItemQuantity) window.currentItemQuantity = 1;
+            window.currentItemQuantity = Math.max(1, window.currentItemQuantity + delta);
+            document.getElementById('itemQuantity').textContent = window.currentItemQuantity;
+        }
+
+        function saveItemToOrder() {
+            const productSelect = document.getElementById('productSelect');
+            const productId = parseInt(productSelect.value);
+            
+            if (!productId) {
+                alert('Please select a product');
+                return;
+            }
+            
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) {
+                alert('Product not found');
+                return;
+            }
+            
+            const selectedSize = document.querySelector('.size-option.selected');
+            if (!selectedSize) {
+                alert('Please select a size');
+                return;
+            }
+            
+            const sizeName = selectedSize.dataset.size;
+            const sizePrice = parseInt(selectedSize.dataset.price);
+            
+            const selectedAddons = Array.from(document.querySelectorAll('.addon-option.selected')).map(opt => ({
+                name: opt.dataset.addon,
+                price: parseInt(opt.dataset.price)
+            }));
+            
+            const quantity = window.currentItemQuantity || 1;
+            const addonsPrice = selectedAddons.reduce((sum, a) => sum + a.price, 0);
+            const itemTotal = (sizePrice + addonsPrice) * quantity;
+            
+            const newItem = {
+                id: product.id,
+                name: product.name,
+                category: product.category,
+                price: sizePrice,
+                image: product.image || '',
+                description: product.description || '',
+                quantity: quantity,
+                size: sizeName,
+                addons: selectedAddons,
+                total: itemTotal
+            };
+            
+            if (editingItemIndex >= 0) {
+                // Update existing item
+                currentEditItems[editingItemIndex] = newItem;
+            } else {
+                // Add new item
+                currentEditItems.push(newItem);
+            }
+            
+            updateItemsList();
+            closeAddItemModal();
         }
 
         // Handle edit form submission
@@ -2199,6 +2813,13 @@
                     loadUsers();
                 }
             });
+        });
+
+        // Close add item modal when clicking outside
+        document.getElementById('addItemModal').addEventListener('click', (e) => {
+            if (e.target.id === 'addItemModal') {
+                closeAddItemModal();
+            }
         });
     </script>
 </body>

@@ -455,15 +455,20 @@ let orderType = localStorage.getItem('orderType') || null; // 'delivery' or 'pic
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    displayMenu('all');
-    updateCartUI();
-    setupEventListeners();
-    setupLocationModal();
-    initializeBranchSelection();
+    // Only initialize if we're on the menu page (check for menuContainer)
+    if (menuContainer) {
+        displayMenu('all');
+        updateCartUI();
+        setupEventListeners();
+        setupLocationModal();
+        initializeBranchSelection();
+    }
 });
 
 // Setup Event Listeners
 function setupEventListeners() {
+    if (!cartBtn || !closeCart || !cartOverlay || !closeModal || !checkoutBtn) return; // Skip if elements don't exist
+    
     // Mobile menu toggle
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navMenu = document.getElementById('navMenu');
@@ -513,6 +518,7 @@ function setupEventListeners() {
 
 // Display Menu with Categories
 function displayMenu(filterCategory) {
+    if (!menuContainer) return; // Skip if element doesn't exist (e.g., in order-detail.html)
     menuContainer.innerHTML = '';
     
     if (filterCategory === 'all') {
@@ -1033,14 +1039,18 @@ function showCartNotification(message) {
 }
 
 // Close modal on outside click
-productModal.addEventListener('click', (e) => {
-    if (e.target === productModal) {
-        closeProductModal();
-    }
-});
+if (productModal) {
+    productModal.addEventListener('click', (e) => {
+        if (e.target === productModal) {
+            closeProductModal();
+        }
+    });
+}
 
 // Location Modal Functions
 function setupLocationModal() {
+    if (!deliveryBtn || !findBranchBtn || !startOrderBtn || !locationModal) return; // Skip if elements don't exist
+    
     // Delivery button
     deliveryBtn.addEventListener('click', () => {
         orderType = 'delivery';
