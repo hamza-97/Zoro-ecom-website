@@ -34,9 +34,9 @@ This is the backend server for the Zoro Burger e-commerce website using MongoDB.
    ```
 
 4. **Access Points**
-   - API Base URL: `http://localhost:3000/api`
-   - Admin Dashboard: `http://localhost:3000/admin`
-   - Rider App: `http://localhost:3000/rider`
+   - API Base URL: `https://zoroburger.com/api`
+   - Admin Dashboard: `https://zoroburger.com/admin`
+   - Rider App: `https://zoroburger.com/rider`
    - Frontend: Open `index.html` in your browser
 
 ## API Endpoints
