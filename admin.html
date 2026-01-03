@@ -892,7 +892,26 @@
     <script src="menu-script.js"></script>
 
     <script>
-        const API_URL = 'https//zoroburger.com/api';
+        // Set API URL and ensure it's properly formatted
+        let API_URL = 'https://zoroburger.com/api';
+        
+        // Normalize API_URL to prevent malformed URLs
+        API_URL = API_URL.replace(/\/+/g, '/').replace(/:\//g, '://').replace(/https?:\/\/\//g, 'https://');
+        
+        // Remove trailing slash if present
+        API_URL = API_URL.replace(/\/$/, '');
+        
+        console.log('API_URL initialized:', API_URL);
+        
+        // Helper function to construct API URLs safely
+        function getApiUrl(endpoint) {
+            // Remove leading slash from endpoint if present
+            const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+            // Construct URL and normalize
+            const url = `${API_URL}/${cleanEndpoint}`.replace(/([^:]\/)\/+/g, '$1');
+            return url;
+        }
+        
         let currentFilter = 'all';
         let previousOrderIds = new Set(); // Track previous order IDs to detect new orders
         let notificationInterval = null; // Track the looping sound interval
@@ -1072,12 +1091,13 @@
         }
 
         // Logout function
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('adminUser');
-                currentUser = null;
-                showLogin();
+        function logout(showConfirm = true) {
+            if (showConfirm && !confirm('Are you sure you want to logout?')) {
+                return;
             }
+            localStorage.removeItem('adminUser');
+            currentUser = null;
+            showLogin();
         }
 
         // Get auth headers for API requests
@@ -1121,7 +1141,10 @@
             errorDiv.textContent = '';
             
             try {
-                const response = await fetch(`${API_URL}/admin/login`, {
+                const loginUrl = getApiUrl('admin/login');
+                console.log('Login URL:', loginUrl);
+                
+                const response = await fetch(loginUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1143,9 +1166,11 @@
                     }
                     localStorage.setItem('adminUser', JSON.stringify(currentUser));
                     showDashboard();
-                    // Load initial data
-                    loadStats();
-                    loadOrders();
+                    // Load initial data after a small delay to ensure currentUser is set
+                    setTimeout(() => {
+                        loadStats();
+                        loadOrders();
+                    }, 100);
                 } else {
                     errorDiv.textContent = data.error || 'Login failed';
                     errorDiv.style.display = 'block';
@@ -1273,13 +1298,24 @@
                     return;
                 }
                 
+                const authHeaders = getAuthHeaders();
+                console.log('Loading stats with headers:', authHeaders);
+                
                 const response = await fetch(`${API_URL}/stats`, {
-                    headers: getAuthHeaders()
+                    headers: authHeaders
                 });
                 
                 if (response.status === 401) {
-                    // Session expired, logout
-                    logout();
+                    // Session expired, logout without confirmation
+                    console.warn('Authentication failed (401) on stats endpoint, logging out...');
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('401 Error details:', errorData);
+                    logout(false);
+                    return;
+                }
+                
+                if (!response.ok) {
+                    console.error('Stats request failed:', response.status, response.statusText);
                     return;
                 }
                 
@@ -1356,6 +1392,7 @@
                 }
                 
                 // Detect new orders by comparing with previous order IDs
+                // Only play sounds for orders matching the user's branch
                 if (previousOrderIds.size > 0) {
                     const currentOrderIds = new Set();
                     let hasNewOrders = false;
@@ -1366,12 +1403,32 @@
                             currentOrderIds.add(orderId);
                             // If this order ID wasn't in the previous set, it's a new order
                             if (!previousOrderIds.has(orderId)) {
-                                hasNewOrders = true;
+                                // Check if this order belongs to the user's branch
+                                const orderBranch = (order.branch || '').toLowerCase();
+                                const userType = currentUser ? currentUser.user_type : null;
+                                
+                                let shouldNotify = false;
+                                
+                                if (userType === 'super_admin') {
+                                    // Super admin gets all orders
+                                    shouldNotify = true;
+                                } else if (userType === 'gulberg') {
+                                    // Gulberg users only get Gulberg orders
+                                    shouldNotify = orderBranch.includes('gulberg');
+                                } else if (userType === 'jt') {
+                                    // JT users only get JT/Johar orders
+                                    shouldNotify = orderBranch.includes('johar') || orderBranch.includes('jt');
+                                }
+                                
+                                if (shouldNotify) {
+                                    hasNewOrders = true;
+                                    console.log(`🔔 New ${userType === 'super_admin' ? '' : userType + ' '}order detected:`, order.order_number || orderId, order.branch);
+                                }
                             }
                         }
                     });
                     
-                    // Start looping sound if new orders detected
+                    // Start looping sound if new orders detected for this user's branch
                     if (hasNewOrders) {
                         startNotificationLoop();
                     }
