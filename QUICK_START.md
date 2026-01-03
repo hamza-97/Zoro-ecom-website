@@ -20,7 +20,7 @@ npm start
 You should see:
 ```
 Server running on http://localhost:3000
-Admin dashboard: http://localhost:3000/admin
+Admin dashboard: https://zoroburger.com/admin
 ```
 
 ## Step 3: Open the Website
@@ -49,11 +49,11 @@ Then visit `http://localhost:8000`
 2. **Checkout**: Click checkout button, fill in customer information
 3. **Place Order**: Submit the order
 4. **View Order**: See confirmation page with order number
-5. **Admin Dashboard**: Visit `http://localhost:3000/admin` to view and manage orders
+5. **Admin Dashboard**: Visit `https://zoroburger.com/admin` to view and manage orders
 
 ## Admin Dashboard Access
 
-- URL: `http://localhost:3000/admin`
+- URL: `https://zoroburger.com/admin`
 - Username: `admin`
 - Password: `admin123`
 

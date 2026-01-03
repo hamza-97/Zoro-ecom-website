@@ -57,7 +57,7 @@ npm start
 ```
 
 ### 5. Access the Rider App
-Open `http://localhost:3000/rider` in a browser that supports PWAs (Chrome, Edge, Firefox, Safari).
+Open `https://zoroburger.com/rider` in a browser that supports PWAs (Chrome, Edge, Firefox, Safari).
 
 ### 6. Install as PWA
 - **Chrome/Edge**: Click the install icon in the address bar
@@ -82,7 +82,7 @@ Open `http://localhost:3000/rider` in a browser that supports PWAs (Chrome, Edge
 
 ## Testing Push Notifications
 
-1. Log in as a rider at `http://localhost:3000/rider`
+1. Log in as a rider at `https://zoroburger.com/rider`
 2. Grant notification permission when prompted
 3. In another browser/device, place an order and have admin confirm it
 4. The rider should receive a push notification

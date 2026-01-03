@@ -1121,11 +1121,14 @@
                 return {};
             }
             
+            // Use hyphenated header names (HTTP standard) - Express will convert to lowercase
             const headers = {
-                'user_id': currentUser.id,
-                'user_type': currentUser.user_type
+                'user-id': String(currentUser.id),
+                'user-type': String(currentUser.user_type),
+                'Content-Type': 'application/json'
             };
-            console.log('Auth headers:', headers);
+            console.log('Auth headers being sent:', headers);
+            console.log('Current user:', currentUser);
             return headers;
         }
 
@@ -1165,12 +1168,16 @@
                         return;
                     }
                     localStorage.setItem('adminUser', JSON.stringify(currentUser));
+                    console.log('User saved to localStorage:', currentUser);
+                    console.log('Verifying currentUser before showDashboard:', currentUser);
                     showDashboard();
                     // Load initial data after a small delay to ensure currentUser is set
                     setTimeout(() => {
+                        console.log('Loading stats/orders, currentUser:', currentUser);
+                        console.log('Auth headers will be:', getAuthHeaders());
                         loadStats();
                         loadOrders();
-                    }, 100);
+                    }, 200);
                 } else {
                     errorDiv.textContent = data.error || 'Login failed';
                     errorDiv.style.display = 'block';
@@ -1293,17 +1300,49 @@
         // Load statistics
         async function loadStats() {
             try {
+                // Ensure currentUser is set from localStorage if needed
                 if (!currentUser) {
-                    console.error('Not authenticated');
-                    return;
+                    const savedUser = localStorage.getItem('adminUser');
+                    if (savedUser) {
+                        try {
+                            currentUser = JSON.parse(savedUser);
+                            console.log('Restored currentUser in loadStats:', currentUser);
+                        } catch (e) {
+                            console.error('Error parsing saved user in loadStats:', e);
+                            return;
+                        }
+                    } else {
+                        console.error('Not authenticated - no currentUser and no saved user');
+                        return;
+                    }
                 }
                 
                 const authHeaders = getAuthHeaders();
                 console.log('Loading stats with headers:', authHeaders);
+                console.log('Current user when loading stats:', currentUser);
                 
-                const response = await fetch(`${API_URL}/stats`, {
-                    headers: authHeaders
+                if (!authHeaders || !authHeaders['user-id'] || !authHeaders['user-type']) {
+                    console.error('❌ Invalid auth headers:', authHeaders);
+                    console.error('❌ currentUser state:', currentUser);
+                    return;
+                }
+                
+                // Log the exact URL and headers being sent
+                const statsUrl = `${API_URL}/stats`;
+                console.log('📤 Sending GET request to:', statsUrl);
+                console.log('📤 Request headers:', JSON.stringify(authHeaders, null, 2));
+                
+                const response = await fetch(statsUrl, {
+                    method: 'GET',
+                    headers: {
+                        'user-id': authHeaders['user-id'],
+                        'user-type': authHeaders['user-type'],
+                        'Content-Type': 'application/json'
+                    }
                 });
+                
+                console.log('📥 Response status:', response.status);
+                console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
                 
                 if (response.status === 401) {
                     // Session expired, logout without confirmation
@@ -1366,10 +1405,20 @@
                 const url = status === 'all' ? `${API_URL}/orders` : `${API_URL}/orders?status=${status}`;
                 console.log('Fetching orders from:', url);
                 
+                const authHeaders = getAuthHeaders();
+                console.log('Auth headers for orders request:', authHeaders);
+                
+                if (!authHeaders || !authHeaders['user-id'] || !authHeaders['user-type']) {
+                    console.error('Invalid auth headers - cannot make request:', authHeaders);
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem; color: red;">Authentication error. Please refresh and login again.</td></tr>';
+                    return;
+                }
+                
                 let response;
                 try {
                     response = await fetch(url, {
-                        headers: getAuthHeaders()
+                        method: 'GET',
+                        headers: authHeaders
                     });
                 } catch (fetchError) {
                     console.error('Fetch error:', fetchError);
@@ -1552,7 +1601,7 @@
                 if (tbody) {
                     const errorMsg = error.message || 'Unknown error';
                     const isFileProtocol = window.location.protocol === 'file:';
-                    const protocolWarning = isFileProtocol ? '<br><br><strong style="color: red;">⚠️ WARNING: You are opening this file directly. Please access it through http://localhost:3000/admin instead!</strong>' : '';
+                    const protocolWarning = isFileProtocol ? '<br><br><strong style="color: red;">⚠️ WARNING: You are opening this file directly. Please access it through https://zoroburger.com/admin instead!</strong>' : '';
                     
                     tbody.innerHTML = 
                         '<tr><td colspan="9" style="text-align: center; padding: 2rem; color: red; background: #ffe6e6; border: 2px solid red; border-radius: 5px;">' +
@@ -1561,7 +1610,7 @@
                         '<br><br><strong>Make sure:</strong><br>' +
                         '1. Backend is running on http://localhost:3000<br>' +
                         '2. MongoDB is connected<br>' +
-                        '3. Access the page via http://localhost:3000/admin (not file://)<br>' +
+                        '3. Access the page via https://zoroburger.com/admin (not file://)<br>' +
                         '4. Check browser console (F12) for details</td></tr>';
                 } else {
                     console.error('ordersTableBody element not found in DOM!');
@@ -2680,7 +2729,7 @@ Debug info:
         // Warn if accessing via file://
         if (window.location.protocol === 'file:') {
             console.warn('⚠️ WARNING: Page opened via file:// protocol. CORS will block API calls.');
-            console.warn('Please access via: http://localhost:3000/admin');
+            console.warn('Please access via: https://zoroburger.com/admin');
         }
         
         // Make sure DOM is ready

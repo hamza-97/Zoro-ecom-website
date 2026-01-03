@@ -73,7 +73,7 @@ Then visit `http://localhost:8000`
 
 ### For Admins
 
-1. Visit `http://localhost:3000/admin`
+1. Visit `https://zoroburger.com/admin`
 2. View all orders and statistics
 3. Update order status (pending → preparing → ready → completed)
 4. View detailed order information
