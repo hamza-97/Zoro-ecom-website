@@ -396,11 +396,11 @@ app.get('/api/orders', authenticateAdmin, async (req, res) => {
         const { status, limit = 100 } = req.query;
         const query = status ? { status } : {};
         
-        // Filter by branch based on user type
+        // Filter by branch based on user type (case-insensitive partial match)
         if (req.user.user_type === 'gulberg') {
-            query.branch = 'Gulberg';
+            query.branch = { $regex: /gulberg/i }; // Case-insensitive match for "Gulberg"
         } else if (req.user.user_type === 'jt') {
-            query.branch = 'JT';
+            query.branch = { $regex: /(jt|johar)/i }; // Case-insensitive match for "JT" or "Johar" anywhere in string
         }
         // super_admin sees all orders (no branch filter)
         
@@ -564,12 +564,12 @@ app.get('/api/stats', authenticateAdmin, async (req, res) => {
     try {
         const stats = {};
         
-        // Build branch filter based on user type
+        // Build branch filter based on user type (case-insensitive partial match)
         const branchFilter = {};
         if (req.user.user_type === 'gulberg') {
-            branchFilter.branch = 'Gulberg';
+            branchFilter.branch = { $regex: /gulberg/i }; // Case-insensitive match for "Gulberg"
         } else if (req.user.user_type === 'jt') {
-            branchFilter.branch = 'JT';
+            branchFilter.branch = { $regex: /^(jt|johar|johar town)/i }; // Case-insensitive match for "JT" or "Johar"
         }
         // super_admin sees all stats (no branch filter)
 
