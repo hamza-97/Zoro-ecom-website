@@ -1095,9 +1095,9 @@
             if (showConfirm && !confirm('Are you sure you want to logout?')) {
                 return;
             }
-            localStorage.removeItem('adminUser');
-            currentUser = null;
-            showLogin();
+                localStorage.removeItem('adminUser');
+                currentUser = null;
+                showLogin();
         }
 
         // Get auth headers for API requests
@@ -1175,8 +1175,8 @@
                     setTimeout(() => {
                         console.log('Loading stats/orders, currentUser:', currentUser);
                         console.log('Auth headers will be:', getAuthHeaders());
-                        loadStats();
-                        loadOrders();
+                    loadStats();
+                    loadOrders();
                     }, 200);
                 } else {
                     errorDiv.textContent = data.error || 'Login failed';
@@ -1309,8 +1309,8 @@
                             console.log('Restored currentUser in loadStats:', currentUser);
                         } catch (e) {
                             console.error('Error parsing saved user in loadStats:', e);
-                            return;
-                        }
+                    return;
+                }
                     } else {
                         console.error('Not authenticated - no currentUser and no saved user');
                         return;
@@ -1470,7 +1470,7 @@
                                 }
                                 
                                 if (shouldNotify) {
-                                    hasNewOrders = true;
+                                hasNewOrders = true;
                                     console.log(`🔔 New ${userType === 'super_admin' ? '' : userType + ' '}order detected:`, order.order_number || orderId, order.branch);
                                 }
                             }

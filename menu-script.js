@@ -1,4 +1,5 @@
 // Products Data organized according to official menu structure from zoroburger.com/menu
+// Make products globally accessible
 const products = [
     // BEEF SMASHERS
     {
@@ -386,6 +387,12 @@ const products = [
         description: 'Pure bottled water'
     }
 ];
+
+// Make products globally accessible for other scripts
+if (typeof window !== 'undefined') {
+    window.products = products;
+    window.menuProducts = products; // Alternative name
+}
 
 // Category display names
 const categoryNames = {

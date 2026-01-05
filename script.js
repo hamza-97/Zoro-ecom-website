@@ -1,239 +1,45 @@
-// Products Data - Updated with ZoroImages folder
-const products = [
-    // BEEF SMASHERS
-    {
-        id: 1,
-        name: 'Classic American',
-        category: 'beef-smashers',
-        price: 895,
-        image: 'ZoroImages/ClassicAmerican.png',
-        description: 'Pickles, Onions, Cheese, Ketchup, Mayo'
-    },
-    {
-        id: 2,
-        name: 'Onion Melt',
-        category: 'beef-smashers',
-        price: 895,
-        image: 'ZoroImages/OnionMelt.png',
-        description: 'Grilled Onions, Cheese, Lettuce, Crispy Onions, Garlic Aioli'
-    },
-    {
-        id: 3,
-        name: 'Frankie',
-        category: 'beef-smashers',
-        price: 895,
-        image: 'ZoroImages/Frankie.png',
-        description: 'Pickled Red Onions, Cheese, Tomatoes, Lettuce, Secret Sauce'
-    },
-    {
-        id: 4,
-        name: 'Big Ben',
-        category: 'beef-smashers',
-        price: 895,
-        image: 'ZoroImages/BigBen.png',
-        description: 'Grilled Onions, Cheese, Crispy Onions, Jalapeno Mayo'
-    },
-    // BEEF SPECIALITY
-    {
-        id: 5,
-        name: 'Truffle Royal',
-        category: 'beef-speciality',
-        price: 995,
-        image: 'ZoroImages/TruffleRoyal.png',
-        description: 'Cheese, Tomatoes, Lettuce, Mustard, Truffle Mayo'
-    },
-    {
-        id: 6,
-        name: 'Bangkok',
-        category: 'beef-speciality',
-        price: 995,
-        image: 'ZoroImages/Bangkok.png',
-        description: 'Lettuce, Jalapenos, Cheese, Chilli Mayo'
-    },
-    {
-        id: 7,
-        name: 'BLT Classic',
-        category: 'beef-speciality',
-        price: 995,
-        image: 'ZoroImages/BltClassic.png',
-        description: 'Classic BLT: Cheese, Bacon, Tomatoes, Lettuce, Ketchup, Mayo, Mustard Sauce Texas BLT: Bacon, Tomatoes, Lettuce, Cheese, BBQ Sauce, Mustard'
-    },
-    {
-        id: 8,
-        name: 'Swiss Mushroom',
-        category: 'beef-speciality',
-        price: 1295,
-        image: 'ZoroImages/SwissMushroom.png',
-        description: 'Swiss Mushroom Sauce, Cheese, Mayo'
-    },
-    // CHICKEN BURGERS
-    {
-        id: 9,
-        name: 'Pepper Chicken',
-        category: 'chicken-burgers',
-        price: 895,
-        image: 'ZoroImages/PepperChicken.png',
-        description: 'Chicken Minced Patty, Cheese, Mayo, Ketchup, Lettuce'
-    },
-    {
-        id: 10,
-        name: 'Tangy Crunch',
-        category: 'chicken-burgers',
-        price: 895,
-        image: 'ZoroImages/TangyCrunch.png',
-        description: 'Breast Fillet, Cheese, Honey Mustard Coleslaw, Mayo'
-    },
-    {
-        id: 11,
-        name: 'Asian Fusion',
-        category: 'chicken-burgers',
-        price: 995,
-        image: 'ZoroImages/AsianFusion.png',
-        description: 'Breast Fillet, Cheese, Sweet & Spicy Asian Sauce, Crispy Onions, Chilli Mayo'
-    },
-    {
-        id: 12,
-        name: 'Mexicana',
-        category: 'chicken-burgers',
-        price: 995,
-        image: 'ZoroImages/Mexicana.png',
-        description: 'Chicken Breast Fillet, Nacho Chips, Lettuce, Jalapenos, Onions, Salsa Mayo, Cheese'
-    },
-    // DESSERTS
-    {
-        id: 13,
-        name: 'Plain Funnel Cake',
-        category: 'desserts',
-        price: 395,
-        image: 'ZoroImages/PlainFunnelCake.png',
-        description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream.'
-    },
-    {
-        id: 14,
-        name: 'Chocolate Funnel Cake',
-        category: 'desserts',
-        price: 495,
-        image: 'ZoroImages/ChocolateFunnelCake.png',
-        description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream and Chocolate Sauce.'
-    },
-    {
-        id: 15,
-        name: 'Strawberry Funnel Cake',
-        category: 'desserts',
-        price: 595,
-        image: 'ZoroImages/StrawberryFunnelCake.png',
-        description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream and housemade Strawberry Sauce.'
-    },
-    {
-        id: 16,
-        name: 'Benzo Cake',
-        category: 'desserts',
-        price: 795,
-        image: 'ZoroImages/BenzoCake.png',
-        description: 'Decadent layered cake'
-    },
-    // PREMIUM SHAKES
-    {
-        id: 17,
-        name: 'Oreo Crush',
-        category: 'premium-shakes',
-        price: 695,
-        image: 'ZoroImages/OreoCrushShake.png',
-        description: 'Creamy milkshake with crushed Oreo cookies'
-    },
-    {
-        id: 18,
-        name: 'Caramel Walnut',
-        category: 'premium-shakes',
-        price: 795,
-        image: 'ZoroImages/CaramelWalnutShake.png',
-        description: 'Rich caramel shake topped with crunchy walnuts'
-    },
-    {
-        id: 19,
-        name: 'Stawberry Pavlova',
-        category: 'premium-shakes',
-        price: 895,
-        image: 'ZoroImages/StrawberryPalovaShake.png',
-        description: 'Delicious strawberry shake with pavlova crumbles'
-    },
-    {
-        id: 20,
-        name: 'Butter Pecan',
-        category: 'premium-shakes',
-        price: 895,
-        image: 'ZoroImages/ButterPecanShake.png',
-        description: 'Smooth butter pecan flavored milkshake'
-    },
-    {
-        id: 21,
-        name: 'Hazel Dream',
-        category: 'premium-shakes',
-        price: 895,
-        image: 'ZoroImages/HazelDreamShake.png',
-        description: 'Dreamy hazelnut shake that melts in your mouth'
-    },
-    {
-        id: 22,
-        name: 'Lotus Swirl',
-        category: 'premium-shakes',
-        price: 895,
-        image: 'ZoroImages/LotusSwirlShake.png',
-        description: 'Biscoff lotus cookies blended into creamy perfection'
-    },
-    {
-        id: 23,
-        name: 'Pistachio Cream',
-        category: 'premium-shakes',
-        price: 1095,
-        image: 'ZoroImages/PistachioCreamShake.png',
-        description: 'Premium pistachio cream shake'
-    }
-];
+// Products data is loaded from menu-script.js
+// The products array is available via window.products (set by menu-script.js)
+// No need to declare products here - it's already declared in menu-script.js
 
 // Cart management
-let cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
+// Cart is already declared in menu-script.js as: let cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
+// Since menu-script.js loads before script.js, we can use that cart variable directly
+// No need to redeclare it here - it's already in the global scope from menu-script.js
 
 // DOM Elements
+// All DOM elements are already declared in menu-script.js
+// We only need productsGrid which is specific to index.html
 const productsGrid = document.getElementById('productsGrid');
-const cartSidebar = document.getElementById('cartSidebar');
-const cartOverlay = document.getElementById('cartOverlay');
-const cartBtn = document.getElementById('cartBtn');
-const closeCart = document.getElementById('closeCart');
-const cartItems = document.getElementById('cartItems');
-const cartCount = document.getElementById('cartCount');
-const cartTotal = document.getElementById('cartTotal');
-const checkoutBtn = document.getElementById('checkoutBtn');
-const categoryTabs = document.querySelectorAll('.category-tab');
-const productModal = document.getElementById('productModal');
-const closeModal = document.getElementById('closeModal');
-const modalBody = document.getElementById('modalBody');
-const locationModal = document.getElementById('locationModal');
-const deliveryBtn = document.getElementById('deliveryBtn');
-const findBranchBtn = document.getElementById('findBranchBtn');
-const branchSelector = document.getElementById('branchSelector');
-const startOrderBtn = document.getElementById('startOrderBtn');
-const branchOptions = document.querySelectorAll('.branch-option');
 
-// Location state
-let selectedBranch = localStorage.getItem('selectedBranch') || 'gulberg';
-let orderType = localStorage.getItem('orderType') || null; // 'delivery' or 'pickup'
+// Note: All other DOM elements (cartSidebar, cartBtn, etc.) and variables (cart, selectedBranch, orderType)
+// are already declared in menu-script.js and available in the global scope
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     // Check if we're on the home page (index.html)
     const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
     
+    // Use products from menu-script.js if available, otherwise use local products
+    const allProducts = typeof products !== 'undefined' ? products : (typeof window.products !== 'undefined' ? window.products : []);
+    
     if (isHomePage) {
-        // Show only 4 items from the active category (BEEF SMASHERS by default)
-        const activeTab = document.querySelector('.category-tab.active');
-        const category = activeTab ? activeTab.dataset.category : 'beef-smashers';
-        const categoryProducts = products.filter(p => p.category === category).slice(0, 4);
-        displayProducts(categoryProducts);
+        // Initialize category slider and display products
+        // Wait a bit for menu-script.js to load if needed
+        if (allProducts.length === 0) {
+            // If products not loaded yet, wait and try again
+            setTimeout(() => {
+                initializeCategorySlider();
+            }, 200);
+        } else {
+            initializeCategorySlider();
+        }
     } else {
         // Show all burgers by default on other pages
-        const burgerProducts = products.filter(p => p.category === 'beef-smashers' || p.category === 'beef-speciality' || p.category === 'chicken-burgers');
-        displayProducts(burgerProducts);
+        const burgerProducts = allProducts.filter(p => p.category === 'beef-smashers' || p.category === 'beef-speciality' || p.category === 'chicken-burgers');
+        if (typeof displayProducts === 'function') {
+            displayProducts(burgerProducts);
+        }
     }
     
     updateCartUI();
@@ -299,17 +105,112 @@ function setupEventListeners() {
             });
         });
     } else {
-        // On home page, show 4 items from selected category
-        categoryTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                categoryTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                const category = tab.dataset.category;
-                const categoryProducts = products.filter(p => p.category === category).slice(0, 4);
-                displayProducts(categoryProducts);
-            });
-        });
+        // On home page, use category slider
+        initializeCategorySlider();
     }
+}
+
+// Initialize category slider for index.html
+function initializeCategorySlider() {
+    const categoryTabs = document.querySelectorAll('.category-tab');
+    const productsGrid = document.getElementById('productsGrid');
+    
+    if (!categoryTabs.length) {
+        console.warn('Category tabs not found');
+        return;
+    }
+    
+    if (!productsGrid) {
+        console.warn('Products grid not found');
+        return;
+    }
+    
+    // Get products from menu-script.js (now available on window object)
+    let allProducts = [];
+    
+    // Try to access products from window object (set by menu-script.js)
+    if (typeof window.products !== 'undefined' && Array.isArray(window.products) && window.products.length > 0) {
+        allProducts = window.products;
+        console.log('✅ Products loaded from menu-script.js:', allProducts.length);
+    } else if (typeof window.menuProducts !== 'undefined' && Array.isArray(window.menuProducts) && window.menuProducts.length > 0) {
+        allProducts = window.menuProducts;
+        console.log('✅ Products loaded from menu-script.js (alternative):', allProducts.length);
+    } else if (typeof products !== 'undefined' && Array.isArray(products) && products.length > 0) {
+        allProducts = products;
+        console.log('✅ Products loaded from global scope:', allProducts.length);
+    } else {
+        // Products not loaded yet, wait and retry
+        console.log('⏳ Products not loaded yet, waiting for menu-script.js...');
+        setTimeout(() => {
+            if (typeof window.products !== 'undefined' && Array.isArray(window.products) && window.products.length > 0) {
+                console.log('✅ Products loaded after delay, retrying initialization');
+                initializeCategorySlider();
+            } else {
+                console.error('❌ No products found. Make sure menu-script.js is loaded before script.js');
+            }
+        }, 500);
+        return;
+    }
+    
+    if (allProducts.length === 0) {
+        console.warn('⚠️ Products array is empty');
+        return;
+    }
+    
+    // Function to display products based on category
+    function displayCategoryProducts(category) {
+        console.log('Displaying category:', category);
+        let categoryProducts;
+        
+        if (category === 'all') {
+            // Show all products, but limit shakes and soft drinks to 4
+            const shakes = allProducts.filter(p => p.category === 'premium-shakes').slice(0, 4);
+            const softDrinks = allProducts.filter(p => p.category === 'soft-drinks').slice(0, 4);
+            const otherProducts = allProducts.filter(p => p.category !== 'premium-shakes' && p.category !== 'soft-drinks');
+            categoryProducts = [...otherProducts, ...shakes, ...softDrinks];
+        } else {
+            categoryProducts = allProducts.filter(p => p.category === category);
+            // Limit to 4 items for premium-shakes and soft-drinks
+            if (category === 'premium-shakes' || category === 'soft-drinks') {
+                categoryProducts = categoryProducts.slice(0, 4);
+            }
+        }
+        
+        console.log('Category products:', categoryProducts.length);
+        
+        if (typeof displayProducts === 'function') {
+            displayProducts(categoryProducts);
+        } else {
+            console.error('displayProducts function not found');
+            // Fallback: directly update the grid
+            if (productsGrid) {
+                productsGrid.innerHTML = '';
+                if (categoryProducts.length === 0) {
+                    productsGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 2rem;">No products found in this category.</p>';
+                    return;
+                }
+                categoryProducts.forEach(product => {
+                    const productCard = createProductCard(product);
+                    productsGrid.appendChild(productCard);
+                });
+            }
+        }
+    }
+    
+    // Set up event listeners for category tabs
+    categoryTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            categoryTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const category = tab.dataset.category;
+            displayCategoryProducts(category);
+        });
+    });
+    
+    // Display initial category (ALL by default, or first active tab)
+    const activeTab = document.querySelector('.category-tab.active');
+    const initialCategory = activeTab ? activeTab.dataset.category : 'all';
+    displayCategoryProducts(initialCategory);
 }
 
 // Display Products
@@ -967,27 +868,5 @@ function updateBranchSelection() {
 }
 
 // Add slide animations
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
+// Style element and animations are already created in menu-script.js
+// No need to duplicate them here

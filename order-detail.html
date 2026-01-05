@@ -1091,10 +1091,10 @@
                 }
                 
                 // Fallback: try to fetch from API
-                try {
-                    const response = await fetch(`${API_URL}/products`);
+            try {
+                const response = await fetch(`${API_URL}/products`);
                     if (response.ok) {
-                        allProducts = await response.json();
+                allProducts = await response.json();
                         console.log('✓ Loaded products from API:', allProducts.length);
                     } else {
                         throw new Error('API response not ok');
@@ -1479,7 +1479,7 @@
 
             // Reset selected product when opening modal
             selectedProductForModal = null;
-            
+
             document.getElementById('itemModalTitle').textContent = 'Add Item';
             renderItemModal(null);
             document.getElementById('itemModal').classList.add('active');
@@ -1574,11 +1574,11 @@
                 const basePrice = item.price || 0;
                 const itemSize = item.size || 'Regular';
                 if (itemSize === 'Regular' || itemSize === 'Single') {
-                    sizes = [
-                        { name: 'Single', price: basePrice },
+                sizes = [
+                    { name: 'Single', price: basePrice },
                         { name: 'Double', price: Math.round(basePrice * 1.447) },
                         { name: 'Triple', price: Math.round(basePrice * 1.894) }
-                    ];
+                ];
                 } else {
                     // If item has a specific size, show all options with that one selected
                     sizes = [

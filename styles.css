@@ -391,6 +391,38 @@ body {
     align-items: center;
 }
 
+/* Category Slider for Index Page */
+.category-slider-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+    margin: 0 -20px;
+    padding: 0 20px;
+}
+
+.category-slider-wrapper::-webkit-scrollbar {
+    height: 4px;
+}
+
+.category-slider-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.category-slider-wrapper::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+.category-tabs-slider {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    min-width: max-content;
+    padding: 0.5rem 0;
+}
+
 .category-tab {
     padding: 0.75rem 0;
     background: transparent;
