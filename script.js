@@ -925,12 +925,22 @@ function setupLocationModal() {
 }
 
 function showLocationModal() {
+    if (!locationModal) {
+        console.warn('Location modal not found on this page');
+        return;
+    }
     locationModal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    updateBranchSelection();
+    if (typeof updateBranchSelection === 'function') {
+        updateBranchSelection();
+    }
 }
 
 function hideLocationModal() {
+    if (!locationModal) {
+        console.warn('Location modal not found on this page');
+        return;
+    }
     locationModal.classList.remove('active');
     document.body.style.overflow = '';
 }
