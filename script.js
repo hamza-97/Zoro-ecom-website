@@ -283,15 +283,9 @@ function setupEventListeners() {
     closeModal.addEventListener('click', () => closeProductModal());
     checkoutBtn.addEventListener('click', () => handleCheckout());
     
-    // Order Now buttons - show location modal
-    document.querySelectorAll('a[href="menu.html"]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            if (!orderType) {
-                e.preventDefault();
-                showLocationModal();
-            }
-        });
-    });
+    // Order Now buttons - links now work directly to menu.html
+    // Location selection will be handled on menu.html if needed
+    // No event listener needed - let the links work normally
     
     // Only enable category filtering if not on home page
     const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
@@ -839,22 +833,49 @@ productModal.addEventListener('click', (e) => {
     }
 });
 
-// Smooth scrolling for anchor links
+// Smooth scrolling for anchor links (only for same-page anchors)
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+        const href = this.getAttribute('href');
+        // Only handle same-page anchors (not cross-page links like "index.html#locations")
+        // Check if href is just a hash (same page) vs a full URL with hash (cross-page)
+        if (href.startsWith('#') && href.length > 1 && !href.includes('.')) {
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         }
+        // If it's a cross-page link (like "index.html#locations"), let it navigate normally
     });
+});
+
+// Handle hash navigation when page loads (for cross-page links like "index.html#locations")
+window.addEventListener('load', () => {
+    if (window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        if (target) {
+            setTimeout(() => {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 100);
+        }
+    }
 });
 
 // Location Modal Functions
 function setupLocationModal() {
+    // Check if location modal elements exist (they might not be on all pages)
+    if (!locationModal || !deliveryBtn || !findBranchBtn || !startOrderBtn) {
+        console.log('Location modal elements not found on this page, skipping setup');
+        return;
+    }
+    
     // Delivery button
     deliveryBtn.addEventListener('click', () => {
         orderType = 'delivery';
