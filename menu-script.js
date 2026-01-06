@@ -385,6 +385,158 @@ const products = [
         price: 125,
         image: 'ZoroImages/DasaniWater.png',
         description: 'Pure bottled water'
+    },
+    
+    // BEEF SMASHER MEALS
+    {
+        id: 47,
+        name: 'Classic American Meal',
+        category: 'beef-smasher-meals',
+        price: 1490,
+        image: 'ZoroImages/ZoroMeals/BEEF/AmericanCombo.png',
+        description: 'Classic American Beef (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 48,
+        name: 'Onion Melt Meal',
+        category: 'beef-smasher-meals',
+        price: 1490,
+        image: 'ZoroImages/ZoroMeals/BEEF/OnionMeltCombo.png',
+        description: 'Classic Onion Melt (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 49,
+        name: 'Frankie Meal',
+        category: 'beef-smasher-meals',
+        price: 1490,
+        image: 'ZoroImages/ZoroMeals/BEEF/FrankieCombo.png',
+        description: 'Frankie Beef (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 50,
+        name: 'Big Ben Meal',
+        category: 'beef-smasher-meals',
+        price: 1490,
+        image: 'ZoroImages/ZoroMeals/BEEF/BigBenCombo.png',
+        description: 'Classic Big Ben (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    
+    // BEEF SPECIALTY MEALS
+    {
+        id: 51,
+        name: 'Truffle Meal',
+        category: 'beef-specialty-meals',
+        price: 1590,
+        image: 'ZoroImages/ZoroMeals/BEEF/TruffleCombo.png',
+        description: 'Truffle Beef (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 52,
+        name: 'Bangkok Meal',
+        category: 'beef-specialty-meals',
+        price: 1590,
+        image: 'ZoroImages/ZoroMeals/BEEF/BangkokCombo.png',
+        description: 'Bangkok Beef (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 53,
+        name: 'BLT Meal',
+        category: 'beef-specialty-meals',
+        price: 1590,
+        image: 'ZoroImages/ZoroMeals/BEEF/BltClassicCombo.png',
+        description: 'BLT Beef (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 54,
+        name: 'Tokyo Beef Meal',
+        category: 'beef-specialty-meals',
+        price: 1590,
+        image: 'ZoroImages/ZoroMeals/BEEF/TokyoCombo.png',
+        description: 'Tokyo Beef (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 55,
+        name: 'Texas BLT Meal',
+        category: 'beef-specialty-meals',
+        price: 1590,
+        image: 'ZoroImages/ZoroMeals/BEEF/BltTexasCombo.png',
+        description: 'Texas BLT Beef (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    
+    // CHICKEN SPECIALTY MEALS
+    {
+        id: 56,
+        name: 'Hellfire Meal',
+        category: 'chicken-specialty-meals',
+        price: 1590,
+        image: 'ZoroImages/ZoroMeals/CHICKEN/HellfireCombo.png',
+        description: 'Hellfire Chicken (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 57,
+        name: 'Asian Fusion Meal',
+        category: 'chicken-specialty-meals',
+        price: 1590,
+        image: 'ZoroImages/ZoroMeals/CHICKEN/AsianFusionCombo.png',
+        description: 'Asian Fusion Chicken (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 58,
+        name: 'The Mexicana Meal',
+        category: 'chicken-specialty-meals',
+        price: 1590,
+        image: 'ZoroImages/ZoroMeals/CHICKEN/MexicanaCombo.png',
+        description: 'Mexicana Chicken (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    
+    // SIGNATURE CHICKEN MEALS
+    {
+        id: 59,
+        name: 'Classic Chicken Meal',
+        category: 'signature-chicken-meals',
+        price: 1490,
+        image: 'ZoroImages/ZoroMeals/CHICKEN/ClassicChickenCombo.png',
+        description: 'Classic Chicken (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 60,
+        name: 'Pepper Chicken Meal',
+        category: 'signature-chicken-meals',
+        price: 1490,
+        image: 'ZoroImages/ZoroMeals/CHICKEN/PepperChickenCombo.png',
+        description: 'Pepper Chicken (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 61,
+        name: 'Roost Meal',
+        category: 'signature-chicken-meals',
+        price: 1490,
+        image: 'ZoroImages/ZoroMeals/CHICKEN/RoostCombo.png',
+        description: 'Roost Chicken (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
+    },
+    {
+        id: 62,
+        name: 'Tangy Crunch Meal',
+        category: 'signature-chicken-meals',
+        price: 1490,
+        image: 'ZoroImages/ZoroMeals/CHICKEN/TangyCrunchCombo.png',
+        description: 'Tangy Crunch Chicken (Single Patty Burger) with Fries & Coke Drink',
+        isCombo: true
     }
 ];
 
@@ -404,7 +556,11 @@ const categoryNames = {
     'appetizers': 'Appetizers',
     'desserts': 'Desserts',
     'premium-shakes': 'Premium Shakes',
-    'soft-drinks': 'Soft Drinks'
+    'soft-drinks': 'Soft Drinks',
+    'beef-smasher-meals': 'Beef Smasher Meals',
+    'beef-specialty-meals': 'Beef Specialty Meals',
+    'chicken-specialty-meals': 'Chicken Specialty Meals',
+    'signature-chicken-meals': 'Signature Chicken Meals'
 };
 
 // Category images mapping
@@ -421,6 +577,10 @@ const categoryImages = {
 
 // Category order (official menu order)
 const categoryOrder = [
+    'beef-smasher-meals',
+    'beef-specialty-meals',
+    'chicken-specialty-meals',
+    'signature-chicken-meals',
     'beef-smashers',
     'beef-speciality',
     'chicken-burgers',
@@ -616,7 +776,12 @@ function createProductCard(product) {
         const productId = parseInt(addToCartBtn.dataset.productId);
         const productToAdd = products.find(p => p.id === productId);
         if (productToAdd) {
-            showProductModal(productToAdd);
+            // If it's a combo, add directly to cart without showing modal
+            if (productToAdd.isCombo) {
+                addComboToCart(productToAdd);
+            } else {
+                showProductModal(productToAdd);
+            }
         }
     };
     
@@ -626,23 +791,7 @@ function createProductCard(product) {
         handleButtonClick(e);
     });
     
-    // Add click event to view product details (clicking anywhere on card opens modal)
-    const handleCardClick = (e) => {
-        // Don't open modal if clicking on the button or its children
-        if (e.target.classList.contains('add-to-cart-btn') || e.target.closest('.add-to-cart-btn')) {
-            return;
-        }
-        showProductModal(product);
-    };
-    
-    card.addEventListener('click', handleCardClick);
-    card.addEventListener('touchend', (e) => {
-        // Only handle if it's not the button
-        if (!e.target.classList.contains('add-to-cart-btn') && !e.target.closest('.add-to-cart-btn')) {
-            e.preventDefault();
-            handleCardClick(e);
-        }
-    });
+    // Removed card click handlers - only button is clickable now
     
     return card;
 }
@@ -673,6 +822,33 @@ function addToCart(productId) {
     saveCart();
     updateCartUI();
     showCartNotification('Item added to cart!');
+}
+
+// Add Combo to Cart (directly adds without modal or options)
+function addComboToCart(product) {
+    if (!product || !product.isCombo) return;
+    
+    // Create a simple key for combos
+    const itemKey = `${product.id}-combo`;
+    const existingItemIndex = cart.findIndex(item => item.key === itemKey || (item.id === product.id && item.isCombo));
+    
+    if (existingItemIndex !== -1) {
+        const existingItem = cart[existingItemIndex];
+        existingItem.quantity += 1;
+        existingItem.total = existingItem.price * existingItem.quantity;
+    } else {
+        cart.push({
+            ...product,
+            quantity: 1,
+            key: itemKey,
+            total: product.price,
+            isCombo: true
+        });
+    }
+    
+    saveCart();
+    updateCartUI();
+    showCartNotification('Meal added to cart!');
 }
 
 // Remove from Cart (by item key or index)
@@ -827,6 +1003,12 @@ function toggleCart() {
 
 // Show Product Modal
 function showProductModal(product) {
+    // If it's a combo, add directly to cart without showing modal
+    if (product.isCombo) {
+        addComboToCart(product);
+        return;
+    }
+    
     // Determine category name
     const categoryName = categoryNames[product.category] || '';
     
