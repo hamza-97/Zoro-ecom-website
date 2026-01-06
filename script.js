@@ -253,19 +253,39 @@ function createProductCard(product) {
     
     // Add click event to the button
     const addToCartBtn = card.querySelector('.add-to-cart-btn');
-    addToCartBtn.addEventListener('click', (e) => {
+    
+    // Handle both click and touch events for mobile compatibility
+    const handleButtonClick = (e) => {
+        e.preventDefault();
         e.stopPropagation();
         const productId = parseInt(addToCartBtn.dataset.productId);
         const productToAdd = products.find(p => p.id === productId);
         if (productToAdd) {
             showProductModal(productToAdd);
         }
+    };
+    
+    addToCartBtn.addEventListener('click', handleButtonClick);
+    addToCartBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        handleButtonClick(e);
     });
     
     // Add click event to view product details (clicking anywhere on card opens modal)
-    card.addEventListener('click', (e) => {
+    const handleCardClick = (e) => {
+        // Don't open modal if clicking on the button or its children
+        if (e.target.classList.contains('add-to-cart-btn') || e.target.closest('.add-to-cart-btn')) {
+            return;
+        }
+        showProductModal(product);
+    };
+    
+    card.addEventListener('click', handleCardClick);
+    card.addEventListener('touchend', (e) => {
+        // Only handle if it's not the button
         if (!e.target.classList.contains('add-to-cart-btn') && !e.target.closest('.add-to-cart-btn')) {
-            showProductModal(product);
+            e.preventDefault();
+            handleCardClick(e);
         }
     });
     
@@ -591,6 +611,7 @@ function showProductModal(product) {
     window.currentQuantity = 1;
     
     productModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 // Change quantity
@@ -685,6 +706,7 @@ function addToCartWithItem(item) {
 // Close Product Modal
 function closeProductModal() {
     productModal.classList.remove('active');
+    document.body.style.overflow = '';
 }
 
 // Handle Checkout
