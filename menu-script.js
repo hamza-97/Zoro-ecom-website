@@ -387,155 +387,159 @@ const products = [
         description: 'Pure bottled water'
     },
     
-    // BEEF SMASHER MEALS
+    // BEEF SMASHER MEALS (19% off, target discounted: 1195)
+    // Original = 1195 / 0.81 = 1475
     {
         id: 47,
         name: 'Classic American Meal',
         category: 'beef-smasher-meals',
-        price: 1490,
+        price: 1475,
         image: 'ZoroImages/ZoroMeals/BEEF/AmericanCombo.png',
-        description: 'Classic American Beef (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Classic American Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 48,
         name: 'Onion Melt Meal',
         category: 'beef-smasher-meals',
-        price: 1490,
+        price: 1475,
         image: 'ZoroImages/ZoroMeals/BEEF/OnionMeltCombo.png',
-        description: 'Classic Onion Melt (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Classic Onion Melt (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 49,
         name: 'Frankie Meal',
         category: 'beef-smasher-meals',
-        price: 1490,
+        price: 1475,
         image: 'ZoroImages/ZoroMeals/BEEF/FrankieCombo.png',
-        description: 'Frankie Beef (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Frankie Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 50,
         name: 'Big Ben Meal',
         category: 'beef-smasher-meals',
-        price: 1490,
+        price: 1475,
         image: 'ZoroImages/ZoroMeals/BEEF/BigBenCombo.png',
-        description: 'Classic Big Ben (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Classic Big Ben (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     
-    // BEEF SPECIALTY MEALS
+    // BEEF SPECIALTY MEALS (18% off, target discounted: 1295)
+    // Original = 1295 / 0.82 = 1579
     {
         id: 51,
         name: 'Truffle Meal',
         category: 'beef-specialty-meals',
-        price: 1590,
+        price: 1579,
         image: 'ZoroImages/ZoroMeals/BEEF/TruffleCombo.png',
-        description: 'Truffle Beef (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Truffle Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 52,
         name: 'Bangkok Meal',
         category: 'beef-specialty-meals',
-        price: 1590,
+        price: 1579,
         image: 'ZoroImages/ZoroMeals/BEEF/BangkokCombo.png',
-        description: 'Bangkok Beef (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Bangkok Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 53,
         name: 'BLT Meal',
         category: 'beef-specialty-meals',
-        price: 1590,
+        price: 1579,
         image: 'ZoroImages/ZoroMeals/BEEF/BltClassicCombo.png',
-        description: 'BLT Beef (Single Patty Burger) with Fries & Coke Drink',
+        description: 'BLT Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 54,
         name: 'Tokyo Beef Meal',
         category: 'beef-specialty-meals',
-        price: 1590,
+        price: 1579,
         image: 'ZoroImages/ZoroMeals/BEEF/TokyoCombo.png',
-        description: 'Tokyo Beef (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Tokyo Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 55,
         name: 'Texas BLT Meal',
         category: 'beef-specialty-meals',
-        price: 1590,
+        price: 1579,
         image: 'ZoroImages/ZoroMeals/BEEF/BltTexasCombo.png',
-        description: 'Texas BLT Beef (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Texas BLT Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     
-    // CHICKEN SPECIALTY MEALS
+    // CHICKEN SPECIALTY MEALS (18% off, target discounted: 1295)
+    // Original = 1295 / 0.82 = 1579
     {
         id: 56,
         name: 'Hellfire Meal',
         category: 'chicken-specialty-meals',
-        price: 1590,
+        price: 1579,
         image: 'ZoroImages/ZoroMeals/CHICKEN/HellfireCombo.png',
-        description: 'Hellfire Chicken (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Hellfire Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 57,
         name: 'Asian Fusion Meal',
         category: 'chicken-specialty-meals',
-        price: 1590,
+        price: 1579,
         image: 'ZoroImages/ZoroMeals/CHICKEN/AsianFusionCombo.png',
-        description: 'Asian Fusion Chicken (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Asian Fusion Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 58,
         name: 'The Mexicana Meal',
         category: 'chicken-specialty-meals',
-        price: 1590,
+        price: 1579,
         image: 'ZoroImages/ZoroMeals/CHICKEN/MexicanaCombo.png',
-        description: 'Mexicana Chicken (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Mexicana Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     
-    // SIGNATURE CHICKEN MEALS
+    // SIGNATURE CHICKEN MEALS (19% off, target discounted: 1195)
+    // Original = 1195 / 0.81 = 1475
     {
         id: 59,
         name: 'Classic Chicken Meal',
         category: 'signature-chicken-meals',
-        price: 1490,
+        price: 1475,
         image: 'ZoroImages/ZoroMeals/CHICKEN/ClassicChickenCombo.png',
-        description: 'Classic Chicken (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Classic Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 60,
         name: 'Pepper Chicken Meal',
         category: 'signature-chicken-meals',
-        price: 1490,
+        price: 1475,
         image: 'ZoroImages/ZoroMeals/CHICKEN/PepperChickenCombo.png',
-        description: 'Pepper Chicken (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Pepper Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 61,
         name: 'Roost Meal',
         category: 'signature-chicken-meals',
-        price: 1490,
+        price: 1475,
         image: 'ZoroImages/ZoroMeals/CHICKEN/RoostCombo.png',
-        description: 'Roost Chicken (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Roost Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     {
         id: 62,
         name: 'Tangy Crunch Meal',
         category: 'signature-chicken-meals',
-        price: 1490,
+        price: 1475,
         image: 'ZoroImages/ZoroMeals/CHICKEN/TangyCrunchCombo.png',
-        description: 'Tangy Crunch Chicken (Single Patty Burger) with Fries & Coke Drink',
+        description: 'Tangy Crunch Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
     }
 ];
@@ -591,6 +595,44 @@ const categoryOrder = [
     'premium-shakes',
     'soft-drinks'
 ];
+
+// Toggle to enable/disable discounts globally
+// Set to true to apply discounts, false to show original prices only
+const APPLY_DISCOUNTS = false;
+
+// Discount rates by category
+const discountRates = {
+    'beef-smashers': 0.19,           // 19% off
+    'beef-smasher-meals': 0.19,      // 19% off
+    'beef-speciality': 0.18,         // 18% off
+    'beef-specialty-meals': 0.18,    // 18% off
+    'chicken-specialty-meals': 0.18, // 18% off
+    'signature-chicken-meals': 0.19, // 19% off
+    // All other categories: 20% off (default)
+};
+
+// Calculate discounted price for a product
+function getDiscountedPrice(product) {
+    const originalPrice = product.price;
+    
+    // If discounts are disabled, return original price for both
+    if (!APPLY_DISCOUNTS) {
+        return {
+            original: originalPrice,
+            discounted: originalPrice,
+            discountRate: 0
+        };
+    }
+    
+    // Apply discount if enabled
+    const discountRate = discountRates[product.category] || 0.20; // Default 20% off
+    const discountedPrice = Math.round(originalPrice * (1 - discountRate));
+    return {
+        original: originalPrice,
+        discounted: discountedPrice,
+        discountRate: discountRate
+    };
+}
 
 // Cart management
 let cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
@@ -750,6 +792,10 @@ function createProductCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card';
     
+    // Calculate discounted price
+    const pricing = getDiscountedPrice(product);
+    const showDiscount = APPLY_DISCOUNTS && pricing.original !== pricing.discounted;
+    
     card.innerHTML = `
         <div class="product-image-container">
             <img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/300x250?text=${encodeURIComponent(product.name)}'">
@@ -758,7 +804,10 @@ function createProductCard(product) {
             <h3 class="product-name">${product.name}</h3>
             <p class="product-description">${product.description}</p>
             <div class="product-footer">
-                <span class="product-price">Rs ${product.price}</span>
+                <div class="product-price-container">
+                    ${showDiscount ? `<span class="product-price-original">Rs ${pricing.original.toLocaleString()}</span>` : ''}
+                    <span class="product-price-discounted">Rs ${pricing.discounted.toLocaleString()}</span>
+                </div>
                 <button class="add-to-cart-btn" data-product-id="${product.id}">
                     Add to Cart
                 </button>
@@ -828,6 +877,9 @@ function addToCart(productId) {
 function addComboToCart(product) {
     if (!product || !product.isCombo) return;
     
+    // Calculate discounted price
+    const pricing = getDiscountedPrice(product);
+    
     // Create a simple key for combos
     const itemKey = `${product.id}-combo`;
     const existingItemIndex = cart.findIndex(item => item.key === itemKey || (item.id === product.id && item.isCombo));
@@ -835,13 +887,15 @@ function addComboToCart(product) {
     if (existingItemIndex !== -1) {
         const existingItem = cart[existingItemIndex];
         existingItem.quantity += 1;
-        existingItem.total = existingItem.price * existingItem.quantity;
+        existingItem.total = pricing.discounted * existingItem.quantity;
     } else {
         cart.push({
             ...product,
+            price: pricing.discounted, // Use discounted price for cart
+            originalPrice: pricing.original, // Store original price
             quantity: 1,
             key: itemKey,
-            total: product.price,
+            total: pricing.discounted,
             isCombo: true
         });
     }
@@ -1012,30 +1066,46 @@ function showProductModal(product) {
     // Determine category name
     const categoryName = categoryNames[product.category] || '';
     
+    // Calculate discounted price for base product
+    const basePricing = getDiscountedPrice(product);
+    
     // Calculate size options - for burgers use Single/Double/Triple pricing
     const isBurger = product.category && (product.category.includes('beef') || product.category.includes('chicken'));
     let sizes;
     
     if (isBurger) {
         // Based on the image: Single = base price, Double = ~1.45x, Triple = ~1.9x
+        // Calculate original prices first, then apply discount
+        const singleOriginal = product.price;
+        const doubleOriginal = Math.round(product.price * 1.447);
+        const tripleOriginal = Math.round(product.price * 1.894);
+        
+        // Apply discount rate to each size if discounts are enabled
+        const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
         sizes = [
-            { name: 'Single', price: product.price },
-            { name: 'Double', price: Math.round(product.price * 1.447) }, // 895 -> 1295
-            { name: 'Triple', price: Math.round(product.price * 1.894) }  // 895 -> 1695
+            { name: 'Single', originalPrice: singleOriginal, price: APPLY_DISCOUNTS ? Math.round(singleOriginal * (1 - discountRate)) : singleOriginal },
+            { name: 'Double', originalPrice: doubleOriginal, price: APPLY_DISCOUNTS ? Math.round(doubleOriginal * (1 - discountRate)) : doubleOriginal },
+            { name: 'Triple', originalPrice: tripleOriginal, price: APPLY_DISCOUNTS ? Math.round(tripleOriginal * (1 - discountRate)) : tripleOriginal }
         ];
     } else {
         sizes = [
-            { name: 'Regular', price: product.price }
+            { name: 'Regular', originalPrice: product.price, price: basePricing.discounted }
         ];
     }
     
-    // Build size options HTML
-    const sizesHTML = sizes.map((size, index) => `
-        <div class="size-option ${index === 0 ? 'selected' : ''}" data-size="${size.name}" data-price="${size.price}">
-            <span class="size-option-name">${size.name}</span>
-            <span class="size-option-price">Rs ${size.price.toLocaleString()}</span>
-        </div>
-    `).join('');
+    // Build size options HTML with original and discounted prices
+    const sizesHTML = sizes.map((size, index) => {
+        const showDiscount = APPLY_DISCOUNTS && size.originalPrice !== size.price;
+        return `
+            <div class="size-option ${index === 0 ? 'selected' : ''}" data-size="${size.name}" data-price="${size.price}" data-original-price="${size.originalPrice}">
+                <span class="size-option-name">${size.name}</span>
+                <span class="size-option-price">
+                    ${showDiscount ? `<span class="size-price-original">Rs ${size.originalPrice.toLocaleString()}</span>` : ''}
+                    <span class="size-price-discounted">Rs ${size.price.toLocaleString()}</span>
+                </span>
+            </div>
+        `;
+    }).join('');
     
     // Add-ons for beef and chicken items (not for wings)
     const isBeef = product.category && (product.category === 'beef-smashers' || product.category === 'beef-speciality');
@@ -1157,7 +1227,8 @@ function addToCartFromModal(productId) {
     }
     
     const sizeName = selectedSize.dataset.size;
-    const sizePrice = parseInt(selectedSize.dataset.price);
+    const sizePrice = parseInt(selectedSize.dataset.price); // This is already discounted
+    const originalPrice = parseInt(selectedSize.dataset.originalPrice) || sizePrice;
     
     // Get selected add-ons
     const selectedAddons = Array.from(document.querySelectorAll('.addon-option.selected')).map(addon => ({
@@ -1189,7 +1260,8 @@ function addToCartFromModal(productId) {
             id: product.id,
             name: product.name,
             image: product.image,
-            price: sizePrice,
+            price: sizePrice, // Store discounted price
+            originalPrice: originalPrice, // Store original price
             quantity: quantity,
             size: sizeName,
             addons: selectedAddons,

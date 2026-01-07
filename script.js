@@ -235,15 +235,37 @@ function createProductCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card';
     
+    // Calculate discounted price (use function from menu-script.js if available)
+    let pricing;
+    let showDiscount = false;
+    if (typeof getDiscountedPrice === 'function') {
+        pricing = getDiscountedPrice(product);
+        // Check if discounts are enabled (APPLY_DISCOUNTS should be available from menu-script.js)
+        const applyDiscounts = typeof APPLY_DISCOUNTS !== 'undefined' ? APPLY_DISCOUNTS : true;
+        showDiscount = applyDiscounts && pricing.original !== pricing.discounted;
+    } else {
+        // Fallback if function not available yet
+        const discountRate = 0.20; // Default 20% off
+        pricing = {
+            original: product.price,
+            discounted: Math.round(product.price * (1 - discountRate)),
+            discountRate: discountRate
+        };
+        showDiscount = true;
+    }
+    
     card.innerHTML = `
         <div class="product-image-container">
             <img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/300x250?text=${encodeURIComponent(product.name)}'">
         </div>
         <div class="product-info">
-            <div class="product-price">From Rs ${product.price}</div>
             <h3 class="product-name">${product.name}</h3>
             <p class="product-description">${product.description}</p>
             <div class="product-footer">
+                <div class="product-price-container">
+                    ${showDiscount ? `<span class="product-price-original">Rs ${pricing.original.toLocaleString()}</span>` : ''}
+                    <span class="product-price-discounted">Rs ${pricing.discounted.toLocaleString()}</span>
+                </div>
                 <button class="add-to-cart-btn" data-product-id="${product.id}">
                     ADD TO CART
                 </button>
@@ -261,7 +283,12 @@ function createProductCard(product) {
         const productId = parseInt(addToCartBtn.dataset.productId);
         const productToAdd = products.find(p => p.id === productId);
         if (productToAdd) {
-            showProductModal(productToAdd);
+            // If it's a combo, add directly to cart without showing modal
+            if (productToAdd.isCombo && typeof addComboToCart === 'function') {
+                addComboToCart(productToAdd);
+            } else {
+                showProductModal(productToAdd);
+            }
         }
     };
     
@@ -271,23 +298,7 @@ function createProductCard(product) {
         handleButtonClick(e);
     });
     
-    // Add click event to view product details (clicking anywhere on card opens modal)
-    const handleCardClick = (e) => {
-        // Don't open modal if clicking on the button or its children
-        if (e.target.classList.contains('add-to-cart-btn') || e.target.closest('.add-to-cart-btn')) {
-            return;
-        }
-        showProductModal(product);
-    };
-    
-    card.addEventListener('click', handleCardClick);
-    card.addEventListener('touchend', (e) => {
-        // Only handle if it's not the button
-        if (!e.target.classList.contains('add-to-cart-btn') && !e.target.closest('.add-to-cart-btn')) {
-            e.preventDefault();
-            handleCardClick(e);
-        }
-    });
+    // Removed card click handlers - only button is clickable now
     
     return card;
 }

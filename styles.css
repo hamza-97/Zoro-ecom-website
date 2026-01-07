@@ -572,6 +572,25 @@ html {
     background: white;
 }
 
+/* Product Price Container */
+.product-price-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.product-price-original {
+    font-size: 0.9rem;
+    color: #999;
+    text-decoration: line-through;
+}
+
+.product-price-discounted {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
 .product-price {
     font-size: 1rem;
     font-weight: 700;
@@ -1457,10 +1476,27 @@ html {
     font-size: 1rem;
 }
 
+/* Size option prices with discount */
+.size-price-original {
+    font-size: 0.85rem;
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 0.5rem;
+}
+
+.size-price-discounted {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
 .size-option-price {
     font-weight: 600;
     color: var(--text-color);
     font-size: 1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .addons-grid {

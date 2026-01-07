@@ -933,7 +933,8 @@
                         category: p.category,
                         price: p.price,
                         image: p.image,
-                        description: p.description
+                        description: p.description,
+                        isCombo: p.isCombo || false
                     }));
                     console.log('✓ Loaded products from menu-script.js:', allProducts.length);
                     return true;
@@ -1973,7 +1974,8 @@
                         category: p.category,
                         price: p.price,
                         image: p.image,
-                        description: p.description
+                        description: p.description,
+                        isCombo: p.isCombo || false
                     }));
                     console.log('Loaded products on modal open:', allProducts.length);
                 } else {
@@ -2046,20 +2048,25 @@ Debug info:
             // Size options
             let sizes = [];
             if (product) {
-                const isBurger = product.category && (
-                    product.category.includes('beef') || 
-                    product.category.includes('chicken') ||
-                    product.category.includes('burger')
-                );
+                // Combo meals don't have size options
+                const isCombo = product.isCombo || false;
                 
-                if (isBurger) {
-                    sizes = [
-                        { name: 'Single', price: product.price },
-                        { name: 'Double', price: Math.round(product.price * 1.447) },
-                        { name: 'Triple', price: Math.round(product.price * 1.894) }
-                    ];
-                } else {
-                    sizes = [{ name: 'Regular', price: product.price }];
+                if (!isCombo) {
+                    const isBurger = product.category && (
+                        product.category.includes('beef') || 
+                        product.category.includes('chicken') ||
+                        product.category.includes('burger')
+                    );
+                    
+                    if (isBurger) {
+                        sizes = [
+                            { name: 'Single', price: product.price },
+                            { name: 'Double', price: Math.round(product.price * 1.447) },
+                            { name: 'Triple', price: Math.round(product.price * 1.894) }
+                        ];
+                    } else {
+                        sizes = [{ name: 'Regular', price: product.price }];
+                    }
                 }
             } else {
                 // Default sizes for when no product selected
@@ -2084,26 +2091,31 @@ Debug info:
             // Addons
             let addons = [];
             if (product) {
-                const category = product.category || '';
-                const isBeef = category === 'beef-smashers' || category === 'beef-speciality';
-                const isChicken = category === 'chicken-burgers';
-                const isWings = category === 'wings';
+                // Combo meals don't have addon options
+                const isCombo = product.isCombo || false;
                 
-                if ((isBeef || isChicken) && !isWings) {
-                    addons = [
-                        { name: 'Pickles', price: 80 },
-                        { name: 'Onions', price: 80 },
-                        { name: 'Pickled Red Onions', price: 80 },
-                        { name: 'Tomatoes', price: 80 },
-                        { name: 'Crispy Onions', price: 100 },
-                        { name: 'Cheese Slice', price: 100 },
-                        { name: 'Bacon', price: 250 },
-                        { name: 'Double Cheese Slice', price: 200 },
-                        { name: 'Lettuce', price: 80 },
-                        { name: 'Grilled Onions', price: 100 },
-                        { name: 'Nachos', price: 80 },
-                        { name: 'Jalapenos', price: 80 }
-                    ];
+                if (!isCombo) {
+                    const category = product.category || '';
+                    const isBeef = category === 'beef-smashers' || category === 'beef-speciality';
+                    const isChicken = category === 'chicken-burgers';
+                    const isWings = category === 'wings';
+                    
+                    if ((isBeef || isChicken) && !isWings) {
+                        addons = [
+                            { name: 'Pickles', price: 80 },
+                            { name: 'Onions', price: 80 },
+                            { name: 'Pickled Red Onions', price: 80 },
+                            { name: 'Tomatoes', price: 80 },
+                            { name: 'Crispy Onions', price: 100 },
+                            { name: 'Cheese Slice', price: 100 },
+                            { name: 'Bacon', price: 250 },
+                            { name: 'Double Cheese Slice', price: 200 },
+                            { name: 'Lettuce', price: 80 },
+                            { name: 'Grilled Onions', price: 100 },
+                            { name: 'Nachos', price: 80 },
+                            { name: 'Jalapenos', price: 80 }
+                        ];
+                    }
                 }
             }
             
@@ -2255,19 +2267,27 @@ Debug info:
                 return;
             }
             
-            const selectedSize = document.querySelector('.size-option.selected');
-            if (!selectedSize) {
-                alert('Please select a size');
-                return;
+            const isCombo = product.isCombo || false;
+            let sizeName = 'Regular';
+            let sizePrice = product.price;
+            let selectedAddons = [];
+            
+            // For combo meals, skip size and addon selection
+            if (!isCombo) {
+                const selectedSize = document.querySelector('.size-option.selected');
+                if (!selectedSize) {
+                    alert('Please select a size');
+                    return;
+                }
+                
+                sizeName = selectedSize.dataset.size;
+                sizePrice = parseInt(selectedSize.dataset.price);
+                
+                selectedAddons = Array.from(document.querySelectorAll('.addon-option.selected')).map(opt => ({
+                    name: opt.dataset.addon,
+                    price: parseInt(opt.dataset.price)
+                }));
             }
-            
-            const sizeName = selectedSize.dataset.size;
-            const sizePrice = parseInt(selectedSize.dataset.price);
-            
-            const selectedAddons = Array.from(document.querySelectorAll('.addon-option.selected')).map(opt => ({
-                name: opt.dataset.addon,
-                price: parseInt(opt.dataset.price)
-            }));
             
             const quantity = window.currentItemQuantity || 1;
             const addonsPrice = selectedAddons.reduce((sum, a) => sum + a.price, 0);
@@ -2281,9 +2301,10 @@ Debug info:
                 image: product.image || '',
                 description: product.description || '',
                 quantity: quantity,
-                size: sizeName,
-                addons: selectedAddons,
-                total: itemTotal
+                size: isCombo ? undefined : sizeName,
+                addons: selectedAddons.length > 0 ? selectedAddons : undefined,
+                total: itemTotal,
+                isCombo: isCombo
             };
             
             if (editingItemIndex >= 0) {
