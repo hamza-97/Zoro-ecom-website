@@ -114,6 +114,11 @@ const orderSchema = new mongoose.Schema({
     notes: {
         type: String,
         default: ''
+    },
+    source: {
+        type: String,
+        enum: ['website', 'call'],
+        default: 'website'
     }
 }, {
     timestamps: true

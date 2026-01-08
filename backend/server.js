@@ -297,7 +297,8 @@ app.post('/api/orders', async (req, res) => {
             total,
             payment_method,
             notes,
-            delivery_location
+            delivery_location,
+            source
         } = req.body;
 
         if (!customer_name || !customer_phone || !branch || !order_type || !items || !total) {
@@ -323,7 +324,8 @@ app.post('/api/orders', async (req, res) => {
             payment_method: payment_method || 'cash',
             notes: notes || '',
             status: 'ordered',
-            payment_status: 'pending'
+            payment_status: 'pending',
+            source: source || 'website'
         };
 
         // Add delivery location if provided

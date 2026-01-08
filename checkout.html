@@ -911,6 +911,7 @@
                 delivery_fee: deliveryFee,
                 tax: tax,
                 total: subtotal + deliveryFee + tax,
+                source: 'website',
                 delivery_location: (latitude && longitude) ? {
                     latitude: parseFloat(latitude),
                     longitude: parseFloat(longitude),

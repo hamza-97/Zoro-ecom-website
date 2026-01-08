@@ -885,6 +885,10 @@
                         </button>
                     </div>
                     <div class="info-item">
+                        <span>Order Source:</span>
+                        <span class="editable-field" id="orderSource">-</span>
+                    </div>
+                    <div class="info-item">
                         <span>Order type:</span>
                         <span class="editable-field" id="orderType">-</span>
                     </div>
@@ -1153,6 +1157,12 @@
             document.getElementById('customerAddress').textContent = currentOrder.customer_address || 'N/A';
 
             // Delivery details
+            const orderSource = currentOrder.source || 'website';
+            const sourceDisplay = orderSource === 'website' ? 'Website' : 'Call';
+            const sourceBadge = orderSource === 'website' ? 
+                '<span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: #e3f2fd; color: #1976d2;">🌐 Website</span>' :
+                '<span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: #fff3e0; color: #f57c00;">📞 Call</span>';
+            document.getElementById('orderSource').innerHTML = sourceBadge;
             document.getElementById('orderType').textContent = 
                 currentOrder.order_type ? currentOrder.order_type.charAt(0).toUpperCase() + currentOrder.order_type.slice(1) : 'N/A';
             document.getElementById('staffNote').textContent = currentOrder.notes || '-';
