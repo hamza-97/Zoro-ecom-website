@@ -620,14 +620,17 @@
             <div class="orders-section" id="ordersSection">
                 <div class="section-header">
                     <h2>Recent Orders</h2>
-                    <div class="filter-tabs">
-                        <button class="filter-tab active" data-status="all">All</button>
-                        <button class="filter-tab" data-status="ordered">Ordered</button>
-                        <button class="filter-tab" data-status="confirmed">Confirmed</button>
-                        <button class="filter-tab" data-status="awaiting_rider">Awaiting Rider</button>
-                        <button class="filter-tab" data-status="in_kitchen">In Kitchen</button>
-                        <button class="filter-tab" data-status="rider_on_way">Rider on Way</button>
-                        <button class="filter-tab" data-status="delivered">Delivered</button>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <button class="action-btn btn-update" onclick="openCreateOrderModal()" style="background: #28a745; white-space: nowrap;">📞 Create Call Order</button>
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" data-status="all">All</button>
+                            <button class="filter-tab" data-status="ordered">Ordered</button>
+                            <button class="filter-tab" data-status="confirmed">Confirmed</button>
+                            <button class="filter-tab" data-status="awaiting_rider">Awaiting Rider</button>
+                            <button class="filter-tab" data-status="in_kitchen">In Kitchen</button>
+                            <button class="filter-tab" data-status="rider_on_way">Rider on Way</button>
+                            <button class="filter-tab" data-status="delivered">Delivered</button>
+                        </div>
                     </div>
                 </div>
                 <div style="overflow-x: auto; display: block; visibility: visible;">
@@ -841,6 +844,194 @@
         </div>
     </div>
 
+    <!-- Create Order Modal -->
+    <div class="modal" id="createOrderModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2>Create Call Order</h2>
+                <button class="close-modal" onclick="closeCreateOrderModal()">&times;</button>
+            </div>
+            <form id="createOrderForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Customer Name *</label>
+                        <input type="text" id="createCustomerName" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Phone *</label>
+                        <input type="text" id="createCustomerPhone" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Customer Email</label>
+                        <input type="email" id="createCustomerEmail" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Branch *</label>
+                        <select id="createBranch" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                            <option value="">Select Branch</option>
+                            <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
+                            <option value="Johar Town, Lahore">Johar Town, Lahore</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Customer Address *</label>
+                    <textarea id="createCustomerAddress" required rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Order Type *</label>
+                        <select id="createOrderType" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                            <option value="delivery">Delivery</option>
+                            <option value="pickup">Pickup</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Method *</label>
+                        <select id="createPaymentMethod" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="online">Online</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="margin: 0;">Items *</label>
+                        <button type="button" class="action-btn btn-update" onclick="openAddItemModalForCreate()" style="padding: 0.5rem 1rem; font-size: 0.9rem;">+ Add Item</button>
+                    </div>
+                    <div id="createItemsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 0.5rem; padding: 0.5rem; background: #f9f9f9; border-radius: 5px; border: 1px solid #e0e0e0;">
+                        <p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>
+                    </div>
+                    <input type="hidden" id="createItems" value="[]">
+                    <small style="color: #666; font-size: 0.85rem;">Items are stored as JSON. Use "Add Item" button to add items easily.</small>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Subtotal</label>
+                        <input type="number" id="createSubtotal" value="0" readonly step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
+                    </div>
+                    <div class="form-group">
+                        <label>Delivery Fee</label>
+                        <input type="number" id="createDeliveryFee" value="0" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Tax</label>
+                        <input type="number" id="createTax" value="0" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Total *</label>
+                        <input type="number" id="createTotal" value="0" readonly required step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5; font-weight: 600;">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Notes</label>
+                    <textarea id="createNotes" rows="2" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" onclick="closeCreateOrderModal()" style="padding: 0.75rem 2rem; background: #6c757d; color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    <button type="submit" style="padding: 0.75rem 2rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Create Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Order Modal -->
+    <div class="modal" id="createOrderModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2>Create Call Order</h2>
+                <button class="close-modal" onclick="closeCreateOrderModal()">&times;</button>
+            </div>
+            <form id="createOrderForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Customer Name *</label>
+                        <input type="text" id="createCustomerName" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Phone *</label>
+                        <input type="text" id="createCustomerPhone" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Customer Email</label>
+                        <input type="email" id="createCustomerEmail" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Branch *</label>
+                        <select id="createBranch" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                            <option value="">Select Branch</option>
+                            <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
+                            <option value="Johar Town, Lahore">Johar Town, Lahore</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Customer Address *</label>
+                    <textarea id="createCustomerAddress" required rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Order Type *</label>
+                        <select id="createOrderType" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                            <option value="delivery">Delivery</option>
+                            <option value="pickup">Pickup</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Method *</label>
+                        <select id="createPaymentMethod" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="online">Online</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="margin: 0;">Items *</label>
+                        <button type="button" class="action-btn btn-update" onclick="openAddItemModalForCreate()" style="padding: 0.5rem 1rem; font-size: 0.9rem;">+ Add Item</button>
+                    </div>
+                    <div id="createItemsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 0.5rem; padding: 0.5rem; background: #f9f9f9; border-radius: 5px; border: 1px solid #e0e0e0;">
+                        <p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>
+                    </div>
+                    <input type="hidden" id="createItems" value="[]">
+                    <small style="color: #666; font-size: 0.85rem;">Items are stored as JSON. Use "Add Item" button to add items easily.</small>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Subtotal</label>
+                        <input type="number" id="createSubtotal" value="0" readonly step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
+                    </div>
+                    <div class="form-group">
+                        <label>Delivery Fee</label>
+                        <input type="number" id="createDeliveryFee" value="0" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Tax</label>
+                        <input type="number" id="createTax" value="0" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Total *</label>
+                        <input type="number" id="createTotal" value="0" readonly required step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5; font-weight: 600;">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Notes</label>
+                    <textarea id="createNotes" rows="2" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" onclick="closeCreateOrderModal()" style="padding: 0.75rem 2rem; background: #6c757d; color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    <button type="submit" style="padding: 0.75rem 2rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Create Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Add Item Modal -->
     <div class="modal" id="addItemModal">
         <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
@@ -921,6 +1112,8 @@
         let allProducts = []; // Store products from menu-script.js
         let currentEditItems = []; // Store current items being edited
         let editingItemIndex = -1; // Index of item being edited (-1 for new item)
+        let currentCreateItems = []; // Store items for creating new order
+        let isCreatingOrder = false; // Flag to track if we're in create order mode
 
         // Load products from menu-script.js
         function loadProducts() {
@@ -1177,7 +1370,7 @@
                         console.log('Loading stats/orders, currentUser:', currentUser);
                         console.log('Auth headers will be:', getAuthHeaders());
                     loadStats();
-                    loadOrders();
+                    loadOrders('all', true);
                     }, 200);
                 } else {
                     errorDiv.textContent = data.error || 'Login failed';
@@ -1370,8 +1563,64 @@
             }
         }
 
+        // Store current orders data for comparison
+        let currentOrdersData = new Map(); // Map of orderId -> order data
+        
+        // Helper function to render order row HTML
+        function renderOrderRow(order) {
+            try {
+                const items = Array.isArray(order.items) ? order.items : (typeof order.items === 'string' ? JSON.parse(order.items) : []);
+                const itemCount = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+                const date = new Date(order.createdAt || order.created_at || order.date).toLocaleString();
+                const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
+                const status = order.status || 'ordered';
+                const paymentStatus = order.payment_status || 'pending';
+                
+                const safeOrderId = orderId.replace(/'/g, "\\'");
+                const safeStatus = status.replace(/'/g, "\\'");
+                const safePaymentStatus = paymentStatus.replace(/'/g, "\\'");
+                
+                return `
+                    <tr data-order-id="${orderId}" style="display: table-row;">
+                        <td><strong>${order.order_number || 'N/A'}</strong></td>
+                        <td>${order.customer_name || 'N/A'}<br><small style="color: #666;">${order.customer_phone || ''}</small></td>
+                        <td>${order.branch || 'N/A'}</td>
+                        <td>${order.order_type ? (order.order_type.charAt(0).toUpperCase() + order.order_type.slice(1)) : 'N/A'}</td>
+                        <td>${itemCount} item(s)</td>
+                        <td><strong>Rs ${parseFloat(order.total || 0).toLocaleString()}</strong></td>
+                        <td><span class="status-badge status-${status}">${formatStatus(status)}</span></td>
+                        <td><small>${date}</small></td>
+                        <td>
+                            <button class="action-btn btn-view" onclick="window.location.href='/order-detail?id=${safeOrderId}'" style="margin-right: 0.5rem;">View</button>
+                            <button class="action-btn btn-update" onclick="openUpdateModal('${safeOrderId}', '${safeStatus}', '${safePaymentStatus}')">Update</button>
+                        </td>
+                    </tr>
+                `;
+            } catch (err) {
+                console.error('Error rendering order:', order, err);
+                return `<tr style="display: table-row;"><td colspan="9" style="color: red;">Error rendering order: ${err.message}</td></tr>`;
+            }
+        }
+        
+        // Helper function to create order row element
+        function createOrderRowElement(order) {
+            const temp = document.createElement('tbody');
+            temp.innerHTML = renderOrderRow(order);
+            return temp.firstElementChild;
+        }
+        
+        // Helper function to check if order changed
+        function hasOrderChanged(oldOrder, newOrder) {
+            return (
+                (oldOrder.status || 'ordered') !== (newOrder.status || 'ordered') ||
+                (oldOrder.payment_status || 'pending') !== (newOrder.payment_status || 'pending') ||
+                parseFloat(oldOrder.total || 0) !== parseFloat(newOrder.total || 0) ||
+                JSON.stringify(oldOrder.items) !== JSON.stringify(newOrder.items)
+            );
+        }
+        
         // Load orders
-        async function loadOrders(status = 'all') {
+        async function loadOrders(status = 'all', isInitialLoad = false) {
             try {
                 const tbody = document.getElementById('ordersTableBody');
                 if (!tbody) {
@@ -1380,7 +1629,10 @@
                     return;
                 }
                 
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">Loading orders...</td></tr>';
+                // Only show loading on initial load
+                if (isInitialLoad) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">Loading orders...</td></tr>';
+                }
                 
                 // Re-check auth if currentUser is null
                 if (!currentUser) {
@@ -1498,53 +1750,79 @@
                 }
                 
                 if (orders.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">No orders found. Place an order from the website to see it here.</td></tr>';
+                    if (isInitialLoad || tbody.children.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">No orders found. Place an order from the website to see it here.</td></tr>';
+                    }
                     return;
                 }
                 
-                const ordersHTML = orders.map(order => {
-                    try {
-                        const items = Array.isArray(order.items) ? order.items : (typeof order.items === 'string' ? JSON.parse(order.items) : []);
-                        const itemCount = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
-                        // MongoDB uses createdAt (camelCase) by default, but also check created_at
-                        const date = new Date(order.createdAt || order.created_at || order.date).toLocaleString();
-                        // MongoDB uses _id instead of id - convert to string
-                        const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
-                        const status = order.status || 'ordered';
-                        const paymentStatus = order.payment_status || 'pending';
-                        
-                        // Escape single quotes in onclick handlers
-                        const safeOrderId = orderId.replace(/'/g, "\\'");
-                        const safeStatus = status.replace(/'/g, "\\'");
-                        const safePaymentStatus = paymentStatus.replace(/'/g, "\\'");
-                        
-                        // Show Edit button only if order is not confirmed (status is 'ordered' or 'pending')
-                        const canEdit = status === 'ordered' || status === 'pending';
-                        const editButton = canEdit ? `<button class="action-btn btn-update" onclick="openEditModal('${safeOrderId}')" style="margin-right: 0.5rem; background: #28a745;">Edit</button>` : '';
-                        
-                        return `
-                            <tr style="display: table-row;">
-                                <td><strong>${order.order_number || 'N/A'}</strong></td>
-                                <td>${order.customer_name || 'N/A'}<br><small style="color: #666;">${order.customer_phone || ''}</small></td>
-                                <td>${order.branch || 'N/A'}</td>
-                                <td>${order.order_type ? (order.order_type.charAt(0).toUpperCase() + order.order_type.slice(1)) : 'N/A'}</td>
-                                <td>${itemCount} item(s)</td>
-                                <td><strong>Rs ${parseFloat(order.total || 0).toLocaleString()}</strong></td>
-                                <td><span class="status-badge status-${status}">${formatStatus(status)}</span></td>
-                                <td><small>${date}</small></td>
-                                <td>
-                                    <button class="action-btn btn-view" onclick="window.location.href='/order-detail?id=${safeOrderId}'" style="margin-right: 0.5rem;">View</button>
-                                    <button class="action-btn btn-update" onclick="openUpdateModal('${safeOrderId}', '${safeStatus}', '${safePaymentStatus}')">Update</button>
-                                </td>
-                            </tr>
-                        `;
-                    } catch (err) {
-                        console.error('Error rendering order:', order, err);
-                        return `<tr style="display: table-row;"><td colspan="9" style="color: red;">Error rendering order: ${err.message}</td></tr>`;
+                // Create a map of new orders
+                const newOrdersMap = new Map();
+                orders.forEach(order => {
+                    const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
+                    if (orderId) {
+                        newOrdersMap.set(orderId, order);
                     }
-                }).join('');
+                });
                 
-                tbody.innerHTML = ordersHTML;
+                // If this is initial load or table is empty, render everything
+                if (isInitialLoad || tbody.children.length === 0 || tbody.querySelector('tr[colspan]')) {
+                    const ordersHTML = orders.map(order => renderOrderRow(order)).join('');
+                    tbody.innerHTML = ordersHTML;
+                    // Store current orders
+                    orders.forEach(order => {
+                        const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
+                        if (orderId) {
+                            currentOrdersData.set(orderId, order);
+                        }
+                    });
+                } else {
+                    // Smart update: only change what's different
+                    const existingRows = Array.from(tbody.querySelectorAll('tr[data-order-id]'));
+                    const existingOrderIds = new Set();
+                    
+                    // Update existing rows or remove if order no longer exists
+                    existingRows.forEach(row => {
+                        const orderId = row.getAttribute('data-order-id');
+                        existingOrderIds.add(orderId);
+                        
+                        if (newOrdersMap.has(orderId)) {
+                            // Order still exists - check if it changed
+                            const newOrder = newOrdersMap.get(orderId);
+                            const oldOrder = currentOrdersData.get(orderId);
+                            
+                            if (!oldOrder || hasOrderChanged(oldOrder, newOrder)) {
+                                // Order changed - update the row smoothly
+                                const newRow = createOrderRowElement(newOrder);
+                                row.replaceWith(newRow);
+                                currentOrdersData.set(orderId, newOrder);
+                            }
+                        } else {
+                            // Order no longer exists - remove row
+                            row.style.transition = 'opacity 0.3s';
+                            row.style.opacity = '0';
+                            setTimeout(() => row.remove(), 300);
+                            currentOrdersData.delete(orderId);
+                        }
+                    });
+                    
+                    // Add new orders (that don't exist in current table)
+                    newOrdersMap.forEach((order, orderId) => {
+                        if (!existingOrderIds.has(orderId)) {
+                            // New order - add it at the top with a subtle animation
+                            const newRow = createOrderRowElement(order);
+                            newRow.style.opacity = '0';
+                            tbody.insertBefore(newRow, tbody.firstChild);
+                            // Fade in
+                            setTimeout(() => {
+                                newRow.style.transition = 'opacity 0.3s';
+                                newRow.style.opacity = '1';
+                            }, 10);
+                            currentOrdersData.set(orderId, order);
+                        }
+                    });
+                }
+                
                 console.log('Orders rendered successfully:', orders.length, 'orders');
                 console.log('Table body innerHTML length:', tbody.innerHTML.length);
                 console.log('Table body children count:', tbody.children.length);
@@ -1626,7 +1904,9 @@
                 document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 currentFilter = tab.dataset.status;
-                loadOrders(currentFilter);
+                // Reset current orders data when filter changes
+                currentOrdersData.clear();
+                loadOrders(currentFilter, true);
             });
         });
 
@@ -1669,7 +1949,7 @@
                 if (response.ok) {
                     alert('Order updated successfully!');
                     closeUpdateModal();
-                    loadOrders(currentFilter);
+                    loadOrders(currentFilter, true);
                     loadStats();
                 } else {
                     alert('Error: ' + (data.error || 'Failed to update order'));
@@ -1962,6 +2242,177 @@
             document.getElementById('editTotal').value = total.toFixed(2);
         }
 
+        // Create Order Modal functions
+        function openCreateOrderModal() {
+            isCreatingOrder = true;
+            currentCreateItems = [];
+            editingItemIndex = -1;
+            
+            // Reset form
+            document.getElementById('createOrderForm').reset();
+            document.getElementById('createItems').value = '[]';
+            document.getElementById('createItemsList').innerHTML = '<p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>';
+            
+            // Set default branch based on user type
+            const userType = currentUser ? currentUser.user_type : null;
+            const branchSelect = document.getElementById('createBranch');
+            if (branchSelect) {
+                if (userType === 'gulberg') {
+                    branchSelect.value = 'Gulberg II, Lahore';
+                } else if (userType === 'jt') {
+                    branchSelect.value = 'Johar Town, Lahore';
+                }
+            }
+            
+            // Set up event listeners for delivery fee and tax
+            const deliveryFeeInput = document.getElementById('createDeliveryFee');
+            const taxInput = document.getElementById('createTax');
+            
+            // Remove existing listeners if any
+            if (deliveryFeeInput) {
+                deliveryFeeInput.removeEventListener('input', updateCreateOrderTotals);
+                deliveryFeeInput.addEventListener('input', updateCreateOrderTotals);
+            }
+            if (taxInput) {
+                taxInput.removeEventListener('input', updateCreateOrderTotals);
+                taxInput.addEventListener('input', updateCreateOrderTotals);
+            }
+            
+            updateCreateOrderTotals();
+            
+            document.getElementById('createOrderModal').classList.add('active');
+        }
+
+        function closeCreateOrderModal() {
+            document.getElementById('createOrderModal').classList.remove('active');
+            document.getElementById('createOrderForm').reset();
+            currentCreateItems = [];
+            editingItemIndex = -1;
+            isCreatingOrder = false;
+        }
+
+        function openAddItemModalForCreate() {
+            openAddItemModal(null, -1);
+        }
+
+        function updateCreateItemsList() {
+            const itemsList = document.getElementById('createItemsList');
+            if (!itemsList) return;
+            
+            if (currentCreateItems.length === 0) {
+                itemsList.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>';
+            } else {
+                itemsList.innerHTML = currentCreateItems.map((item, index) => {
+                    const addonsPrice = (item.addons || []).reduce((sum, a) => sum + (a.price || 0), 0);
+                    const itemTotal = (item.total || ((item.price || 0) + addonsPrice) * (item.quantity || 1));
+                    const sizeInfo = item.size ? ` (${item.size})` : '';
+                    const addonsInfo = item.addons && item.addons.length > 0 
+                        ? ` + ${item.addons.map(a => a.name).join(', ')}`
+                        : '';
+                    
+                    return `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; margin-bottom: 0.5rem; background: white; border-radius: 5px; border: 1px solid #e0e0e0;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; margin-bottom: 0.25rem;">${item.name}${sizeInfo}${addonsInfo}</div>
+                                <div style="font-size: 0.85rem; color: #666;">
+                                    Qty: ${item.quantity || 1} × Rs ${(item.price || 0).toLocaleString()}${addonsPrice > 0 ? ` + Addons: Rs ${addonsPrice.toLocaleString()}` : ''} = Rs ${itemTotal.toLocaleString()}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button onclick="editItemInCreateOrder(${index})" style="padding: 0.5rem; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">Edit</button>
+                                <button onclick="removeItemFromCreateOrder(${index})" style="padding: 0.5rem; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">Remove</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Update hidden input
+            document.getElementById('createItems').value = JSON.stringify(currentCreateItems, null, 2);
+            updateCreateOrderTotals();
+        }
+
+        function removeItemFromCreateOrder(index) {
+            currentCreateItems.splice(index, 1);
+            updateCreateItemsList();
+        }
+
+        function editItemInCreateOrder(index) {
+            editingItemIndex = index;
+            openAddItemModal(currentCreateItems[index], index);
+        }
+
+        function updateCreateOrderTotals() {
+            const subtotal = currentCreateItems.reduce((sum, item) => {
+                return sum + (item.total || ((item.price || 0) + ((item.addons || []).reduce((aSum, a) => aSum + (a.price || 0), 0))) * (item.quantity || 1));
+            }, 0);
+            
+            const deliveryFee = parseFloat(document.getElementById('createDeliveryFee').value) || 0;
+            const tax = parseFloat(document.getElementById('createTax').value) || 0;
+            const total = subtotal + deliveryFee + tax;
+            
+            document.getElementById('createSubtotal').value = subtotal.toFixed(2);
+            document.getElementById('createTotal').value = total.toFixed(2);
+        }
+
+        // Handle create order form submission
+        document.getElementById('createOrderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (currentCreateItems.length === 0) {
+                alert('Please add at least one item to the order.');
+                return;
+            }
+            
+            const orderData = {
+                customer_name: document.getElementById('createCustomerName').value,
+                customer_phone: document.getElementById('createCustomerPhone').value,
+                customer_email: document.getElementById('createCustomerEmail').value,
+                customer_address: document.getElementById('createCustomerAddress').value,
+                branch: document.getElementById('createBranch').value,
+                order_type: document.getElementById('createOrderType').value,
+                payment_method: document.getElementById('createPaymentMethod').value,
+                items: currentCreateItems,
+                subtotal: parseFloat(document.getElementById('createSubtotal').value),
+                delivery_fee: parseFloat(document.getElementById('createDeliveryFee').value) || 0,
+                tax: parseFloat(document.getElementById('createTax').value) || 0,
+                total: parseFloat(document.getElementById('createTotal').value),
+                notes: document.getElementById('createNotes').value
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert(`Order created successfully! Order #: ${data.order_number || 'N/A'}`);
+                    closeCreateOrderModal();
+                    loadOrders(currentFilter, true);
+                    loadStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to create order'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to create order. Make sure the backend is running.');
+            }
+        });
+
+        // Event listeners for delivery fee and tax are set up in openCreateOrderModal()
+
         // Add Item Modal functions
         function openAddItemModal(item = null, index = -1) {
             // Ensure products are loaded - check both allProducts and global products
@@ -2015,6 +2466,7 @@ Debug info:
         function closeAddItemModal() {
             document.getElementById('addItemModal').classList.remove('active');
             editingItemIndex = -1;
+            // Don't reset isCreatingOrder here - it should persist until create order modal is closed
         }
 
         function renderAddItemModal(item) {
@@ -2307,15 +2759,29 @@ Debug info:
                 isCombo: isCombo
             };
             
-            if (editingItemIndex >= 0) {
-                // Update existing item
-                currentEditItems[editingItemIndex] = newItem;
+            // Check if we're in create order mode or edit order mode
+            if (isCreatingOrder) {
+                if (editingItemIndex >= 0 && editingItemIndex < currentCreateItems.length) {
+                    // Update existing item in create order
+                    currentCreateItems[editingItemIndex] = newItem;
+                } else {
+                    // Add new item to create order
+                    currentCreateItems.push(newItem);
+                }
+                updateCreateItemsList();
+                editingItemIndex = -1; // Reset after saving
             } else {
-                // Add new item
-                currentEditItems.push(newItem);
+                if (editingItemIndex >= 0 && editingItemIndex < currentEditItems.length) {
+                    // Update existing item
+                    currentEditItems[editingItemIndex] = newItem;
+                } else {
+                    // Add new item
+                    currentEditItems.push(newItem);
+                }
+                updateItemsList();
+                editingItemIndex = -1; // Reset after saving
             }
             
-            updateItemsList();
             closeAddItemModal();
         }
 
@@ -2373,7 +2839,7 @@ Debug info:
                 if (response.ok) {
                     alert('Order updated successfully!');
                     closeEditModal();
-                    loadOrders(currentFilter);
+                    loadOrders(currentFilter, true);
                     loadStats();
                 } else {
                     alert('Error: ' + (data.error || 'Failed to update order'));
@@ -2771,7 +3237,7 @@ Debug info:
             loadStats().catch(err => {
                 console.error('Failed to load stats:', err);
             });
-            loadOrders().catch(err => {
+            loadOrders('all', true).catch(err => {
                 console.error('Failed to load orders:', err);
             });
         };
@@ -2805,11 +3271,15 @@ Debug info:
         document.addEventListener('keydown', stopOnInteraction, { once: true });
         document.addEventListener('mousemove', stopOnInteraction, { once: true });
 
-        // Auto-refresh every 5 seconds for real-time updates
+        // Auto-refresh every 30 seconds for real-time updates (less frequent to reduce disruption)
+        // Only refresh when page is visible, and use smart updates (no full re-render)
         setInterval(() => {
-            loadOrders(currentFilter).catch(err => console.error('Failed to refresh orders:', err));
-            loadStats().catch(err => console.error('Failed to refresh stats:', err));
-        }, 5000);
+            // Only refresh if page is visible (not hidden/tabbed away)
+            if (!document.hidden) {
+                loadOrders(currentFilter, false).catch(err => console.error('Failed to refresh orders:', err));
+                loadStats().catch(err => console.error('Failed to refresh stats:', err));
+            }
+        }, 30000); // Changed from 5000ms (5s) to 30000ms (30s)
 
         // Sidebar menu navigation
         document.querySelectorAll('.sidebar-menu li').forEach(menuItem => {
