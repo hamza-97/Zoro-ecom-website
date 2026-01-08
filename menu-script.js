@@ -598,7 +598,7 @@ const categoryOrder = [
 
 // Toggle to enable/disable discounts globally
 // Set to true to apply discounts, false to show original prices only
-const APPLY_DISCOUNTS = false;
+const APPLY_DISCOUNTS = true;
 
 // Discount rates by category
 const discountRates = {
