@@ -241,7 +241,7 @@ function createProductCard(product) {
     if (typeof getDiscountedPrice === 'function') {
         pricing = getDiscountedPrice(product);
         // Check if discounts are enabled (APPLY_DISCOUNTS should be available from menu-script.js)
-        const applyDiscounts = typeof APPLY_DISCOUNTS !== 'undefined' ? APPLY_DISCOUNTS : true;
+        const applyDiscounts = true
         showDiscount = applyDiscounts && pricing.original !== pricing.discounted;
     } else {
         // Fallback if function not available yet
