@@ -237,7 +237,7 @@ function createProductCard(product) {
     
     // Calculate discounted price (use function from menu-script.js if available)
     let pricing;
-    let showDiscount = false;
+    let showDiscount = true;
     if (typeof getDiscountedPrice === 'function') {
         pricing = getDiscountedPrice(product);
         // Check if discounts are enabled (APPLY_DISCOUNTS should be available from menu-script.js)
