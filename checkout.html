@@ -823,8 +823,8 @@
                 `;
             }).join('');
             
-            // Always delivery, so delivery fee is always 200
-            const deliveryFee = 200;
+            // Always delivery, so delivery fee is always 150
+            const deliveryFee = 150;
             const tax = Math.round(subtotal * 0.16); // 16% tax
             const total = subtotal + deliveryFee + tax;
             
@@ -890,7 +890,7 @@
                 // Use item.total if available (includes addons), otherwise calculate
                 return sum + (item.total || (item.price * (item.quantity || 1)));
             }, 0);
-            const deliveryFee = 200;
+            const deliveryFee = 150;
             const tax = Math.round(subtotal * 0.16); // 16% tax
             
             // Get coordinates if available
