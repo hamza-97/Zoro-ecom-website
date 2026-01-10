@@ -401,7 +401,7 @@ async function authenticateAdmin(req, res, next) {
 // Get all orders (for admin)
 app.get('/api/orders', authenticateAdmin, async (req, res) => {
     try {
-        const { status, limit = 100 } = req.query;
+        const { status, limit = 100, startDate, endDate } = req.query;
         const query = status ? { status } : {};
         
         // Filter by branch based on user type (case-insensitive partial match)
@@ -411,6 +411,21 @@ app.get('/api/orders', authenticateAdmin, async (req, res) => {
             query.branch = { $regex: /(jt|johar)/i }; // Case-insensitive match for "JT" or "Johar" anywhere in string
         }
         // super_admin sees all orders (no branch filter)
+        
+        // Add date filtering if provided
+        if (startDate || endDate) {
+            query.createdAt = {};
+            if (startDate) {
+                const start = new Date(startDate);
+                start.setHours(0, 0, 0, 0); // Start of day
+                query.createdAt.$gte = start;
+            }
+            if (endDate) {
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999); // End of day
+                query.createdAt.$lte = end;
+            }
+        }
         
         const orders = await Order.find(query)
             .sort({ createdAt: -1 })

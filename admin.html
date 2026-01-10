@@ -625,8 +625,15 @@
             <div class="orders-section" id="ordersSection">
                 <div class="section-header">
                     <h2>Recent Orders</h2>
-                    <div style="display: flex; gap: 1rem; align-items: center;">
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                         <button class="action-btn btn-update" onclick="openCreateOrderModal()" style="background: #28a745; white-space: nowrap;">📞 Create Call Order</button>
+                        <div style="display: flex; gap: 0.5rem; align-items: center; background: white; padding: 0.5rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <label style="font-size: 0.9rem; color: #666; white-space: nowrap;">From:</label>
+                            <input type="date" id="startDateFilter" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;" onchange="applyDateFilter()">
+                            <label style="font-size: 0.9rem; color: #666; white-space: nowrap; margin-left: 0.5rem;">To:</label>
+                            <input type="date" id="endDateFilter" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;" onchange="applyDateFilter()">
+                            <button class="action-btn btn-update" onclick="clearDateFilter()" style="margin-left: 0.5rem; padding: 0.5rem 1rem; font-size: 0.9rem; white-space: nowrap;">Clear</button>
+                        </div>
                         <div class="filter-tabs">
                             <button class="filter-tab active" data-status="all">All</button>
                             <button class="filter-tab" data-status="ordered">Ordered</button>
@@ -1570,12 +1577,53 @@
         // Store current orders data for comparison
         let currentOrdersData = new Map(); // Map of orderId -> order data
         
+        // Helper function to format date and time nicely
+        function formatDateTime(dateString) {
+            try {
+                const date = new Date(dateString);
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const orderDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                
+                // Format time
+                const hours = date.getHours();
+                const minutes = date.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                const displayHours = hours % 12 || 12;
+                const displayMinutes = minutes.toString().padStart(2, '0');
+                const timeStr = `${displayHours}:${displayMinutes} ${ampm}`;
+                
+                // Format date
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const day = date.getDate();
+                const month = monthNames[date.getMonth()];
+                const year = date.getFullYear();
+                
+                // Check if it's today
+                if (orderDate.getTime() === today.getTime()) {
+                    return `<strong>Today</strong><br><small style="color: #666;">${timeStr}</small>`;
+                }
+                
+                // Check if it's yesterday
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                if (orderDate.getTime() === yesterday.getTime()) {
+                    return `<strong>Yesterday</strong><br><small style="color: #666;">${timeStr}</small>`;
+                }
+                
+                // Otherwise show full date
+                return `<strong>${day} ${month} ${year}</strong><br><small style="color: #666;">${timeStr}</small>`;
+            } catch (err) {
+                return new Date(dateString).toLocaleString();
+            }
+        }
+        
         // Helper function to render order row HTML
         function renderOrderRow(order) {
             try {
                 const items = Array.isArray(order.items) ? order.items : (typeof order.items === 'string' ? JSON.parse(order.items) : []);
                 const itemCount = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
-                const date = new Date(order.createdAt || order.created_at || order.date).toLocaleString();
+                const dateTime = formatDateTime(order.createdAt || order.created_at || order.date);
                 const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
                 const status = order.status || 'ordered';
                 const paymentStatus = order.payment_status || 'pending';
@@ -1593,7 +1641,7 @@
                         <td>${itemCount} item(s)</td>
                         <td><strong>Rs ${parseFloat(order.total || 0).toLocaleString()}</strong></td>
                         <td><span class="status-badge status-${status}">${formatStatus(status)}</span></td>
-                        <td><small>${date}</small></td>
+                        <td>${dateTime}</td>
                         <td>
                             <button class="action-btn btn-view" onclick="window.location.href='/order-detail?id=${safeOrderId}'" style="margin-right: 0.5rem;">View</button>
                             <button class="action-btn btn-update" onclick="openUpdateModal('${safeOrderId}', '${safeStatus}', '${safePaymentStatus}')">Update</button>
@@ -1659,7 +1707,24 @@
                 
                 console.log('Loading orders with user:', currentUser);
                 
-                const url = status === 'all' ? `${API_URL}/orders` : `${API_URL}/orders?status=${status}`;
+                // Build URL with status and date filters
+                const params = new URLSearchParams();
+                if (status !== 'all') {
+                    params.append('status', status);
+                }
+                
+                // Add date filters if they exist
+                const startDate = document.getElementById('startDateFilter')?.value;
+                const endDate = document.getElementById('endDateFilter')?.value;
+                if (startDate) {
+                    params.append('startDate', startDate);
+                }
+                if (endDate) {
+                    params.append('endDate', endDate);
+                }
+                
+                const queryString = params.toString();
+                const url = queryString ? `${API_URL}/orders?${queryString}` : `${API_URL}/orders`;
                 console.log('Fetching orders from:', url);
                 
                 const authHeaders = getAuthHeaders();
@@ -1913,6 +1978,31 @@
                 loadOrders(currentFilter, true);
             });
         });
+        
+        // Date filter functions
+        function applyDateFilter() {
+            const startDate = document.getElementById('startDateFilter')?.value;
+            const endDate = document.getElementById('endDateFilter')?.value;
+            
+            // Validate dates
+            if (startDate && endDate && startDate > endDate) {
+                alert('Start date cannot be after end date!');
+                document.getElementById('endDateFilter').value = '';
+                return;
+            }
+            
+            // Reset current orders data when filter changes
+            currentOrdersData.clear();
+            loadOrders(currentFilter, true);
+        }
+        
+        function clearDateFilter() {
+            document.getElementById('startDateFilter').value = '';
+            document.getElementById('endDateFilter').value = '';
+            // Reset current orders data when filter changes
+            currentOrdersData.clear();
+            loadOrders(currentFilter, true);
+        }
 
         // Update order status
         function openUpdateModal(orderId, status, paymentStatus) {
