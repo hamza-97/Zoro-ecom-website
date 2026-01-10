@@ -80,7 +80,7 @@ const products = [
         id: 10,
         name: 'Swiss Mushroom',
         category: 'beef-speciality',
-        price: 1295,
+        price: 1295,  // Base price for Single (before discount)
         image: 'ZoroImages/SwissMushroom.png',
         description: 'Swiss Mushroom Sauce, Cheese, Mayo'
     },
@@ -114,7 +114,7 @@ const products = [
         id: 14,
         name: 'Roost',
         category: 'chicken-burgers',
-        price: 895,
+        price: 995,  // Updated base price (before discount)
         image: 'ZoroImages/Roost.png',
         description: 'Breast Fillet, Cheese, Lettuce, Tomatoes, Zesty Chick Sauce'
     },
@@ -388,13 +388,13 @@ const products = [
         description: 'Pure bottled water'
     },
     
-    // BEEF SMASHER MEALS (19% off, target discounted: 1195)
-    // Original = 1195 / 0.81 = 1475
+    // BEEF SMASHER MEALS (19.8% off, target discounted: 1195)
+    // Original price: 1490, discounted: 1195
     {
         id: 47,
         name: 'Classic American Meal',
         category: 'beef-smasher-meals',
-        price: 1475,
+        price: 1490,
         image: 'ZoroImages/ZoroMeals/BEEF/AmericanCombo.png',
         description: 'Classic American Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -403,7 +403,7 @@ const products = [
         id: 48,
         name: 'Onion Melt Meal',
         category: 'beef-smasher-meals',
-        price: 1475,
+        price: 1490,
         image: 'ZoroImages/ZoroMeals/BEEF/OnionMeltCombo.png',
         description: 'Classic Onion Melt (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -412,7 +412,7 @@ const products = [
         id: 49,
         name: 'Frankie Meal',
         category: 'beef-smasher-meals',
-        price: 1475,
+        price: 1490,
         image: 'ZoroImages/ZoroMeals/BEEF/FrankieCombo.png',
         description: 'Frankie Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -421,14 +421,14 @@ const products = [
         id: 50,
         name: 'Big Ben Meal',
         category: 'beef-smasher-meals',
-        price: 1475,
+        price: 1490,
         image: 'ZoroImages/ZoroMeals/BEEF/BigBenCombo.png',
         description: 'Classic Big Ben (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     
-    // BEEF SPECIALTY MEALS (18% off, target discounted: 1295)
-    // Original = 1295 / 0.82 = 1590
+    // BEEF SPECIALTY MEALS (18.55% off, target discounted: 1295)
+    // Original price: 1590, discounted: 1295
     {
         id: 51,
         name: 'Truffle Meal',
@@ -475,8 +475,8 @@ const products = [
         isCombo: true
     },
     
-    // CHICKEN SPECIALTY MEALS (18% off, target discounted: 1295)
-    // Original = 1295 / 0.82 = 1590
+    // CHICKEN SPECIALTY MEALS (18.55% off, target discounted: 1295)
+    // Original price: 1590, discounted: 1295
     {
         id: 56,
         name: 'Hellfire Meal',
@@ -505,8 +505,8 @@ const products = [
         isCombo: true
     },
     
-    // SIGNATURE CHICKEN MEALS (19% off, target discounted: 1195)
-    // Original = 1195 / 0.81 = 1475
+    // SIGNATURE CHICKEN MEALS (19.8% off, target discounted: 1195)
+    // Original price: 1490, discounted: 1195
     {
         id: 59,
         name: 'Classic Chicken Meal',
@@ -604,11 +604,11 @@ const APPLY_DISCOUNTS = true;
 // Discount rates by category
 const discountRates = {
     'beef-smashers': 0.19,           // 19% off
-    'beef-smasher-meals': 0.19,      // 19% off
+    'beef-smasher-meals': 0.1980,    // 19.8% off (1490 → 1195)
     'beef-speciality': 0.18,         // 18% off
-    'beef-specialty-meals': 0.18,    // 18% off
-    'chicken-specialty-meals': 0.18, // 18% off
-    'signature-chicken-meals': 0.19, // 19% off
+    'beef-specialty-meals': 0.1855,  // 18.55% off (1590 → 1295)
+    'chicken-specialty-meals': 0.1855, // 18.55% off (1590 → 1295)
+    'signature-chicken-meals': 0.1980, // 19.8% off (1490 → 1195)
     // All other categories: 20% off (default)
 };
 
@@ -1117,13 +1117,42 @@ function showProductModal(product) {
     // Calculate discounted price for base product
     const basePricing = getDiscountedPrice(product);
     
-    // Calculate size options - for burgers use Single/Double/Triple pricing, for wings use 6/12 pieces, for chicken crunchers use 6/12/18 pieces
+    // Calculate size options - for burgers use Single/Double/Triple pricing, for wings use 6/12 pieces, for chicken crunchers use 6/12/18 pieces, for shakes use Regular/Large
     const isWings = product.category === 'wings';
     const isChickenCrunchers = product.id === 26; // Chicken Crunchers has id 26
-    const isBurger = !isWings && !isChickenCrunchers && product.category && (product.category.includes('beef') || product.category.includes('chicken'));
+    const isShakes = product.category === 'premium-shakes';
+    const isBurger = !isWings && !isChickenCrunchers && !isShakes && product.category && (product.category.includes('beef') || product.category.includes('chicken'));
     let sizes;
     
-    if (isWings) {
+    if (isShakes) {
+        // Premium Shakes: Regular and Large sizes
+        // Pricing rules:
+        // - If regular is 695, large is 995
+        // - If regular is 795, large is 1095
+        // - If regular is 895, large is 1195
+        // - If regular is 1095, large is 1395
+        const regularPrice = product.price;
+        let largePrice;
+        
+        if (regularPrice === 695) {
+            largePrice = 995;
+        } else if (regularPrice === 795) {
+            largePrice = 1095;
+        } else if (regularPrice === 895) {
+            largePrice = 1195;
+        } else if (regularPrice === 1095) {
+            largePrice = 1395;
+        } else {
+            // Fallback calculation if price doesn't match
+            largePrice = regularPrice + 300;
+        }
+        
+        const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
+        sizes = [
+            { name: 'Regular', originalPrice: regularPrice, price: APPLY_DISCOUNTS ? Math.round(regularPrice * (1 - discountRate)) : regularPrice },
+            { name: 'Large', originalPrice: largePrice, price: APPLY_DISCOUNTS ? Math.round(largePrice * (1 - discountRate)) : largePrice }
+        ];
+    } else if (isWings) {
         // Wings: 6 pieces or 12 pieces (price will be calculated dynamically based on bone-in/boneless selection)
         // Apply discount to base wing prices
         const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
@@ -1143,12 +1172,20 @@ function showProductModal(product) {
         // Use exact prices based on category
         // Beef Smashers: Single 895, Double 1295, Triple 1695
         // Beef Speciality: Single 995, Double 1395, Triple 1795
-        // Classic Chicken: Single 695, Double 1195, No Triple
+        // Swiss Mushroom (id 10): Single 1295, Double 1695, Triple 2095
+        // Classic Chicken (id 11): Single 695, Double 1195, No Triple
+        // Pepper Chicken (id 12): Single 895, Double 1295, No Triple
+        // Tangy Crunch (id 13): Single 895, Double 1295, No Triple
+        // Roost (id 14): Single 995, Double 1295, No Triple
         // Other Chicken Burgers: Single 995, Double 1395, No Triple
         const isBeefSmashers = product.category === 'beef-smashers';
         const isBeefSpeciality = product.category === 'beef-speciality';
         const isChickenBurgers = product.category === 'chicken-burgers';
+        const isSwissMushroom = product.id === 10; // Swiss Mushroom has id 10
         const isClassicChicken = product.id === 11; // Classic Chicken has id 11
+        const isPepperChicken = product.id === 12; // Pepper Chicken has id 12
+        const isTangyCrunch = product.id === 13; // Tangy Crunch has id 13
+        const isRoost = product.id === 14; // Roost has id 14
         
         let singleOriginal, doubleOriginal, tripleOriginal;
         let hasTriple = true;
@@ -1158,15 +1195,39 @@ function showProductModal(product) {
             doubleOriginal = 1295;
             tripleOriginal = 1695;
         } else if (isBeefSpeciality) {
-            singleOriginal = 995;
-            doubleOriginal = 1395;
-            tripleOriginal = 1795;
+            if (isSwissMushroom) {
+                // Swiss Mushroom has different pricing (original prices before discount)
+                singleOriginal = 1295;  // Original price, discount will be applied on top
+                doubleOriginal = 1695;  // Original price, discount will be applied on top
+                tripleOriginal = 2095;  // Original price, discount will be applied on top
+            } else {
+                // Other Beef Speciality burgers
+                singleOriginal = 995;
+                doubleOriginal = 1395;
+                tripleOriginal = 1795;
+            }
         } else if (isChickenBurgers) {
             if (isClassicChicken) {
                 singleOriginal = 695;
                 doubleOriginal = 1195;
                 hasTriple = false;
+            } else if (isPepperChicken) {
+                // Pepper Chicken: Single 895, Double 1295
+                singleOriginal = 895;
+                doubleOriginal = 1295;
+                hasTriple = false;
+            } else if (isTangyCrunch) {
+                // Tangy Crunch: Single 895, Double 1295
+                singleOriginal = 895;
+                doubleOriginal = 1295;
+                hasTriple = false;
+            } else if (isRoost) {
+                // Roost: Single 995, Double 1295
+                singleOriginal = 995;
+                doubleOriginal = 1295;
+                hasTriple = false;
             } else {
+                // Other Chicken Burgers
                 singleOriginal = 995;
                 doubleOriginal = 1395;
                 hasTriple = false;
