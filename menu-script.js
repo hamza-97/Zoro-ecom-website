@@ -146,17 +146,18 @@ const products = [
     // WINGS
     {
         id: 18,
-        name: 'Carolina Reaper Wings',
+        name: 'Carolina Reaper',
         category: 'wings',
-        price: 895,
+        price: 895, // Base price for 6 pieces bone-in
         image: 'ZoroImages/CarolinaReaperWings.png',
-        description: 'Extremely spicy wings with Carolina Reaper sauce'
+        description: 'Extremely spicy wings with Carolina Reaper sauce',
+        isSpicy: true
     },
     {
         id: 19,
         name: 'Korean BBQ',
         category: 'wings',
-        price: 895,
+        price: 895, // Base price for 6 pieces bone-in
         image: 'ZoroImages/KoreanBbqWings.png',
         description: 'Crispy Chicken Wings glazed in Korean BBQ Sauce'
     },
@@ -164,7 +165,7 @@ const products = [
         id: 20,
         name: 'Buffalo',
         category: 'wings',
-        price: 895,
+        price: 895, // Base price for 6 pieces bone-in
         image: 'ZoroImages/BuffaloWings.png',
         description: 'Crispy Chicken Wings tossed in Tangy Buffalo Hot Sauce'
     },
@@ -172,7 +173,7 @@ const products = [
         id: 21,
         name: 'Thai',
         category: 'wings',
-        price: 895,
+        price: 895, // Base price for 6 pieces bone-in
         image: 'ZoroImages/ThaiWings.png',
         description: 'Chicken Wings coated in a flavorful blend of Thai Sweet and Spicy Sauce'
     },
@@ -208,7 +209,7 @@ const products = [
         category: 'loaded-fries',
         price: 1295,
         image: 'ZoroImages/PhillyCheeseLoadedFries.png',
-        description: 'Beef, Grilled Onions, Melted Cheese'
+        description: 'Beef, Grilled Onions, Garlic Aioli, Melted Cheese'
     },
     
     // APPETIZERS
@@ -427,12 +428,12 @@ const products = [
     },
     
     // BEEF SPECIALTY MEALS (18% off, target discounted: 1295)
-    // Original = 1295 / 0.82 = 1579
+    // Original = 1295 / 0.82 = 1590
     {
         id: 51,
         name: 'Truffle Meal',
         category: 'beef-specialty-meals',
-        price: 1579,
+        price: 1590,
         image: 'ZoroImages/ZoroMeals/BEEF/TruffleCombo.png',
         description: 'Truffle Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -441,7 +442,7 @@ const products = [
         id: 52,
         name: 'Bangkok Meal',
         category: 'beef-specialty-meals',
-        price: 1579,
+        price: 1590,
         image: 'ZoroImages/ZoroMeals/BEEF/BangkokCombo.png',
         description: 'Bangkok Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -450,7 +451,7 @@ const products = [
         id: 53,
         name: 'BLT Meal',
         category: 'beef-specialty-meals',
-        price: 1579,
+        price: 1590,
         image: 'ZoroImages/ZoroMeals/BEEF/BltClassicCombo.png',
         description: 'BLT Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -459,7 +460,7 @@ const products = [
         id: 54,
         name: 'Tokyo Beef Meal',
         category: 'beef-specialty-meals',
-        price: 1579,
+        price: 1590,
         image: 'ZoroImages/ZoroMeals/BEEF/TokyoCombo.png',
         description: 'Tokyo Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -468,19 +469,19 @@ const products = [
         id: 55,
         name: 'Texas BLT Meal',
         category: 'beef-specialty-meals',
-        price: 1579,
+        price: 1590,
         image: 'ZoroImages/ZoroMeals/BEEF/BltTexasCombo.png',
         description: 'Texas BLT Beef (Single Patty Burger) with Fries & Coke',
         isCombo: true
     },
     
     // CHICKEN SPECIALTY MEALS (18% off, target discounted: 1295)
-    // Original = 1295 / 0.82 = 1579
+    // Original = 1295 / 0.82 = 1590
     {
         id: 56,
         name: 'Hellfire Meal',
         category: 'chicken-specialty-meals',
-        price: 1579,
+        price: 1590,
         image: 'ZoroImages/ZoroMeals/CHICKEN/HellfireCombo.png',
         description: 'Hellfire Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -489,7 +490,7 @@ const products = [
         id: 57,
         name: 'Asian Fusion Meal',
         category: 'chicken-specialty-meals',
-        price: 1579,
+        price: 1590,
         image: 'ZoroImages/ZoroMeals/CHICKEN/AsianFusionCombo.png',
         description: 'Asian Fusion Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -498,7 +499,7 @@ const products = [
         id: 58,
         name: 'The Mexicana Meal',
         category: 'chicken-specialty-meals',
-        price: 1579,
+        price: 1590,
         image: 'ZoroImages/ZoroMeals/CHICKEN/MexicanaCombo.png',
         description: 'Mexicana Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -510,7 +511,7 @@ const products = [
         id: 59,
         name: 'Classic Chicken Meal',
         category: 'signature-chicken-meals',
-        price: 1475,
+        price: 1490,
         image: 'ZoroImages/ZoroMeals/CHICKEN/ClassicChickenCombo.png',
         description: 'Classic Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -519,7 +520,7 @@ const products = [
         id: 60,
         name: 'Pepper Chicken Meal',
         category: 'signature-chicken-meals',
-        price: 1475,
+        price: 1490,
         image: 'ZoroImages/ZoroMeals/CHICKEN/PepperChickenCombo.png',
         description: 'Pepper Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -528,7 +529,7 @@ const products = [
         id: 61,
         name: 'Roost Meal',
         category: 'signature-chicken-meals',
-        price: 1475,
+        price: 1490,
         image: 'ZoroImages/ZoroMeals/CHICKEN/RoostCombo.png',
         description: 'Roost Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -537,7 +538,7 @@ const products = [
         id: 62,
         name: 'Tangy Crunch Meal',
         category: 'signature-chicken-meals',
-        price: 1475,
+        price: 1490,
         image: 'ZoroImages/ZoroMeals/CHICKEN/TangyCrunchCombo.png',
         description: 'Tangy Crunch Chicken (Single Patty Burger) with Fries & Coke',
         isCombo: true
@@ -801,7 +802,10 @@ function createProductCard(product) {
             <img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/300x250?text=${encodeURIComponent(product.name)}'">
         </div>
         <div class="product-info">
-            <h3 class="product-name">${product.name}</h3>
+            <h3 class="product-name">
+                ${product.name}
+                ${product.isSpicy ? '<span class="spicy-indicator" title="Very Spicy">🌶️🌶️🌶️</span>' : ''}
+            </h3>
             <p class="product-description">${product.description}</p>
             <div class="product-footer">
                 <div class="product-price-container">
@@ -828,7 +832,12 @@ function createProductCard(product) {
             // If it's a combo, add directly to cart without showing modal
             if (productToAdd.isCombo) {
                 addComboToCart(productToAdd);
-            } else {
+            } 
+            // If it's a dessert, add directly to cart without showing modal (no size/addon options)
+            else if (productToAdd.category === 'desserts') {
+                addDessertToCart(productToAdd);
+            } 
+            else {
                 showProductModal(productToAdd);
             }
         }
@@ -905,6 +914,37 @@ function addComboToCart(product) {
     showCartNotification('Meal added to cart!');
 }
 
+// Add Dessert to Cart (directly adds without modal or options)
+function addDessertToCart(product) {
+    if (!product || product.category !== 'desserts') return;
+    
+    // Calculate discounted price
+    const pricing = getDiscountedPrice(product);
+    
+    // Create a simple key for desserts
+    const itemKey = `${product.id}-dessert`;
+    const existingItemIndex = cart.findIndex(item => item.key === itemKey || (item.id === product.id && item.category === 'desserts' && !item.size && !item.addons));
+    
+    if (existingItemIndex !== -1) {
+        const existingItem = cart[existingItemIndex];
+        existingItem.quantity += 1;
+        existingItem.total = pricing.discounted * existingItem.quantity;
+    } else {
+        cart.push({
+            ...product,
+            price: pricing.discounted, // Use discounted price for cart
+            originalPrice: pricing.original, // Store original price
+            quantity: 1,
+            key: itemKey,
+            total: pricing.discounted
+        });
+    }
+    
+    saveCart();
+    updateCartUI();
+    showCartNotification('Item added to cart!');
+}
+
 // Remove from Cart (by item key or index)
 function removeFromCart(itemKey) {
     // If itemKey is a number, treat it as index
@@ -957,13 +997,20 @@ function updateCartUI() {
             
             // Build details content
             const hasSize = item.size && item.size !== 'default';
+            const hasWingType = item.wingType;
             const hasAddons = item.addons && item.addons.length > 0;
-            const hasDetails = hasSize || hasAddons;
+            const hasDetails = hasSize || hasWingType || hasAddons;
             
             // Size detail - show per item (always 1x since each item has one size)
             const sizeDetail = hasSize ? `
-                <div class="cart-detail-label">Choose Size:</div>
-                <div class="cart-detail-value">1x ${item.size}</div>
+                <div class="cart-detail-label">Size:</div>
+                <div class="cart-detail-value">${item.size}</div>
+            ` : '';
+            
+            // Wing type detail
+            const wingTypeDetail = hasWingType ? `
+                <div class="cart-detail-label">Type:</div>
+                <div class="cart-detail-value">${item.wingType === 'bone-in' ? 'Bone-in' : 'Boneless'}</div>
             ` : '';
             
             // Addons detail - show per item (always 1x for each addon per item)
@@ -1003,6 +1050,7 @@ function updateCartUI() {
                     ${hasDetails ? `
                     <div class="cart-item-details-content hidden" id="cart-details-${index}">
                         ${sizeDetail}
+                        ${wingTypeDetail}
                         ${addonsDetail}
                     </div>
                     ` : ''}
@@ -1069,24 +1117,82 @@ function showProductModal(product) {
     // Calculate discounted price for base product
     const basePricing = getDiscountedPrice(product);
     
-    // Calculate size options - for burgers use Single/Double/Triple pricing
-    const isBurger = product.category && (product.category.includes('beef') || product.category.includes('chicken'));
+    // Calculate size options - for burgers use Single/Double/Triple pricing, for wings use 6/12 pieces, for chicken crunchers use 6/12/18 pieces
+    const isWings = product.category === 'wings';
+    const isChickenCrunchers = product.id === 26; // Chicken Crunchers has id 26
+    const isBurger = !isWings && !isChickenCrunchers && product.category && (product.category.includes('beef') || product.category.includes('chicken'));
     let sizes;
     
-    if (isBurger) {
-        // Based on the image: Single = base price, Double = ~1.45x, Triple = ~1.9x
-        // Calculate original prices first, then apply discount
-        const singleOriginal = product.price;
-        const doubleOriginal = Math.round(product.price * 1.447);
-        const tripleOriginal = Math.round(product.price * 1.894);
+    if (isWings) {
+        // Wings: 6 pieces or 12 pieces (price will be calculated dynamically based on bone-in/boneless selection)
+        // Apply discount to base wing prices
+        const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
+        sizes = [
+            { name: '6 Pieces', originalPrice: 895, price: APPLY_DISCOUNTS ? Math.round(895 * (1 - discountRate)) : 895 },
+            { name: '12 Pieces', originalPrice: 1495, price: APPLY_DISCOUNTS ? Math.round(1495 * (1 - discountRate)) : 1495 }
+        ];
+    } else if (isChickenCrunchers) {
+        // Chicken Crunchers: 6, 12, or 18 pieces - apply discount
+        const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
+        sizes = [
+            { name: '6 Pieces', originalPrice: 595, price: APPLY_DISCOUNTS ? Math.round(595 * (1 - discountRate)) : 595 },
+            { name: '12 Pieces', originalPrice: 1195, price: APPLY_DISCOUNTS ? Math.round(1195 * (1 - discountRate)) : 1195 },
+            { name: '18 Pieces', originalPrice: 1795, price: APPLY_DISCOUNTS ? Math.round(1795 * (1 - discountRate)) : 1795 }
+        ];
+    } else if (isBurger) {
+        // Use exact prices based on category
+        // Beef Smashers: Single 895, Double 1295, Triple 1695
+        // Beef Speciality: Single 995, Double 1395, Triple 1795
+        // Classic Chicken: Single 695, Double 1195, No Triple
+        // Other Chicken Burgers: Single 995, Double 1395, No Triple
+        const isBeefSmashers = product.category === 'beef-smashers';
+        const isBeefSpeciality = product.category === 'beef-speciality';
+        const isChickenBurgers = product.category === 'chicken-burgers';
+        const isClassicChicken = product.id === 11; // Classic Chicken has id 11
+        
+        let singleOriginal, doubleOriginal, tripleOriginal;
+        let hasTriple = true;
+        
+        if (isBeefSmashers) {
+            singleOriginal = 895;
+            doubleOriginal = 1295;
+            tripleOriginal = 1695;
+        } else if (isBeefSpeciality) {
+            singleOriginal = 995;
+            doubleOriginal = 1395;
+            tripleOriginal = 1795;
+        } else if (isChickenBurgers) {
+            if (isClassicChicken) {
+                singleOriginal = 695;
+                doubleOriginal = 1195;
+                hasTriple = false;
+            } else {
+                singleOriginal = 995;
+                doubleOriginal = 1395;
+                hasTriple = false;
+            }
+        } else {
+            // Fallback (shouldn't happen)
+            singleOriginal = product.price;
+            doubleOriginal = Math.round(product.price * 1.447);
+            tripleOriginal = Math.round(product.price * 1.894);
+        }
         
         // Apply discount rate to each size if discounts are enabled
         const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
         sizes = [
             { name: 'Single', originalPrice: singleOriginal, price: APPLY_DISCOUNTS ? Math.round(singleOriginal * (1 - discountRate)) : singleOriginal },
-            { name: 'Double', originalPrice: doubleOriginal, price: APPLY_DISCOUNTS ? Math.round(doubleOriginal * (1 - discountRate)) : doubleOriginal },
-            { name: 'Triple', originalPrice: tripleOriginal, price: APPLY_DISCOUNTS ? Math.round(tripleOriginal * (1 - discountRate)) : tripleOriginal }
+            { name: 'Double', originalPrice: doubleOriginal, price: APPLY_DISCOUNTS ? Math.round(doubleOriginal * (1 - discountRate)) : doubleOriginal }
         ];
+        
+        // Add Triple option only if it exists
+        if (hasTriple) {
+            sizes.push({
+                name: 'Triple',
+                originalPrice: tripleOriginal,
+                price: APPLY_DISCOUNTS ? Math.round(tripleOriginal * (1 - discountRate)) : tripleOriginal
+            });
+        }
     } else {
         sizes = [
             { name: 'Regular', originalPrice: product.price, price: basePricing.discounted }
@@ -1094,23 +1200,34 @@ function showProductModal(product) {
     }
     
     // Build size options HTML with original and discounted prices
+    // For wings, don't show price in size options (price is shown separately and updates based on type)
     const sizesHTML = sizes.map((size, index) => {
-        const showDiscount = APPLY_DISCOUNTS && size.originalPrice !== size.price;
+        const showDiscount = APPLY_DISCOUNTS && size.originalPrice !== size.price && !isWings;
         return `
             <div class="size-option ${index === 0 ? 'selected' : ''}" data-size="${size.name}" data-price="${size.price}" data-original-price="${size.originalPrice}">
                 <span class="size-option-name">${size.name}</span>
+                ${!isWings ? `
                 <span class="size-option-price">
                     ${showDiscount ? `<span class="size-price-original">Rs ${size.originalPrice.toLocaleString()}</span>` : ''}
                     <span class="size-price-discounted">Rs ${size.price.toLocaleString()}</span>
                 </span>
+                ` : ''}
             </div>
         `;
     }).join('');
     
+    // Wing type options (Bone-in or Boneless) - only for wings
+    let wingTypes = [];
+    if (isWings) {
+        wingTypes = [
+            { name: 'Bone-in', value: 'bone-in' },
+            { name: 'Boneless', value: 'boneless' }
+        ];
+    }
+    
     // Add-ons for beef and chicken items (not for wings)
     const isBeef = product.category && (product.category === 'beef-smashers' || product.category === 'beef-speciality');
     const isChicken = product.category && product.category === 'chicken-burgers';
-    const isWings = product.category && product.category === 'wings';
     const addons = (isBeef || isChicken) && !isWings ? [
         { name: 'Pickles', price: 80 },
         { name: 'Onions', price: 80 },
@@ -1125,6 +1242,20 @@ function showProductModal(product) {
         { name: 'Nachos', price: 80 },
         { name: 'Jalapenos', price: 80 }
     ] : [];
+    
+    // Build wing types HTML with prices (prices will update dynamically based on size selection)
+    const wingTypesHTML = wingTypes.map((type, index) => {
+        // Default price for 6 pieces bone-in (will update when size changes)
+        const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
+        const defaultOriginalPrice = type.value === 'bone-in' ? 895 : 1095;
+        const defaultPrice = APPLY_DISCOUNTS ? Math.round(defaultOriginalPrice * (1 - discountRate)) : defaultOriginalPrice;
+        return `
+            <div class="size-option wing-type-option ${index === 0 ? 'selected' : ''}" data-type="${type.value}" data-original-price="${defaultOriginalPrice}" data-price="${defaultPrice}">
+                <span class="size-option-name">${type.name}</span>
+                <span class="size-option-price wing-type-price" id="wing-price-${type.value}">Rs ${defaultPrice.toLocaleString()}</span>
+            </div>
+        `;
+    }).join('');
     
     // Build add-ons HTML
     const addonsHTML = addons.map(addon => `
@@ -1141,14 +1272,17 @@ function showProductModal(product) {
         <div class="modal-options">
             <div class="modal-options-header">
                 ${categoryName ? `<div class="modal-category">${categoryName}</div>` : ''}
-                <h2 class="modal-product-name">${product.name}</h2>
+                <h2 class="modal-product-name">
+                    ${product.name}
+                    ${product.isSpicy ? '<span class="spicy-indicator" title="Very Spicy" style="margin-left: 0.5rem;">🌶️🌶️🌶️</span>' : ''}
+                </h2>
                 <p class="modal-product-description">${product.description}</p>
             </div>
             
             ${sizes.length > 0 ? `
             <div class="modal-section">
                 <div class="modal-section-header">
-                    <div class="modal-section-title">Choose Size</div>
+                    <div class="modal-section-title">Pick Size</div>
                     <div class="modal-section-required">Required</div>
                 </div>
                 <div class="size-options">
@@ -1157,7 +1291,19 @@ function showProductModal(product) {
             </div>
             ` : ''}
             
-            ${addons.length > 0 ? `
+            ${isWings && wingTypes.length > 0 ? `
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Choose Type</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="size-options">
+                    ${wingTypesHTML}
+                </div>
+            </div>
+            ` : ''}
+            
+            ${!isWings && addons && addons.length > 0 ? `
             <div class="modal-section">
                 <div class="modal-section-header">
                     <div class="modal-section-title">Add Ons</div>
@@ -1168,6 +1314,7 @@ function showProductModal(product) {
                 </div>
             </div>
             ` : ''}
+            
             
             <div class="quantity-controls">
                 <div class="quantity-selector">
@@ -1185,13 +1332,84 @@ function showProductModal(product) {
         </div>
     `;
     
+    // Update wing price function - define it before event listeners if it's a wing product
+    if (isWings) {
+        window.updateWingPrice = function() {
+            const selectedSize = document.querySelector('.size-option:not(.wing-type-option).selected');
+            const wingTypeOptions = document.querySelectorAll('.wing-type-option');
+            
+            if (selectedSize && wingTypeOptions.length > 0) {
+                const sizeName = selectedSize.dataset.size;
+                const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
+                
+                // Update prices for each wing type option based on selected size
+                wingTypeOptions.forEach(option => {
+                    const typeValue = option.dataset.type;
+                    let originalPrice = 0;
+                    
+                    // Pricing structure (original prices):
+                    // 6 pieces: bone-in = 895, boneless = 1095
+                    // 12 pieces: bone-in = 1495, boneless = 1995
+                    if (sizeName === '6 Pieces') {
+                        originalPrice = typeValue === 'bone-in' ? 895 : 1095;
+                    } else if (sizeName === '12 Pieces') {
+                        originalPrice = typeValue === 'bone-in' ? 1495 : 1995;
+                    }
+                    
+                    // Apply discount
+                    const discountedPrice = APPLY_DISCOUNTS ? Math.round(originalPrice * (1 - discountRate)) : originalPrice;
+                    
+                    // Update the price display for this type option
+                    const priceElement = option.querySelector('.wing-type-price');
+                    if (priceElement) {
+                        priceElement.textContent = `Rs ${discountedPrice.toLocaleString()}`;
+                    }
+                    
+                    // Update data attributes for cart processing when this type is selected
+                    if (option.classList.contains('selected')) {
+                        if (selectedSize) {
+                            selectedSize.dataset.price = discountedPrice;
+                            selectedSize.dataset.originalPrice = originalPrice;
+                        }
+                    }
+                    
+                    // Store original and discounted prices in the option element for later use
+                    option.dataset.originalPrice = originalPrice;
+                    option.dataset.price = discountedPrice;
+                });
+            }
+        };
+    }
+    
     // Add event listeners for size selection
-    document.querySelectorAll('.size-option').forEach(option => {
+    document.querySelectorAll('.size-option:not(.wing-type-option)').forEach(option => {
         option.addEventListener('click', function() {
-            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('selected'));
+            // Only deselect other size options (not wing type options)
+            document.querySelectorAll('.size-option:not(.wing-type-option)').forEach(opt => opt.classList.remove('selected'));
             this.classList.add('selected');
+            
+            // Update wing price if this is a wing product
+            if (isWings && window.updateWingPrice) {
+                window.updateWingPrice();
+            }
         });
     });
+    
+    // Add event listeners for wing type selection
+    if (isWings) {
+        document.querySelectorAll('.wing-type-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.wing-type-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                // Update the selected size's price data attributes based on selected type
+                const selectedSize = document.querySelector('.size-option:not(.wing-type-option).selected');
+                if (selectedSize && window.updateWingPrice) {
+                    window.updateWingPrice();
+                }
+            });
+        });
+    }
     
     // Add event listeners for add-ons
     document.querySelectorAll('.addon-option').forEach(option => {
@@ -1199,6 +1417,15 @@ function showProductModal(product) {
             this.classList.toggle('selected');
         });
     });
+    
+    // Set initial price for wings
+    if (isWings) {
+        setTimeout(() => {
+            if (window.updateWingPrice) {
+                window.updateWingPrice();
+            }
+        }, 100);
+    }
     
     // Reset quantity
     window.currentModalQuantity = 1;
@@ -1219,18 +1446,44 @@ function addToCartFromModal(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
     
-    // Get selected size
-    const selectedSize = document.querySelector('.size-option.selected');
+    const isWings = product.category && product.category === 'wings';
+    
+    // Get selected size (for wings, this is the piece count)
+    const selectedSize = document.querySelector('.size-option:not(.wing-type-option).selected');
     if (!selectedSize) {
         alert('Please select a size');
         return;
     }
     
-    const sizeName = selectedSize.dataset.size;
-    const sizePrice = parseInt(selectedSize.dataset.price); // This is already discounted
-    const originalPrice = parseInt(selectedSize.dataset.originalPrice) || sizePrice;
+    let sizeName = selectedSize.dataset.size;
+    let sizePrice = parseInt(selectedSize.dataset.price);
+    let originalPrice = parseInt(selectedSize.dataset.originalPrice) || sizePrice;
+    let wingType = null;
+    let displayName = product.name;
     
-    // Get selected add-ons
+    // For wings, get the selected type (bone-in or boneless) and calculate price
+    if (isWings) {
+        const selectedType = document.querySelector('.wing-type-option.selected');
+        if (!selectedType) {
+            alert('Please select bone-in or boneless');
+            return;
+        }
+        
+        wingType = selectedType.dataset.type;
+        // Get prices from the selected type option (discounts already applied in updateWingPrice)
+        originalPrice = parseInt(selectedType.dataset.originalPrice) || parseInt(selectedSize.dataset.originalPrice);
+        sizePrice = parseInt(selectedType.dataset.price) || parseInt(selectedSize.dataset.price);
+        
+        // Update display name to include type
+        displayName = `${product.name} (${sizeName}, ${wingType === 'bone-in' ? 'Bone-in' : 'Boneless'})`;
+    } else {
+        // For non-wings (burgers, chicken crunchers, etc.), prices are already discounted in size options
+        // Price is already calculated and stored in the size option's data attributes
+        sizePrice = parseInt(selectedSize.dataset.price);
+        originalPrice = parseInt(selectedSize.dataset.originalPrice) || sizePrice;
+    }
+    
+    // Get selected add-ons (not applicable for wings)
     const selectedAddons = Array.from(document.querySelectorAll('.addon-option.selected')).map(addon => ({
         name: addon.dataset.addon,
         price: parseInt(addon.dataset.price)
@@ -1242,12 +1495,23 @@ function addToCartFromModal(productId) {
     const itemTotal = (sizePrice + addonsTotal) * quantity;
     
     // Create cart item with unique key for variations
-    const itemKey = `${product.id}-${sizeName}-${selectedAddons.map(a => a.name).join(',')}`;
+    // For wings, include type in the key
+    const itemKey = isWings 
+        ? `${product.id}-${sizeName}-${wingType}`
+        : `${product.id}-${sizeName}-${selectedAddons.map(a => a.name).join(',')}`;
     
     // Check if this exact item already exists in cart
     const existingItemIndex = cart.findIndex(item => {
-        const itemKeyToCompare = `${item.id}-${item.size || 'default'}-${(item.addons || []).map(a => a.name).join(',')}`;
-        return itemKeyToCompare === itemKey;
+        if (isWings) {
+            return item.key === itemKey || (
+                item.id === product.id && 
+                item.size === sizeName && 
+                item.wingType === wingType
+            );
+        } else {
+            const itemKeyToCompare = `${item.id}-${item.size || 'default'}-${(item.addons || []).map(a => a.name).join(',')}`;
+            return itemKeyToCompare === itemKey;
+        }
     });
     
     if (existingItemIndex !== -1) {
@@ -1256,18 +1520,25 @@ function addToCartFromModal(productId) {
         cart[existingItemIndex].total = cart[existingItemIndex].quantity * (cart[existingItemIndex].price + (cart[existingItemIndex].addons || []).reduce((sum, a) => sum + a.price, 0));
     } else {
         // Add new item
-        cart.push({
+        const cartItem = {
             id: product.id,
-            name: product.name,
+            name: displayName,
             image: product.image,
-            price: sizePrice, // Store discounted price
-            originalPrice: originalPrice, // Store original price
+            price: sizePrice,
+            originalPrice: originalPrice,
             quantity: quantity,
             size: sizeName,
             addons: selectedAddons,
             total: itemTotal,
             key: itemKey
-        });
+        };
+        
+        // Add wing type if applicable
+        if (isWings && wingType) {
+            cartItem.wingType = wingType;
+        }
+        
+        cart.push(cartItem);
     }
     
     saveCart();

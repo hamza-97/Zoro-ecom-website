@@ -1265,8 +1265,8 @@
         function startEdit(fieldId) {
             if (currentOrder.status === 'confirmed' || currentOrder.status === 'awaiting_rider' || 
                 currentOrder.status === 'in_kitchen' || currentOrder.status === 'rider_on_way' || 
-                currentOrder.status === 'delivered') {
-                alert('This order cannot be edited because it has already been confirmed or is in progress.');
+                currentOrder.status === 'delivered' || currentOrder.status === 'cancelled') {
+                alert('This order cannot be edited because it has already been confirmed, is in progress, delivered, or cancelled.');
                 return;
             }
 
@@ -1412,8 +1412,8 @@
         function deleteItem(index) {
             if (currentOrder.status === 'confirmed' || currentOrder.status === 'awaiting_rider' || 
                 currentOrder.status === 'in_kitchen' || currentOrder.status === 'rider_on_way' || 
-                currentOrder.status === 'delivered') {
-                alert('This order cannot be edited because it has already been confirmed or is in progress.');
+                currentOrder.status === 'delivered' || currentOrder.status === 'cancelled') {
+                alert('This order cannot be edited because it has already been confirmed, is in progress, delivered, or cancelled.');
                 toggleItemMenu(index);
                 return;
             }
@@ -1458,8 +1458,8 @@
         window.openAddItemModal = async function openAddItemModal() {
             if (currentOrder.status === 'confirmed' || currentOrder.status === 'awaiting_rider' || 
                 currentOrder.status === 'in_kitchen' || currentOrder.status === 'rider_on_way' || 
-                currentOrder.status === 'delivered') {
-                alert('This order cannot be edited because it has already been confirmed or is in progress.');
+                currentOrder.status === 'delivered' || currentOrder.status === 'cancelled') {
+                alert('This order cannot be edited because it has already been confirmed, is in progress, delivered, or cancelled.');
                 return;
             }
 
