@@ -1223,7 +1223,7 @@ function showProductModal(product) {
                 hasTriple = false;
             } else if (isRoost) {
                 // Roost: Single 995, Double 1295
-                singleOriginal = 995;
+                singleOriginal = 895;
                 doubleOriginal = 1295;
                 hasTriple = false;
             } else {
