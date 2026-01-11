@@ -602,10 +602,10 @@ const categoryOrder = [
 const APPLY_DISCOUNTS = true;
 
 // Discount rates by category
+// Only combo meals have custom discount rates
+// All other items (beef-smashers, beef-speciality, chicken-burgers, wings, loaded-fries, appetizers, desserts, premium-shakes, soft-drinks) get 20% off (default)
 const discountRates = {
-    'beef-smashers': 0.19,           // 19% off
     'beef-smasher-meals': 0.1980,    // 19.8% off (1490 → 1195)
-    'beef-speciality': 0.18,         // 18% off
     'beef-specialty-meals': 0.1855,  // 18.55% off (1590 → 1295)
     'chicken-specialty-meals': 0.1855, // 18.55% off (1590 → 1295)
     'signature-chicken-meals': 0.1980, // 19.8% off (1490 → 1195)
