@@ -43,7 +43,7 @@ const riderSchema = new mongoose.Schema({
     location: {
         type: String,
         required: true,
-        enum: ['gulberg', 'jt'],
+        enum: ['gulberg', 'jt', 'islamabad'],
         default: 'gulberg'
     },
     push_subscriptions: [{

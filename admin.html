@@ -1198,6 +1198,7 @@
                             <option value="">Select Branch</option>
                             <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
                             <option value="Johar Town, Lahore">Johar Town, Lahore</option>
+                            <option value="Islamabad">Islamabad</option>
                         </select>
                     </div>
                 </div>
@@ -1210,6 +1211,7 @@
                         <label>Order Type *</label>
                         <select id="createOrderType" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                             <option value="delivery">Delivery</option>
+                            <option value="pickup">Pickup</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1289,6 +1291,7 @@
                             <option value="">Select Branch</option>
                             <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
                             <option value="Johar Town, Lahore">Johar Town, Lahore</option>
+                            <option value="Islamabad">Islamabad</option>
                         </select>
                     </div>
                 </div>
@@ -1393,6 +1396,7 @@
                     <select id="userType" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                         <option value="gulberg">Gulberg User</option>
                         <option value="jt">JT User</option>
+                        <option value="islamabad">Islamabad User</option>
                         <option value="super_admin">Super Admin</option>
                     </select>
                 </div>
@@ -1600,6 +1604,7 @@
                 const userTypeLabel = {
                     'gulberg': 'Gulberg Admin',
                     'jt': 'JT Admin',
+                    'islamabad': 'Islamabad Admin',
                     'super_admin': 'Super Admin'
                 };
                 document.getElementById('userInfo').textContent = 
@@ -1618,8 +1623,8 @@
             menuItems.forEach(item => {
                 const section = item.dataset.section;
                 
-                // Gulberg and JT users only see Orders tab
-                if (currentUser.user_type === 'gulberg' || currentUser.user_type === 'jt') {
+                // Gulberg, JT, and Islamabad users only see Orders tab
+                if (currentUser.user_type === 'gulberg' || currentUser.user_type === 'jt' || currentUser.user_type === 'islamabad') {
                     if (section !== 'orders') {
                         item.style.display = 'none';
                     } else {
@@ -2175,6 +2180,9 @@
                                 } else if (userType === 'jt') {
                                     // JT users only get JT/Johar orders
                                     shouldNotify = orderBranch.includes('johar') || orderBranch.includes('jt');
+                                } else if (userType === 'islamabad') {
+                                    // Islamabad users only get Islamabad orders
+                                    shouldNotify = orderBranch.includes('islamabad');
                                 }
                                 
                                 if (shouldNotify) {
@@ -2776,6 +2784,8 @@
                     branchSelect.value = 'Gulberg II, Lahore';
                 } else if (userType === 'jt') {
                     branchSelect.value = 'Johar Town, Lahore';
+                } else if (userType === 'islamabad') {
+                    branchSelect.value = 'Islamabad';
                 }
             }
             
@@ -3240,12 +3250,16 @@ Debug info:
                 // Combo meals don't have addon options
                 const isCombo = product.isCombo || false;
                 
-                if (!isCombo) {
-                    const category = product.category || '';
+                // Wings don't have add-ons - explicitly check for wings category
+                const category = product.category || '';
+                const isWingsCategory = category === 'wings';
+                
+                if (!isCombo && !isWingsCategory) {
                     const isBeef = category === 'beef-smashers' || category === 'beef-speciality';
                     const isChicken = category === 'chicken-burgers';
                     
-                    if ((isBeef || isChicken) && !isWings) {
+                    // Only show add-ons for beef and chicken burgers (not wings)
+                    if (isBeef || isChicken) {
                         addons = [
                             { name: 'Pickles', price: 80 },
                             { name: 'Onions', price: 80 },
@@ -3805,13 +3819,14 @@ Debug info:
                     const userTypeLabel = {
                         'gulberg': 'Gulberg',
                         'jt': 'JT',
+                        'islamabad': 'Islamabad',
                         'super_admin': 'Super Admin'
                     };
                     
                     return `
                         <tr style="display: table-row;">
                             <td><strong>${user.username || 'N/A'}</strong></td>
-                            <td><span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: ${user.user_type === 'super_admin' ? '#cfe2ff' : user.user_type === 'gulberg' ? '#d1e7dd' : '#fff3cd'}; color: ${user.user_type === 'super_admin' ? '#084298' : user.user_type === 'gulberg' ? '#0f5132' : '#856404'};">${userTypeLabel[user.user_type] || user.user_type || 'N/A'}</span></td>
+                            <td><span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: ${user.user_type === 'super_admin' ? '#cfe2ff' : user.user_type === 'gulberg' ? '#d1e7dd' : user.user_type === 'islamabad' ? '#e7d5ff' : '#fff3cd'}; color: ${user.user_type === 'super_admin' ? '#084298' : user.user_type === 'gulberg' ? '#0f5132' : user.user_type === 'islamabad' ? '#6f42c1' : '#856404'};">${userTypeLabel[user.user_type] || user.user_type || 'N/A'}</span></td>
                             <td><small>${createdAt}</small></td>
                             <td><small>${updatedAt}</small></td>
                             <td>

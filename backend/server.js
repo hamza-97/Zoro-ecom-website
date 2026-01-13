@@ -56,6 +56,8 @@ async function notifyAllRiders(orderData) {
         let riderLocation = 'gulberg'; // default
         if (orderData.branch && orderData.branch.toLowerCase().includes('johar')) {
             riderLocation = 'jt';
+        } else if (orderData.branch && orderData.branch.toLowerCase().includes('islamabad')) {
+            riderLocation = 'islamabad';
         } else if (orderData.branch && orderData.branch.toLowerCase().includes('gulberg')) {
             riderLocation = 'gulberg';
         }
@@ -280,6 +282,68 @@ app.get('/api/products/:id', async (req, res) => {
     }
 });
 
+// Business hours configuration (in Pakistan Standard Time - PKT, UTC+5)
+const BUSINESS_HOURS = {
+    'Gulberg II, Lahore': { open: 12, close: 1.75 }, // 12pm-1:45am (1.75 = 1:45am)
+    'Johar Town, Lahore': { open: 12, close: 3.75 }, // 12pm-3:45am (3.75 = 3:45am)
+    'Islamabad': { open: 12, close: 1.75 } // 12pm-1:45am (1.75 = 1:45am)
+};
+
+// Check if current time is within business hours for a branch
+// Note: Server should be running in Pakistan Standard Time (PKT) timezone
+function isWithinBusinessHours(branch) {
+    if (!branch || !BUSINESS_HOURS[branch]) {
+        return true; // If branch not found, allow order (fallback)
+    }
+    
+    const hours = BUSINESS_HOURS[branch];
+    const now = new Date();
+    
+    // Get current time (assumes server is in PKT timezone)
+    // If server is in a different timezone, convert to PKT (UTC+5)
+    const pktOffset = 5 * 60; // 5 hours in minutes
+    const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const pktTime = new Date(utcTime + (pktOffset * 60000));
+    
+    let currentHour = pktTime.getHours();
+    const currentMinute = pktTime.getMinutes();
+    const currentTime = currentHour + (currentMinute / 60);
+    
+    // Handle closing times that are after midnight (e.g., 1:45am = 1.75)
+    if (hours.close < hours.open) {
+        // Closing time is after midnight (e.g., 1:45am)
+        // Open from 12pm (12:00) to closing time next day (e.g., 1:45am = 1.75)
+        if (currentTime >= hours.open || currentTime < hours.close) {
+            return true;
+        }
+    } else {
+        // Normal hours (open < close, both same day)
+        if (currentTime >= hours.open && currentTime < hours.close) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// Get closing time message for a branch
+function getClosingTimeMessage(branch) {
+    if (!branch || !BUSINESS_HOURS[branch]) {
+        return '';
+    }
+    
+    const hours = BUSINESS_HOURS[branch];
+    let closeHour = Math.floor(hours.close);
+    let closeMinute = Math.round((hours.close - closeHour) * 60);
+    
+    // Format closing time
+    const period = closeHour >= 12 ? 'pm' : 'am';
+    if (closeHour > 12) closeHour -= 12;
+    if (closeHour === 0) closeHour = 12;
+    
+    return `${closeHour}:${closeMinute.toString().padStart(2, '0')}${period}`;
+}
+
 // Create order
 app.post('/api/orders', async (req, res) => {
     try {
@@ -303,6 +367,14 @@ app.post('/api/orders', async (req, res) => {
 
         if (!customer_name || !customer_phone || !branch || !order_type || !items || !total) {
             return res.status(400).json({ error: 'Missing required fields' });
+        }
+        
+        // Validate business hours
+        if (!isWithinBusinessHours(branch)) {
+            const closingTime = getClosingTimeMessage(branch);
+            return res.status(400).json({ 
+                error: `Sorry, we are currently closed. This branch closes at ${closingTime}. Please place your order during business hours (12pm-${closingTime}).` 
+            });
         }
 
         const orderNumber = generateOrderNumber();
@@ -409,6 +481,8 @@ app.get('/api/orders', authenticateAdmin, async (req, res) => {
             query.branch = { $regex: /gulberg/i }; // Case-insensitive match for "Gulberg"
         } else if (req.user.user_type === 'jt') {
             query.branch = { $regex: /(jt|johar)/i }; // Case-insensitive match for "JT" or "Johar" anywhere in string
+        } else if (req.user.user_type === 'islamabad') {
+            query.branch = { $regex: /islamabad/i }; // Case-insensitive match for "Islamabad"
         }
         // super_admin sees all orders (no branch filter)
         
@@ -593,6 +667,8 @@ app.get('/api/stats', authenticateAdmin, async (req, res) => {
             branchFilter.branch = { $regex: /gulberg/i }; // Case-insensitive match for "Gulberg"
         } else if (req.user.user_type === 'jt') {
             branchFilter.branch = { $regex: /^(jt|johar|johar town)/i }; // Case-insensitive match for "JT" or "Johar"
+        } else if (req.user.user_type === 'islamabad') {
+            branchFilter.branch = { $regex: /islamabad/i }; // Case-insensitive match for "Islamabad"
         }
         // super_admin sees all stats (no branch filter)
 
@@ -770,8 +846,8 @@ app.post('/api/admin/users', authenticateAdmin, async (req, res) => {
             return res.status(400).json({ error: 'Username and password required' });
         }
 
-        if (!user_type || !['gulberg', 'jt', 'super_admin'].includes(user_type)) {
-            return res.status(400).json({ error: 'Valid user_type required (gulberg, jt, or super_admin)' });
+        if (!user_type || !['gulberg', 'jt', 'islamabad', 'super_admin'].includes(user_type)) {
+            return res.status(400).json({ error: 'Valid user_type required (gulberg, jt, islamabad, or super_admin)' });
         }
 
         // Check if username already exists
@@ -814,7 +890,7 @@ app.patch('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
         if (username) updateData.username = username;
         if (password) updateData.password = password;
         if (user_type) {
-            if (!['gulberg', 'jt', 'super_admin'].includes(user_type)) {
+            if (!['gulberg', 'jt', 'islamabad', 'super_admin'].includes(user_type)) {
                 return res.status(400).json({ error: 'Invalid user_type' });
             }
             updateData.user_type = user_type;

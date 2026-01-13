@@ -426,6 +426,18 @@
             display: block;
         }
 
+        .branch-status-closed {
+            background: #ffebee;
+            color: #c62828;
+            border: 2px solid #ef5350;
+        }
+
+        .branch-status-open {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 2px solid #4caf50;
+        }
+
         @media (max-width: 768px) {
             .checkout-container {
                 grid-template-columns: 1fr;
@@ -475,7 +487,9 @@
                         <option value="">Select a branch</option>
                         <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
                         <option value="Johar Town, Lahore">Johar Town, Lahore</option>
+                        <option value="Islamabad">Islamabad</option>
                     </select>
+                    <div id="branchStatus" style="margin-top: 0.5rem; padding: 0.75rem; border-radius: 5px; display: none; font-size: 0.9rem; font-weight: 600;"></div>
                 </div>
 
                 <div class="form-group">
@@ -614,10 +628,72 @@
         // Get cart from localStorage
         const cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
         
+        // Business hours configuration (in Pakistan Standard Time - PKT, UTC+5)
+        const BUSINESS_HOURS = {
+            'Gulberg II, Lahore': { open: 12, close: 1.75 }, // 12pm-1:45am (1.75 = 1:45am)
+            'Johar Town, Lahore': { open: 12, close: 3.75 }, // 12pm-3:45am (3.75 = 3:45am)
+            'Islamabad': { open: 12, close: 1.75 } // 12pm-1:45am (1.75 = 1:45am)
+        };
+        
+        // Check if current time is within business hours for a branch
+        // Note: Assumes user's local time is Pakistan Standard Time (PKT)
+        function isWithinBusinessHours(branch) {
+            if (!branch || !BUSINESS_HOURS[branch]) {
+                return true; // If branch not found, allow order (fallback)
+            }
+            
+            const hours = BUSINESS_HOURS[branch];
+            const now = new Date();
+            
+            // Get current time in local timezone (assumed to be PKT for Pakistani users)
+            let currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTime = currentHour + (currentMinute / 60);
+            
+            // Handle closing times that are after midnight (e.g., 1:45am = 1.75)
+            if (hours.close < hours.open) {
+                // Closing time is after midnight (e.g., 1:45am)
+                // Open from 12pm (12:00) to closing time next day (e.g., 1:45am = 1.75)
+                if (currentTime >= hours.open || currentTime < hours.close) {
+                    return true;
+                }
+            } else {
+                // Normal hours (open < close, both same day)
+                if (currentTime >= hours.open && currentTime < hours.close) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        // Get closing time message for a branch
+        function getClosingTimeMessage(branch) {
+            if (!branch || !BUSINESS_HOURS[branch]) {
+                return '';
+            }
+            
+            const hours = BUSINESS_HOURS[branch];
+            let closeHour = Math.floor(hours.close);
+            let closeMinute = Math.round((hours.close - closeHour) * 60);
+            
+            // Format closing time
+            const period = closeHour >= 12 ? 'pm' : 'am';
+            if (closeHour > 12) closeHour -= 12;
+            if (closeHour === 0) closeHour = 12;
+            
+            return `${closeHour}:${closeMinute.toString().padStart(2, '0')}${period}`;
+        }
+        
         // Map variables
         let map;
         let marker;
+        let deliveryRadiusCircle;
         const defaultLocation = [31.5204, 74.3587]; // Lahore, Pakistan [lat, lng]
+        
+        // Islamabad branch location and delivery radius
+        const ISLAMABAD_CENTER = [33.678753, 73.031342]; // Islamabad branch coordinates
+        const ISLAMABAD_DELIVERY_RADIUS_KM = 9; // 9 km radius
         
         // Initialize map
         function initMap() {
@@ -628,12 +704,83 @@
             }
         }
         
+        // Calculate distance between two coordinates using Haversine formula
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in kilometers
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in kilometers
+        }
+        
+        // Check if location is within delivery radius for Islamabad
+        function isWithinDeliveryRadius(lat, lng, branch) {
+            if (branch !== 'Islamabad') {
+                return true; // No radius restriction for other branches
+            }
+            const distance = calculateDistance(lat, lng, ISLAMABAD_CENTER[0], ISLAMABAD_CENTER[1]);
+            return distance <= ISLAMABAD_DELIVERY_RADIUS_KM;
+        }
+        
+        // Validate delivery location and show error if outside radius
+        function validateDeliveryLocation(lat, lng) {
+            const branch = document.getElementById('branch').value;
+            
+            if (branch === 'Islamabad' && lat && lng) {
+                const distance = calculateDistance(lat, lng, ISLAMABAD_CENTER[0], ISLAMABAD_CENTER[1]);
+                
+                if (!isWithinDeliveryRadius(lat, lng, branch)) {
+                    const errorMsg = `Delivery location is ${distance.toFixed(1)} km away from Islamabad branch. We only deliver within ${ISLAMABAD_DELIVERY_RADIUS_KM} km radius. Please select a location closer to the branch.`;
+                    alert(errorMsg);
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        // Update delivery radius circle on map based on selected branch
+        function updateDeliveryRadiusCircle(branch) {
+            if (deliveryRadiusCircle) {
+                map.removeLayer(deliveryRadiusCircle);
+                deliveryRadiusCircle = null;
+            }
+            
+            if (branch === 'Islamabad') {
+                // Add circle showing delivery radius for Islamabad
+                deliveryRadiusCircle = L.circle(ISLAMABAD_CENTER, {
+                    radius: ISLAMABAD_DELIVERY_RADIUS_KM * 1000, // Convert km to meters
+                    color: '#d32f2f',
+                    fillColor: '#ffebee',
+                    fillOpacity: 0.2,
+                    weight: 2,
+                    dashArray: '5, 5'
+                }).addTo(map);
+                
+                // Add label to circle
+                deliveryRadiusCircle.bindPopup(`Delivery Area: ${ISLAMABAD_DELIVERY_RADIUS_KM} km radius from Islamabad branch`);
+            }
+        }
+        
         function setupMap() {
             const mapContainer = document.getElementById('map');
             if (!mapContainer || map) return; // Don't reinitialize if map exists
             
-            // Initialize Leaflet map centered on Lahore
-            map = L.map('map').setView(defaultLocation, 13);
+            // Check selected branch to determine initial map center
+            const branch = document.getElementById('branch').value;
+            let initialCenter = defaultLocation;
+            let initialZoom = 13;
+            
+            if (branch === 'Islamabad') {
+                initialCenter = ISLAMABAD_CENTER;
+                initialZoom = 12; // Zoom out a bit to show the radius
+            }
+            
+            // Initialize Leaflet map
+            map = L.map('map').setView(initialCenter, initialZoom);
             
             // Add OpenStreetMap tiles
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -641,10 +788,30 @@
                 maxZoom: 19
             }).addTo(map);
             
+            // Add delivery radius circle if Islamabad is selected
+            if (branch === 'Islamabad') {
+                updateDeliveryRadiusCircle(branch);
+            }
+            
             // Add click listener to map
             map.on('click', (e) => {
-                placeMarker([e.latlng.lat, e.latlng.lng]);
-                updateAddressFromCoordinates(e.latlng.lat, e.latlng.lng);
+                const lat = e.latlng.lat;
+                const lng = e.latlng.lng;
+                const branch = document.getElementById('branch').value;
+                
+                // Show warning if outside radius but still allow placing marker
+                if (branch === 'Islamabad') {
+                    const distance = calculateDistance(lat, lng, ISLAMABAD_CENTER[0], ISLAMABAD_CENTER[1]);
+                    if (distance > ISLAMABAD_DELIVERY_RADIUS_KM) {
+                        const warningMsg = `Note: This location is ${distance.toFixed(1)} km away from Islamabad branch. We only deliver within ${ISLAMABAD_DELIVERY_RADIUS_KM} km radius. You can still place the marker, but the order may not be accepted if outside the delivery area.`;
+                        if (!confirm(warningMsg + '\n\nDo you want to place the marker here anyway?')) {
+                            return; // User cancelled, don't place marker
+                        }
+                    }
+                }
+                
+                placeMarker([lat, lng]);
+                updateAddressFromCoordinates(lat, lng);
             });
             
             // Try to get user's current location
@@ -667,8 +834,10 @@
         }
         
         function placeMarker(location) {
+            // Store last valid position
             if (marker) {
                 marker.setLatLng(location);
+                marker.lastValidPosition = location;
             } else {
                 // Create a custom icon
                 const customIcon = L.icon({
@@ -686,11 +855,41 @@
                     draggable: true,
                     icon: customIcon
                 }).addTo(map);
+                marker.lastValidPosition = location;
                 
                 // Update address when marker is dragged
                 marker.on('dragend', (e) => {
                     const position = marker.getLatLng();
-                    updateAddressFromCoordinates(position.lat, position.lng);
+                    const lat = position.lat;
+                    const lng = position.lng;
+                    
+                    // Validate location after dragging
+                    const branch = document.getElementById('branch').value;
+                    if (branch === 'Islamabad' && lat && lng) {
+                        const distance = calculateDistance(lat, lng, ISLAMABAD_CENTER[0], ISLAMABAD_CENTER[1]);
+                        if (distance > ISLAMABAD_DELIVERY_RADIUS_KM) {
+                            // Show warning but allow marker to stay (will be validated on submit)
+                            const errorMsg = `Warning: This location is ${distance.toFixed(1)} km away. We only deliver within ${ISLAMABAD_DELIVERY_RADIUS_KM} km radius. Please select a location within the delivery area.`;
+                            alert(errorMsg);
+                            // Optionally move back to last valid position
+                            if (marker.lastValidPosition) {
+                                const confirmMove = confirm('Would you like to move the marker back to the last valid location?');
+                                if (confirmMove) {
+                                    marker.setLatLng(marker.lastValidPosition);
+                                    updateAddressFromCoordinates(marker.lastValidPosition[0], marker.lastValidPosition[1]);
+                                    return;
+                                }
+                            }
+                        } else {
+                            // Location is valid, update last valid position
+                            marker.lastValidPosition = [lat, lng];
+                        }
+                    } else {
+                        // Not Islamabad branch, always valid
+                        marker.lastValidPosition = [lat, lng];
+                    }
+                    
+                    updateAddressFromCoordinates(lat, lng);
                 });
             }
             
@@ -739,10 +938,13 @@
                             };
                             
                             if (map) {
-                                map.setCenter(location);
-                                map.setZoom(15);
-                                placeMarker(location);
-                                updateAddressFromCoordinates(location.lat, location.lng);
+                                // Validate location before using it
+                                if (validateDeliveryLocation(location.lat, location.lng)) {
+                                    map.setCenter(location);
+                                    map.setZoom(15);
+                                    placeMarker(location);
+                                    updateAddressFromCoordinates(location.lat, location.lng);
+                                }
                             }
                             
                             useCurrentLocationBtn.disabled = false;
@@ -869,6 +1071,34 @@
                     initMap();
                 }, 500);
             }
+            
+            // Update delivery radius circle when branch changes
+            const branchSelect = document.getElementById('branch');
+            if (branchSelect) {
+                branchSelect.addEventListener('change', () => {
+                    const branch = branchSelect.value;
+                    if (map) {
+                        updateDeliveryRadiusCircle(branch);
+                        
+                        // Recenter map if Islamabad is selected
+                        if (branch === 'Islamabad') {
+                            map.setView(ISLAMABAD_CENTER, 12);
+                            if (marker) {
+                                // Validate current marker position
+                                const markerPos = marker.getLatLng();
+                                if (!validateDeliveryLocation(markerPos.lat, markerPos.lng)) {
+                                    // Remove marker if outside radius
+                                    map.removeLayer(marker);
+                                    marker = null;
+                                    document.getElementById('selectedLatitude').value = '';
+                                    document.getElementById('selectedLongitude').value = '';
+                                    document.getElementById('customerAddress').value = '';
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         });
         
         // Handle form submission
@@ -896,6 +1126,24 @@
             // Get coordinates if available
             const latitude = document.getElementById('selectedLatitude').value;
             const longitude = document.getElementById('selectedLongitude').value;
+            const branch = document.getElementById('branch').value;
+            
+            // Validate delivery location for Islamabad branch ONLY if coordinates are provided
+            // If no coordinates provided, allow order to proceed (user can provide address manually)
+            if (branch === 'Islamabad' && latitude && longitude) {
+                const lat = parseFloat(latitude);
+                const lng = parseFloat(longitude);
+                
+                // Only validate if coordinates are valid numbers
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    if (!validateDeliveryLocation(lat, lng)) {
+                        submitBtn.disabled = false;
+                        loading.classList.remove('active');
+                        return;
+                    }
+                }
+            }
+            // If no coordinates provided, proceed with order (address may be provided manually)
             
             const formData = {
                 customer_name: document.getElementById('customerName').value,
@@ -936,7 +1184,12 @@
                     // Redirect to confirmation page
                     window.location.href = `order-confirmation.html?order=${data.order_number}`;
                 } else {
-                    alert('Error: ' + (data.error || 'Failed to place order'));
+                    // Check if error is about business hours
+                    if (data.error && data.error.toLowerCase().includes('closed')) {
+                        alert(data.error);
+                    } else {
+                        alert('Error: ' + (data.error || 'Failed to place order'));
+                    }
                     submitBtn.disabled = false;
                     loading.classList.remove('active');
                 }
@@ -965,6 +1218,46 @@
                 }
             }
         }
+        
+        // Update branch status indicator
+        function updateBranchStatus() {
+            const branchSelect = document.getElementById('branch');
+            const branchStatus = document.getElementById('branchStatus');
+            
+            if (!branchSelect || !branchStatus) return;
+            
+            const branch = branchSelect.value;
+            
+            if (!branch) {
+                branchStatus.style.display = 'none';
+                return;
+            }
+            
+            const isOpen = isWithinBusinessHours(branch);
+            const closingTime = getClosingTimeMessage(branch);
+            
+            if (isOpen) {
+                branchStatus.textContent = `✓ We're open! Closes at ${closingTime}`;
+                branchStatus.className = 'branch-status-open';
+                branchStatus.style.display = 'block';
+            } else {
+                branchStatus.textContent = `✗ We're closed. Opens at 12pm, closes at ${closingTime}`;
+                branchStatus.className = 'branch-status-closed';
+                branchStatus.style.display = 'block';
+            }
+        }
+        
+        // Update branch status when branch selection changes
+        document.addEventListener('DOMContentLoaded', () => {
+            const branchSelect = document.getElementById('branch');
+            if (branchSelect) {
+                branchSelect.addEventListener('change', updateBranchStatus);
+                // Check status initially
+                updateBranchStatus();
+                // Update status every minute
+                setInterval(updateBranchStatus, 60000);
+            }
+        });
         
         // Initialize
         displayOrderItems();
