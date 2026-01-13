@@ -3012,6 +3012,14 @@ Debug info:
             // Determine if product is wings early (needed for add-ons logic)
             const isWings = product && product.category === 'wings';
             
+            // Initialize basePricing and APPLY_DISCOUNTS at function level (needed for wing types)
+            let basePricing = { original: product ? product.price : 0, discounted: product ? product.price : 0, discountRate: 0 };
+            const APPLY_DISCOUNTS = typeof window !== 'undefined' && window.APPLY_DISCOUNTS !== undefined ? window.APPLY_DISCOUNTS : true;
+            
+            if (product && typeof getDiscountedPrice === 'function') {
+                basePricing = getDiscountedPrice(product);
+            }
+            
             // Product search/select
             if (allProducts.length === 0) {
                 console.error('No products available! allProducts length:', allProducts.length);
@@ -3047,12 +3055,12 @@ Debug info:
                 const isCombo = product.isCombo || false;
                 
                 if (!isCombo) {
-                    // Get discount pricing if available
-                    let basePricing = { original: product.price, discounted: product.price, discountRate: 0 };
-                    const APPLY_DISCOUNTS = typeof window !== 'undefined' && window.APPLY_DISCOUNTS !== undefined ? window.APPLY_DISCOUNTS : true;
-                    
-                    if (typeof getDiscountedPrice === 'function') {
+                    // basePricing and APPLY_DISCOUNTS are already defined at function level
+                    // Update basePricing if product exists
+                    if (product && typeof getDiscountedPrice === 'function') {
                         basePricing = getDiscountedPrice(product);
+                    } else if (product) {
+                        basePricing = { original: product.price, discounted: product.price, discountRate: 0 };
                     }
                     
                     // isWings is already defined at function level, no need to redefine
@@ -3455,12 +3463,16 @@ Debug info:
             
             if (product) {
                 // Create a temporary item object with the selected product to preserve selection
+                // Set default size based on product type
+                const isWingsProduct = product.category === 'wings';
+                const defaultSize = isWingsProduct ? '6 Pieces' : 'Single';
+                
                 const tempItem = {
                     id: product.id, // Include ID for better product matching
                     name: product.name,
                     category: product.category,
                     price: product.price,
-                    size: 'Single', // Default size
+                    size: defaultSize, // Default size (6 Pieces for wings, Single for others)
                     quantity: window.currentItemQuantity || 1,
                     addons: []
                 };
