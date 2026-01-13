@@ -1373,7 +1373,6 @@
         </div>
     </div>
 
-    <!-- Add/Edit User Modal -->
     <div class="modal" id="userModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -3001,8 +3000,17 @@ Debug info:
             let product = null;
             
             if (item) {
-                product = allProducts.find(p => p.name === item.name);
+                // Try to find product by ID first (more reliable), then by name
+                if (item.id) {
+                    product = allProducts.find(p => p.id === item.id);
+                }
+                if (!product && item.name) {
+                    product = allProducts.find(p => p.name === item.name);
+                }
             }
+            
+            // Determine if product is wings early (needed for add-ons logic)
+            const isWings = product && product.category === 'wings';
             
             // Product search/select
             if (allProducts.length === 0) {
@@ -3047,7 +3055,7 @@ Debug info:
                         basePricing = getDiscountedPrice(product);
                     }
                     
-                    const isWings = product.category === 'wings';
+                    // isWings is already defined at function level, no need to redefine
                     const isChickenCrunchers = product.id === 26;
                     const isShakes = product.category === 'premium-shakes';
                     const isBurger = !isWings && !isChickenCrunchers && !isShakes && product.category && (
@@ -3199,7 +3207,7 @@ Debug info:
             }
             
             // Wing type options (Bone-in or Boneless) - only for wings
-            const isWings = product && product.category === 'wings';
+            // isWings is already defined at function level
             let wingTypes = [];
             if (isWings) {
                 wingTypes = [
@@ -3251,10 +3259,11 @@ Debug info:
                 const isCombo = product.isCombo || false;
                 
                 // Wings don't have add-ons - explicitly check for wings category
-                const category = product.category || '';
-                const isWingsCategory = category === 'wings';
+                // Use the isWings variable that was already determined earlier in the function
+                // This ensures we're using the same check that determines wing types
                 
-                if (!isCombo && !isWingsCategory) {
+                if (!isCombo && !isWings) {
+                    const category = product.category || '';
                     const isBeef = category === 'beef-smashers' || category === 'beef-speciality';
                     const isChicken = category === 'chicken-burgers';
                     
@@ -3447,6 +3456,7 @@ Debug info:
             if (product) {
                 // Create a temporary item object with the selected product to preserve selection
                 const tempItem = {
+                    id: product.id, // Include ID for better product matching
                     name: product.name,
                     category: product.category,
                     price: product.price,
