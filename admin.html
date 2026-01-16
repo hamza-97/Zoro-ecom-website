@@ -9,6 +9,33 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+    <!-- End Google Tag Manager -->
+    
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '886908076899683');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=886908076899683&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Facebook Pixel Code -->
+    
     <style>
         * {
             margin: 0;
@@ -870,6 +897,10 @@
     </style>
 </head>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <!-- Login Screen -->
     <div class="login-container" id="loginContainer">
         <div class="login-box">
@@ -3005,7 +3036,26 @@ Debug info:
                     product = allProducts.find(p => p.id === item.id);
                 }
                 if (!product && item.name) {
-                    product = allProducts.find(p => p.name === item.name);
+                    // For wing items, the name might include size/type like "Buffalo (6 Pieces, Bone-in)"
+                    // Extract the base product name by removing everything after the first "("
+                    const baseName = item.name.split('(')[0].trim();
+                    product = allProducts.find(p => {
+                        // Exact match first
+                        if (p.name === item.name) return true;
+                        // Then try base name match (for wings with size/type in name)
+                        if (p.name === baseName) return true;
+                        // Also check if item name starts with product name (for wing variations)
+                        if (item.name.startsWith(p.name)) return true;
+                        return false;
+                    });
+                }
+                // If still not found and item has category, try matching by category and similar name
+                if (!product && item.category && item.name) {
+                    const baseName = item.name.split('(')[0].trim();
+                    product = allProducts.find(p => 
+                        p.category === item.category && 
+                        (p.name === baseName || p.name === item.name || item.name.startsWith(p.name))
+                    );
                 }
             }
             
@@ -3224,7 +3274,14 @@ Debug info:
                 ];
             }
             
-            const selectedSize = item ? (item.size || (sizes.length > 0 ? sizes[0].name : 'Single')) : (sizes.length > 0 ? sizes[0].name : 'Single');
+            // For wings, default to "6 Pieces" if no size is set, otherwise use item size or first available size
+            let defaultSize = 'Single';
+            if (isWings) {
+                defaultSize = '6 Pieces';
+            } else if (sizes.length > 0) {
+                defaultSize = sizes[0].name;
+            }
+            const selectedSize = item ? (item.size || defaultSize) : defaultSize;
             const sizesHTML = sizes.map(size => {
                 const isSelected = selectedSize === size.name;
                 const showDiscount = !isWings && size.originalPrice && size.originalPrice !== size.price;
