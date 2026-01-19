@@ -1290,18 +1290,18 @@ function showProductModal(product) {
     const isBeef = product.category && (product.category === 'beef-smashers' || product.category === 'beef-speciality');
     const isChicken = product.category && product.category === 'chicken-burgers';
     const addons = (isBeef || isChicken) && !isWings ? [
-        { name: 'Pickles', price: 80 },
-        { name: 'Onions', price: 80 },
-        { name: 'Pickled Red Onions', price: 80 },
-        { name: 'Tomatoes', price: 80 },
-        { name: 'Crispy Onions', price: 100 },
-        { name: 'Cheese Slice', price: 100 },
-        { name: 'Bacon', price: 250 },
-        { name: 'Double Cheese Slice', price: 200 },
-        { name: 'Lettuce', price: 80 },
-        { name: 'Grilled Onions', price: 100 },
-        { name: 'Nachos', price: 80 },
-        { name: 'Jalapenos', price: 80 }
+        { name: 'Pickles', price: 195 },
+        { name: 'Onions', price: 195 },
+        { name: 'Pickled Red Onions', price: 195 },
+        { name: 'Tomatoes', price: 195 },
+        { name: 'Crispy Onions', price: 195 },
+        { name: 'Cheese Slice', price: 195 },
+        { name: 'Bacon', price: 195 },
+        { name: 'Double Cheese Slice', price: 195 },
+        { name: 'Lettuce', price: 195 },
+        { name: 'Grilled Onions', price: 195 },
+        { name: 'Nachos', price: 195 },
+        { name: 'Jalapenos', price: 195 }
     ] : [];
     
     // Build wing types HTML with prices (prices will update dynamically based on size selection)
