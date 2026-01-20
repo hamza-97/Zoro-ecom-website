@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,33 +10,38 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-XXXXXXX');</script>
     <!-- End Google Tag Manager -->
-    
+
     <!-- Facebook Pixel Code -->
     <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '886908076899683');
-    fbq('track', 'PageView');
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '886908076899683');
+        fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=886908076899683&ev=PageView&noscript=1"
-    /></noscript>
+            src="https://www.facebook.com/tr?id=886908076899683&ev=PageView&noscript=1" /></noscript>
     <!-- End Facebook Pixel Code -->
-    
+
     <style>
         * {
             margin: 0;
@@ -64,10 +70,10 @@
             left: 0;
             top: 0;
             z-index: 100;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
         }
-        
+
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -78,11 +84,11 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: 99;
         }
-        
+
         .sidebar-overlay.active {
             display: block;
         }
-        
+
         .mobile-menu-toggle {
             display: none;
             position: fixed;
@@ -96,9 +102,9 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
-        
+
         .mobile-menu-toggle:hover {
             background: #c82333;
         }
@@ -163,7 +169,8 @@
             visibility: visible;
             position: relative;
             z-index: 1;
-            opacity: 1 !important; /* Override styles.css opacity: 0 */
+            opacity: 1 !important;
+            /* Override styles.css opacity: 0 */
         }
 
         .header {
@@ -171,19 +178,19 @@
             padding: 1.5rem 2rem;
             border-radius: 10px;
             margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
         }
-        
+
         .header h1 {
             font-size: 1.5rem;
             margin: 0;
         }
-        
+
         .header-actions {
             display: flex;
             gap: 0.5rem;
@@ -202,7 +209,7 @@
             background: white;
             padding: 1.5rem;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .stat-card h3 {
@@ -223,7 +230,7 @@
             background: white;
             padding: 2rem;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             display: block;
             visibility: visible;
             min-height: 200px;
@@ -242,7 +249,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-        
+
         .section-header h2 {
             margin: 0;
             font-size: 1.5rem;
@@ -256,11 +263,11 @@
             -webkit-overflow-scrolling: touch;
             padding-bottom: 0.5rem;
         }
-        
+
         .filter-tabs::-webkit-scrollbar {
             height: 4px;
         }
-        
+
         .filter-tabs::-webkit-scrollbar-thumb {
             background: var(--primary-color);
             border-radius: 2px;
@@ -291,7 +298,7 @@
             -webkit-overflow-scrolling: touch;
             margin: 1rem 0;
         }
-        
+
         .orders-table {
             width: 100%;
             border-collapse: collapse;
@@ -317,7 +324,7 @@
             display: table-cell;
             visibility: visible;
         }
-        
+
         .orders-table tr {
             display: table-row;
             visibility: visible;
@@ -326,21 +333,21 @@
         .orders-table tr:hover {
             background: #f9f9f9;
         }
-        
+
         /* Mobile card view for orders */
         .orders-card-view {
             display: none;
         }
-        
+
         .order-card {
             background: white;
             border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 1rem;
             margin-bottom: 1rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        
+
         .order-card-header {
             display: flex;
             justify-content: space-between;
@@ -349,31 +356,31 @@
             padding-bottom: 0.75rem;
             border-bottom: 1px solid #eee;
         }
-        
+
         .order-card-info {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
-        
+
         .order-card-row {
             display: flex;
             justify-content: space-between;
             padding: 0.5rem 0;
             border-bottom: 1px solid #f0f0f0;
         }
-        
+
         .order-card-label {
             color: #666;
             font-size: 0.9rem;
             font-weight: 500;
         }
-        
+
         .order-card-value {
             font-weight: 600;
             text-align: right;
         }
-        
+
         .order-card-actions {
             display: flex;
             gap: 0.5rem;
@@ -381,7 +388,7 @@
             padding-top: 1rem;
             border-top: 1px solid #eee;
         }
-        
+
         .order-card-actions .action-btn {
             flex: 1;
             padding: 0.75rem;
@@ -480,7 +487,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -501,7 +508,7 @@
             margin: 1rem;
             position: relative;
         }
-        
+
         @media (max-width: 768px) {
             .modal-content {
                 width: calc(100% - 2rem);
@@ -510,19 +517,20 @@
                 margin: 0.5rem;
                 max-height: 95vh;
             }
-            
-            .modal-content form > div[style*="grid"] {
+
+            .modal-content form>div[style*="grid"] {
                 grid-template-columns: 1fr !important;
             }
-            
+
             .modal-content .form-group {
                 margin-bottom: 0.75rem;
             }
-            
+
             .modal-content input,
             .modal-content select,
             .modal-content textarea {
-                font-size: 16px; /* Prevents zoom on iOS */
+                font-size: 16px;
+                /* Prevents zoom on iOS */
             }
         }
 
@@ -563,12 +571,12 @@
             .mobile-menu-toggle {
                 display: block;
             }
-            
+
             .sidebar {
                 width: 280px;
                 transform: translateX(-100%);
             }
-            
+
             .sidebar.active {
                 transform: translateX(0);
             }
@@ -578,22 +586,22 @@
                 padding: 1rem;
                 width: 100%;
             }
-            
+
             .header {
                 padding: 1rem;
                 margin-top: 3.5rem;
             }
-            
+
             .header h1 {
                 font-size: 1.25rem;
                 width: 100%;
             }
-            
+
             .header-actions {
                 width: 100%;
                 justify-content: flex-start;
             }
-            
+
             .header-actions button {
                 flex: 1;
                 min-width: auto;
@@ -618,7 +626,7 @@
             .orders-table-wrapper {
                 display: none;
             }
-            
+
             .orders-card-view {
                 display: block;
             }
@@ -627,48 +635,49 @@
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
-            
+
             .stat-card {
                 padding: 1rem;
             }
-            
+
             .stat-card .value {
                 font-size: 1.5rem;
             }
-            
+
             .orders-section {
                 padding: 1rem;
             }
-            
+
             .section-header {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .section-header h2 {
                 font-size: 1.25rem;
             }
-            
+
             .filter-tabs {
                 width: 100%;
                 overflow-x: auto;
             }
-            
+
             .filter-tab {
                 font-size: 0.8rem;
                 padding: 0.5rem 0.75rem;
                 min-height: 36px;
             }
-            
-            .action-btn, .logout-btn {
+
+            .action-btn,
+            .logout-btn {
                 padding: 0.5rem 0.75rem;
                 font-size: 0.85rem;
             }
-            
+
             .modal-header h2 {
                 font-size: 1.25rem;
             }
-            
+
             .form-group {
                 margin-bottom: 0.75rem;
             }
@@ -678,67 +687,70 @@
             .main-content {
                 padding: 0.75rem;
             }
-            
+
             .header {
                 padding: 0.75rem;
                 margin-top: 3rem;
             }
-            
+
             .header h1 {
                 font-size: 1.1rem;
             }
-            
+
             .orders-section {
                 padding: 0.75rem;
             }
-            
+
             .section-header h2 {
                 font-size: 1.1rem;
             }
-            
+
             .stat-card {
                 padding: 0.75rem;
             }
-            
+
             .stat-card .value {
                 font-size: 1.25rem;
             }
-            
+
             .filter-tab {
                 font-size: 0.75rem;
                 padding: 0.4rem 0.6rem;
             }
-            
+
             .order-card {
                 padding: 0.75rem;
             }
-            
-            .action-btn, .logout-btn {
+
+            .action-btn,
+            .logout-btn {
                 font-size: 0.8rem;
                 padding: 0.4rem 0.6rem;
             }
-            
-            .section-header > div {
+
+            .section-header>div {
                 flex-direction: column;
                 width: 100%;
             }
-            
-            .section-header > div > div {
+
+            .section-header>div>div {
                 width: 100%;
                 margin-bottom: 0.5rem;
             }
-            
-            #startDateFilter, #endDateFilter {
+
+            #startDateFilter,
+            #endDateFilter {
                 font-size: 0.85rem;
                 padding: 0.4rem;
             }
-            
-            .size-option, .addon-option {
+
+            .size-option,
+            .addon-option {
                 min-width: 100px;
                 padding: 0.75rem 0.5rem;
                 font-size: 0.9rem;
             }
-            
+
             .addons-grid {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
@@ -756,7 +768,7 @@
             background: white;
             padding: 3rem;
             border-radius: 10px;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
         }
@@ -896,10 +908,11 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <!-- Login Screen -->
     <div class="login-container" id="loginContainer">
@@ -908,7 +921,8 @@
             <h2>Admin Login</h2>
             <form id="loginForm">
                 <input type="text" id="loginUsername" placeholder="Username" required autocomplete="username">
-                <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+                <input type="password" id="loginPassword" placeholder="Password" required
+                    autocomplete="current-password">
                 <button type="submit">Login</button>
             </form>
             <div id="loginError" style="color: red; margin-top: 1rem; text-align: center; display: none;"></div>
@@ -965,13 +979,21 @@
                 <div class="section-header">
                     <h2>Recent Orders</h2>
                     <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                        <button class="action-btn btn-update" onclick="openCreateOrderModal()" style="background: #28a745; white-space: nowrap;">📞 Create Call Order</button>
-                        <div style="display: flex; gap: 0.5rem; align-items: center; background: white; padding: 0.5rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <button class="action-btn btn-update" onclick="openCreateOrderModal()"
+                            style="background: #28a745; white-space: nowrap;">📞 Create Call Order</button>
+                        <div
+                            style="display: flex; gap: 0.5rem; align-items: center; background: white; padding: 0.5rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                             <label style="font-size: 0.9rem; color: #666; white-space: nowrap;">From:</label>
-                            <input type="date" id="startDateFilter" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;" onchange="applyDateFilter()">
-                            <label style="font-size: 0.9rem; color: #666; white-space: nowrap; margin-left: 0.5rem;">To:</label>
-                            <input type="date" id="endDateFilter" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;" onchange="applyDateFilter()">
-                            <button class="action-btn btn-update" onclick="clearDateFilter()" style="margin-left: 0.5rem; padding: 0.5rem 1rem; font-size: 0.9rem; white-space: nowrap;">Clear</button>
+                            <input type="date" id="startDateFilter"
+                                style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;"
+                                onchange="applyDateFilter()">
+                            <label
+                                style="font-size: 0.9rem; color: #666; white-space: nowrap; margin-left: 0.5rem;">To:</label>
+                            <input type="date" id="endDateFilter"
+                                style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;"
+                                onchange="applyDateFilter()">
+                            <button class="action-btn btn-update" onclick="clearDateFilter()"
+                                style="margin-left: 0.5rem; padding: 0.5rem 1rem; font-size: 0.9rem; white-space: nowrap;">Clear</button>
                         </div>
                         <div class="filter-tabs">
                             <button class="filter-tab active" data-status="all">All</button>
@@ -1096,7 +1118,8 @@
                         <option value="refunded">Refunded</option>
                     </select>
                 </div>
-                <button type="submit" class="action-btn btn-update" style="width: 100%; margin-top: 1rem;">Update Order</button>
+                <button type="submit" class="action-btn btn-update" style="width: 100%; margin-top: 1rem;">Update
+                    Order</button>
             </form>
         </div>
     </div>
@@ -1124,38 +1147,45 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Customer Name *</label>
-                        <input type="text" id="editCustomerName" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="text" id="editCustomerName" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
                         <label>Customer Phone *</label>
-                        <input type="text" id="editCustomerPhone" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="text" id="editCustomerPhone" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Customer Email</label>
-                        <input type="email" id="editCustomerEmail" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="email" id="editCustomerEmail"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
                         <label>Branch *</label>
-                        <input type="text" id="editBranch" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="text" id="editBranch" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
                     <label>Customer Address</label>
-                    <textarea id="editCustomerAddress" rows="2" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                    <textarea id="editCustomerAddress" rows="2"
+                        style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Order Type *</label>
-                        <select id="editOrderType" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <select id="editOrderType" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                             <option value="delivery">Delivery</option>
                             <option value="pickup">Pickup</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Payment Method</label>
-                        <select id="editPaymentMethod" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <select id="editPaymentMethod"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                             <option value="cash">Cash</option>
                             <option value="card">Card</option>
                             <option value="online">Online</option>
@@ -1163,39 +1193,51 @@
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                         <label style="margin: 0;">Order Items *</label>
-                        <button type="button" class="action-btn btn-update" onclick="openAddItemModal()" style="padding: 0.5rem 1rem; font-size: 0.9rem;">+ Add Item</button>
+                        <button type="button" class="action-btn btn-update" onclick="openAddItemModal()"
+                            style="padding: 0.5rem 1rem; font-size: 0.9rem;">+ Add Item</button>
                     </div>
-                    <div id="editItemsList" style="margin-bottom: 1rem; padding: 1rem; background: #f9f9f9; border-radius: 5px; min-height: 100px; max-height: 300px; overflow-y: auto;">
-                        <p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>
+                    <div id="editItemsList"
+                        style="margin-bottom: 1rem; padding: 1rem; background: #f9f9f9; border-radius: 5px; min-height: 100px; max-height: 300px; overflow-y: auto;">
+                        <p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add
+                            Item" to add products.</p>
                     </div>
-                    <textarea id="editItems" rows="4" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 0.9rem; font-family: monospace; resize: vertical; display: none;"></textarea>
-                    <small style="color: #666; font-size: 0.85rem;">Items are stored as JSON. Use "Add Item" button to add items easily.</small>
+                    <textarea id="editItems" rows="4" required
+                        style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 0.9rem; font-family: monospace; resize: vertical; display: none;"></textarea>
+                    <small style="color: #666; font-size: 0.85rem;">Items are stored as JSON. Use "Add Item" button to
+                        add items easily.</small>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Subtotal (Rs) *</label>
-                        <input type="number" id="editSubtotal" step="0.01" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="number" id="editSubtotal" step="0.01" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
                         <label>Delivery Fee (Rs)</label>
-                        <input type="number" id="editDeliveryFee" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="number" id="editDeliveryFee" step="0.01"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
                         <label>Tax (Rs)</label>
-                        <input type="number" id="editTax" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="number" id="editTax" step="0.01"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
                         <label>Total (Rs) *</label>
-                        <input type="number" id="editTotal" step="0.01" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="number" id="editTotal" step="0.01" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
                     <label>Notes</label>
-                    <textarea id="editNotes" rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                    <textarea id="editNotes" rows="3"
+                        style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
                 </div>
-                <button type="submit" class="action-btn btn-update" style="width: 100%; margin-top: 1rem; background: #28a745;">Save Changes</button>
+                <button type="submit" class="action-btn btn-update"
+                    style="width: 100%; margin-top: 1rem; background: #28a745;">Save Changes</button>
             </form>
         </div>
     </div>
@@ -1211,21 +1253,25 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Customer Name *</label>
-                        <input type="text" id="createCustomerName" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="text" id="createCustomerName" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
                         <label>Customer Phone *</label>
-                        <input type="text" id="createCustomerPhone" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="text" id="createCustomerPhone" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Customer Email</label>
-                        <input type="email" id="createCustomerEmail" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="email" id="createCustomerEmail"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
                         <label>Branch *</label>
-                        <select id="createBranch" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <select id="createBranch" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                             <option value="">Select Branch</option>
                             <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
                             <option value="Johar Town, Lahore">Johar Town, Lahore</option>
@@ -1235,59 +1281,75 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
                     <label>Customer Address *</label>
-                    <textarea id="createCustomerAddress" required rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                    <textarea id="createCustomerAddress" required rows="3"
+                        style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Order Type *</label>
-                        <select id="createOrderType" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <select id="createOrderType" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                             <option value="delivery">Delivery</option>
                             <option value="pickup">Pickup</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Payment Method *</label>
-                        <select id="createPaymentMethod" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <select id="createPaymentMethod" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                             <option selected value="cash">Cash</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                         <label style="margin: 0;">Items *</label>
-                        <button type="button" class="action-btn btn-update" onclick="openAddItemModalForCreate()" style="padding: 0.5rem 1rem; font-size: 0.9rem;">+ Add Item</button>
+                        <button type="button" class="action-btn btn-update" onclick="openAddItemModalForCreate()"
+                            style="padding: 0.5rem 1rem; font-size: 0.9rem;">+ Add Item</button>
                     </div>
-                    <div id="createItemsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 0.5rem; padding: 0.5rem; background: #f9f9f9; border-radius: 5px; border: 1px solid #e0e0e0;">
-                        <p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>
+                    <div id="createItemsList"
+                        style="max-height: 300px; overflow-y: auto; margin-bottom: 0.5rem; padding: 0.5rem; background: #f9f9f9; border-radius: 5px; border: 1px solid #e0e0e0;">
+                        <p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add
+                            Item" to add products.</p>
                     </div>
                     <input type="hidden" id="createItems" value="[]">
-                    <small style="color: #666; font-size: 0.85rem;">Items are stored as JSON. Use "Add Item" button to add items easily.</small>
+                    <small style="color: #666; font-size: 0.85rem;">Items are stored as JSON. Use "Add Item" button to
+                        add items easily.</small>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Subtotal</label>
-                        <input type="number" id="createSubtotal" value="0" readonly step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
+                        <input type="number" id="createSubtotal" value="0" readonly step="0.01"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
                     </div>
                     <div class="form-group">
                         <label>Delivery Fee</label>
-                        <input type="number" id="createDeliveryFee" value="150" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="number" id="createDeliveryFee" value="150" step="0.01"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
                         <label>Tax (16%)</label>
-                        <input type="number" id="createTax" value="0" step="0.01" readonly style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
+                        <input type="number" id="createTax" value="0" step="0.01" readonly
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
                     </div>
                     <div class="form-group">
                         <label>Total *</label>
-                        <input type="number" id="createTotal" value="0" readonly required step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5; font-weight: 600;">
+                        <input type="number" id="createTotal" value="0" readonly required step="0.01"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5; font-weight: 600;">
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
                     <label>Notes</label>
-                    <textarea id="createNotes" rows="2" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                    <textarea id="createNotes" rows="2"
+                        style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
                 </div>
                 <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                    <button type="button" onclick="closeCreateOrderModal()" style="padding: 0.75rem 2rem; background: #6c757d; color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Cancel</button>
-                    <button type="submit" style="padding: 0.75rem 2rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Create Order</button>
+                    <button type="button" onclick="closeCreateOrderModal()"
+                        style="padding: 0.75rem 2rem; background: #6c757d; color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    <button type="submit"
+                        style="padding: 0.75rem 2rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Create
+                        Order</button>
                 </div>
             </form>
         </div>
@@ -1304,21 +1366,25 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Customer Name *</label>
-                        <input type="text" id="createCustomerName" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="text" id="createCustomerName" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
                         <label>Customer Phone *</label>
-                        <input type="text" id="createCustomerPhone" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="text" id="createCustomerPhone" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Customer Email</label>
-                        <input type="email" id="createCustomerEmail" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="email" id="createCustomerEmail"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
                         <label>Branch *</label>
-                        <select id="createBranch" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <select id="createBranch" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                             <option value="">Select Branch</option>
                             <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
                             <option value="Johar Town, Lahore">Johar Town, Lahore</option>
@@ -1328,19 +1394,22 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
                     <label>Customer Address *</label>
-                    <textarea id="createCustomerAddress" required rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                    <textarea id="createCustomerAddress" required rows="3"
+                        style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Order Type *</label>
-                        <select id="createOrderType" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <select id="createOrderType" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                             <option value="delivery">Delivery</option>
                             <option value="pickup">Pickup</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Payment Method *</label>
-                        <select id="createPaymentMethod" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <select id="createPaymentMethod" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                             <option value="cash">Cash</option>
                             <option value="card">Card</option>
                             <option value="online">Online</option>
@@ -1348,41 +1417,54 @@
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                         <label style="margin: 0;">Items *</label>
-                        <button type="button" class="action-btn btn-update" onclick="openAddItemModalForCreate()" style="padding: 0.5rem 1rem; font-size: 0.9rem;">+ Add Item</button>
+                        <button type="button" class="action-btn btn-update" onclick="openAddItemModalForCreate()"
+                            style="padding: 0.5rem 1rem; font-size: 0.9rem;">+ Add Item</button>
                     </div>
-                    <div id="createItemsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 0.5rem; padding: 0.5rem; background: #f9f9f9; border-radius: 5px; border: 1px solid #e0e0e0;">
-                        <p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>
+                    <div id="createItemsList"
+                        style="max-height: 300px; overflow-y: auto; margin-bottom: 0.5rem; padding: 0.5rem; background: #f9f9f9; border-radius: 5px; border: 1px solid #e0e0e0;">
+                        <p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add
+                            Item" to add products.</p>
                     </div>
                     <input type="hidden" id="createItems" value="[]">
-                    <small style="color: #666; font-size: 0.85rem;">Items are stored as JSON. Use "Add Item" button to add items easily.</small>
+                    <small style="color: #666; font-size: 0.85rem;">Items are stored as JSON. Use "Add Item" button to
+                        add items easily.</small>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="form-group">
                         <label>Subtotal</label>
-                        <input type="number" id="createSubtotal" value="0" readonly step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
+                        <input type="number" id="createSubtotal" value="0" readonly step="0.01"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
                     </div>
                     <div class="form-group">
                         <label>Delivery Fee</label>
-                        <input type="number" id="createDeliveryFee" value="150" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <input type="number" id="createDeliveryFee" value="150" step="0.01"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
                         <label>Tax (16%)</label>
-                        <input type="number" id="createTax" value="0" step="0.01" readonly style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
+                        <input type="number" id="createTax" value="0" step="0.01" readonly
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
                     </div>
                     <div class="form-group">
                         <label>Total *</label>
-                        <input type="number" id="createTotal" value="0" readonly required step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5; font-weight: 600;">
+                        <input type="number" id="createTotal" value="0" readonly required step="0.01"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5; font-weight: 600;">
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
                     <label>Notes</label>
-                    <textarea id="createNotes" rows="2" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+                    <textarea id="createNotes" rows="2"
+                        style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
                 </div>
                 <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                    <button type="button" onclick="closeCreateOrderModal()" style="padding: 0.75rem 2rem; background: #6c757d; color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Cancel</button>
-                    <button type="submit" style="padding: 0.75rem 2rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Create Order</button>
+                    <button type="button" onclick="closeCreateOrderModal()"
+                        style="padding: 0.75rem 2rem; background: #6c757d; color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    <button type="submit"
+                        style="padding: 0.75rem 2rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">Create
+                        Order</button>
                 </div>
             </form>
         </div>
@@ -1391,9 +1473,11 @@
     <!-- Add Item Modal -->
     <div class="modal" id="addItemModal">
         <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
-            <div class="modal-header" style="position: sticky; top: 0; background: white; z-index: 10; border-bottom: 1px solid #e0e0e0; padding-bottom: 1rem; margin-bottom: 1rem;">
+            <div class="modal-header"
+                style="position: sticky; top: 0; background: white; z-index: 10; border-bottom: 1px solid #e0e0e0; padding-bottom: 1rem; margin-bottom: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                    <button onclick="closeAddItemModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">←</button>
+                    <button onclick="closeAddItemModal()"
+                        style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">←</button>
                     <h2 id="addItemModalTitle" style="margin: 0;">Add Item</h2>
                 </div>
                 <button class="close-modal" onclick="closeAddItemModal()">&times;</button>
@@ -1414,23 +1498,28 @@
                 <input type="hidden" id="userId">
                 <div class="form-group">
                     <label>Username</label>
-                    <input type="text" id="userUsername" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    <input type="text" id="userUsername" required
+                        style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" id="userPassword" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
-                    <small style="color: #666; font-size: 0.85rem;" id="passwordHint">Leave blank to keep current password (when editing)</small>
+                    <input type="password" id="userPassword" required
+                        style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    <small style="color: #666; font-size: 0.85rem;" id="passwordHint">Leave blank to keep current
+                        password (when editing)</small>
                 </div>
                 <div class="form-group" id="userTypeGroup">
                     <label>User Type</label>
-                    <select id="userType" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                    <select id="userType" required
+                        style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                         <option value="gulberg">Gulberg User</option>
                         <option value="jt">JT User</option>
                         <option value="islamabad">Islamabad User</option>
                         <option value="super_admin">Super Admin</option>
                     </select>
                 </div>
-                <button type="submit" class="action-btn btn-update" style="width: 100%; margin-top: 1rem;">Save User</button>
+                <button type="submit" class="action-btn btn-update" style="width: 100%; margin-top: 1rem;">Save
+                    User</button>
             </form>
         </div>
     </div>
@@ -1441,15 +1530,15 @@
     <script>
         // Set API URL and ensure it's properly formatted
         let API_URL = 'https://zoroburger.com/api';
-        
+
         // Normalize API_URL to prevent malformed URLs
         API_URL = API_URL.replace(/\/+/g, '/').replace(/:\//g, '://').replace(/https?:\/\/\//g, 'https://');
-        
+
         // Remove trailing slash if present
         API_URL = API_URL.replace(/\/$/, '');
-        
+
         console.log('API_URL initialized:', API_URL);
-        
+
         // Helper function to construct API URLs safely
         function getApiUrl(endpoint) {
             // Remove leading slash from endpoint if present
@@ -1458,7 +1547,7 @@
             const url = `${API_URL}/${cleanEndpoint}`.replace(/([^:]\/)\/+/g, '$1');
             return url;
         }
-        
+
         let currentFilter = 'all';
         let previousOrderIds = new Set(); // Track previous order IDs to detect new orders
         let notificationInterval = null; // Track the looping sound interval
@@ -1480,7 +1569,7 @@
                 overlay.classList.toggle('active');
             }
         }
-        
+
         function closeMobileMenu() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.querySelector('.sidebar-overlay');
@@ -1489,7 +1578,7 @@
                 overlay.classList.remove('active');
             }
         }
-        
+
         // Close mobile menu when clicking outside or on window resize
         window.addEventListener('resize', () => {
             if (window.innerWidth > 768) {
@@ -1516,7 +1605,7 @@
                 } else {
                     console.warn('Products not yet available. Type:', typeof products, 'Length:', typeof products !== 'undefined' ? products.length : 'N/A');
                 }
-                
+
                 // If products not available, try to fetch from API
                 console.warn('Products not found in menu-script.js, trying API...');
                 fetch(`${API_URL}/products`)
@@ -1584,7 +1673,7 @@
                 }
             }, 200);
         }
-        
+
         // Initialize when DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initProducts);
@@ -1628,7 +1717,7 @@
         function showDashboard() {
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('adminContainer').style.display = 'flex';
-            
+
             // Update user info display
             if (currentUser) {
                 const userTypeLabel = {
@@ -1637,10 +1726,10 @@
                     'islamabad': 'Islamabad Admin',
                     'super_admin': 'Super Admin'
                 };
-                document.getElementById('userInfo').textContent = 
+                document.getElementById('userInfo').textContent =
                     `Logged in as: ${currentUser.username} (${userTypeLabel[currentUser.user_type] || currentUser.user_type})`;
             }
-            
+
             // Hide/show tabs based on user type
             updateSidebarVisibility();
         }
@@ -1648,11 +1737,11 @@
         // Update sidebar visibility based on user type
         function updateSidebarVisibility() {
             if (!currentUser) return;
-            
+
             const menuItems = document.querySelectorAll('.sidebar-menu li');
             menuItems.forEach(item => {
                 const section = item.dataset.section;
-                
+
                 // Gulberg, JT, and Islamabad users only see Orders tab
                 if (currentUser.user_type === 'gulberg' || currentUser.user_type === 'jt' || currentUser.user_type === 'islamabad') {
                     if (section !== 'orders') {
@@ -1672,9 +1761,9 @@
             if (showConfirm && !confirm('Are you sure you want to logout?')) {
                 return;
             }
-                localStorage.removeItem('adminUser');
-                currentUser = null;
-                showLogin();
+            localStorage.removeItem('adminUser');
+            currentUser = null;
+            showLogin();
         }
 
         // Get auth headers for API requests
@@ -1692,12 +1781,12 @@
                     }
                 }
             }
-            
+
             if (!currentUser || !currentUser.id || !currentUser.user_type) {
                 console.error('Cannot get auth headers - invalid currentUser:', currentUser);
                 return {};
             }
-            
+
             // Use hyphenated header names (HTTP standard) - Express will convert to lowercase
             const headers = {
                 'user-id': String(currentUser.id),
@@ -1712,18 +1801,18 @@
         // Handle login form submission
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
             const errorDiv = document.getElementById('loginError');
-            
+
             errorDiv.style.display = 'none';
             errorDiv.textContent = '';
-            
+
             try {
                 const loginUrl = getApiUrl('admin/login');
                 console.log('Login URL:', loginUrl);
-                
+
                 const response = await fetch(loginUrl, {
                     method: 'POST',
                     headers: {
@@ -1731,9 +1820,9 @@
                     },
                     body: JSON.stringify({ username, password })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok && data.success) {
                     // Save user info
                     currentUser = data.user;
@@ -1752,8 +1841,8 @@
                     setTimeout(() => {
                         console.log('Loading stats/orders, currentUser:', currentUser);
                         console.log('Auth headers will be:', getAuthHeaders());
-                    loadStats();
-                    loadOrders('all', true);
+                        loadStats();
+                        loadOrders('all', true);
                     }, 200);
                 } else {
                     errorDiv.textContent = data.error || 'Login failed';
@@ -1783,30 +1872,30 @@
                 if (!audioContext) {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 }
-                
+
                 // Resume audio context if suspended (browser autoplay policy)
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                 }
-                
+
                 // Create a pleasant two-tone notification sound
                 const playTone = (frequency, duration, startTime) => {
                     const oscillator = audioContext.createOscillator();
                     const gainNode = audioContext.createGain();
-                    
+
                     oscillator.connect(gainNode);
                     gainNode.connect(audioContext.destination);
-                    
+
                     oscillator.frequency.value = frequency;
                     oscillator.type = 'sine';
-                    
+
                     gainNode.gain.setValueAtTime(0.3, startTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-                    
+
                     oscillator.start(startTime);
                     oscillator.stop(startTime + duration);
                 };
-                
+
                 // Play two tones: a higher tone followed by a lower tone (like a doorbell)
                 const now = audioContext.currentTime;
                 playTone(800, 0.15, now); // First tone (higher)
@@ -1822,7 +1911,7 @@
             if (notificationInterval) {
                 return;
             }
-            
+
             // Only loop if the page is hidden (user not viewing the dashboard)
             if (!document.hidden) {
                 // Page is visible - just play once
@@ -1830,13 +1919,13 @@
                 console.log('🔔 New order detected! (Dashboard is visible, playing once)');
                 return;
             }
-            
+
             hasUnacknowledgedOrders = true;
             console.log('🔔 New order detected! Starting notification loop (dashboard is hidden)...');
-            
+
             // Play immediately
             playSingleNotificationSound();
-            
+
             // Then play every 3 seconds in a loop
             notificationInterval = setInterval(() => {
                 // Stop if page becomes visible or orders are acknowledged
@@ -1886,29 +1975,29 @@
                             console.log('Restored currentUser in loadStats:', currentUser);
                         } catch (e) {
                             console.error('Error parsing saved user in loadStats:', e);
-                    return;
-                }
+                            return;
+                        }
                     } else {
                         console.error('Not authenticated - no currentUser and no saved user');
                         return;
                     }
                 }
-                
+
                 const authHeaders = getAuthHeaders();
                 console.log('Loading stats with headers:', authHeaders);
                 console.log('Current user when loading stats:', currentUser);
-                
+
                 if (!authHeaders || !authHeaders['user-id'] || !authHeaders['user-type']) {
                     console.error('❌ Invalid auth headers:', authHeaders);
                     console.error('❌ currentUser state:', currentUser);
                     return;
                 }
-                
+
                 // Log the exact URL and headers being sent
                 const statsUrl = `${API_URL}/stats`;
                 console.log('📤 Sending GET request to:', statsUrl);
                 console.log('📤 Request headers:', JSON.stringify(authHeaders, null, 2));
-                
+
                 const response = await fetch(statsUrl, {
                     method: 'GET',
                     headers: {
@@ -1917,10 +2006,10 @@
                         'Content-Type': 'application/json'
                     }
                 });
-                
+
                 console.log('📥 Response status:', response.status);
                 console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
-                
+
                 if (response.status === 401) {
                     // Session expired, logout without confirmation
                     console.warn('Authentication failed (401) on stats endpoint, logging out...');
@@ -1929,14 +2018,14 @@
                     logout(false);
                     return;
                 }
-                
+
                 if (!response.ok) {
                     console.error('Stats request failed:', response.status, response.statusText);
                     return;
                 }
-                
+
                 const stats = await response.json();
-                
+
                 document.getElementById('totalOrders').textContent = stats.total_orders || 0;
                 document.getElementById('todayOrders').textContent = stats.today_orders || 0;
                 document.getElementById('totalRevenue').textContent = `Rs ${(stats.total_revenue || 0).toLocaleString()}`;
@@ -1948,12 +2037,12 @@
 
         // Store current orders data for comparison
         let currentOrdersData = new Map(); // Map of orderId -> order data
-        
+
         // Helper function to format date and time nicely
         function formatDateTime(dateString) {
             try {
                 const date = new Date(dateString);
-                
+
                 // Format time
                 const hours = date.getHours();
                 const minutes = date.getMinutes();
@@ -1961,19 +2050,19 @@
                 const displayHours = hours % 12 || 12;
                 const displayMinutes = minutes.toString().padStart(2, '0');
                 const timeStr = `${displayHours}:${displayMinutes} ${ampm}`;
-                
+
                 // Format date - always show full date
                 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                 const day = date.getDate();
                 const month = monthNames[date.getMonth()];
                 const year = date.getFullYear();
-                
+
                 return `<strong>${day} ${month} ${year}</strong><br><small style="color: #666;">${timeStr}</small>`;
             } catch (err) {
                 return new Date(dateString).toLocaleString();
             }
         }
-        
+
         // Helper function to render order row HTML
         function renderOrderRow(order) {
             try {
@@ -1983,11 +2072,11 @@
                 const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
                 const status = order.status || 'ordered';
                 const paymentStatus = order.payment_status || 'pending';
-                
+
                 const safeOrderId = orderId.replace(/'/g, "\\'");
                 const safeStatus = status.replace(/'/g, "\\'");
                 const safePaymentStatus = paymentStatus.replace(/'/g, "\\'");
-                
+
                 return `
                     <tr data-order-id="${orderId}" style="display: table-row;">
                         <td><strong>${order.order_number || 'N/A'}</strong></td>
@@ -2009,7 +2098,7 @@
                 return `<tr style="display: table-row;"><td colspan="9" style="color: red;">Error rendering order: ${err.message}</td></tr>`;
             }
         }
-        
+
         // Helper function to render order card for mobile view
         function renderOrderCard(order) {
             try {
@@ -2019,11 +2108,11 @@
                 const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
                 const status = order.status || 'ordered';
                 const paymentStatus = order.payment_status || 'pending';
-                
+
                 const safeOrderId = orderId.replace(/'/g, "\\'");
                 const safeStatus = status.replace(/'/g, "\\'");
                 const safePaymentStatus = paymentStatus.replace(/'/g, "\\'");
-                
+
                 return `
                     <div class="order-card" data-order-id="${orderId}">
                         <div class="order-card-header">
@@ -2070,14 +2159,14 @@
                 return `<div class="order-card" style="color: red; padding: 1rem;">Error rendering order: ${err.message}</div>`;
             }
         }
-        
+
         // Helper function to create order row element
         function createOrderRowElement(order) {
             const temp = document.createElement('tbody');
             temp.innerHTML = renderOrderRow(order);
             return temp.firstElementChild;
         }
-        
+
         // Helper function to check if order changed
         function hasOrderChanged(oldOrder, newOrder) {
             return (
@@ -2087,7 +2176,7 @@
                 JSON.stringify(oldOrder.items) !== JSON.stringify(newOrder.items)
             );
         }
-        
+
         // Load orders
         async function loadOrders(status = 'all', isInitialLoad = false) {
             try {
@@ -2097,7 +2186,7 @@
                     alert('Error: Table body element not found. Please refresh the page.');
                     return;
                 }
-                
+
                 // Only show loading on initial load
                 if (isInitialLoad) {
                     tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">Loading orders...</td></tr>';
@@ -2106,7 +2195,7 @@
                         cardView.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">Loading orders...</p>';
                     }
                 }
-                
+
                 // Re-check auth if currentUser is null
                 if (!currentUser) {
                     const savedUser = localStorage.getItem('adminUser');
@@ -2119,21 +2208,21 @@
                         }
                     }
                 }
-                
+
                 if (!currentUser) {
                     console.error('Not authenticated - currentUser is null');
                     tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem; color: red;">Please login to view orders.</td></tr>';
                     return;
                 }
-                
+
                 console.log('Loading orders with user:', currentUser);
-                
+
                 // Build URL with status and date filters
                 const params = new URLSearchParams();
                 if (status !== 'all') {
                     params.append('status', status);
                 }
-                
+
                 // Add date filters if they exist
                 const startDate = document.getElementById('startDateFilter')?.value;
                 const endDate = document.getElementById('endDateFilter')?.value;
@@ -2143,20 +2232,20 @@
                 if (endDate) {
                     params.append('endDate', endDate);
                 }
-                
+
                 const queryString = params.toString();
                 const url = queryString ? `${API_URL}/orders?${queryString}` : `${API_URL}/orders`;
                 console.log('Fetching orders from:', url);
-                
+
                 const authHeaders = getAuthHeaders();
                 console.log('Auth headers for orders request:', authHeaders);
-                
+
                 if (!authHeaders || !authHeaders['user-id'] || !authHeaders['user-type']) {
                     console.error('Invalid auth headers - cannot make request:', authHeaders);
                     tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem; color: red;">Authentication error. Please refresh and login again.</td></tr>';
                     return;
                 }
-                
+
                 let response;
                 try {
                     response = await fetch(url, {
@@ -2167,28 +2256,28 @@
                     console.error('Fetch error:', fetchError);
                     throw new Error(`Failed to connect to server: ${fetchError.message}. Make sure the backend is running on http://localhost:3000`);
                 }
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('API Error:', response.status, errorText);
                     throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
                 }
-                
+
                 const orders = await response.json();
                 console.log('Received orders:', orders);
-                
+
                 if (!Array.isArray(orders)) {
                     console.error('Expected array but got:', orders);
                     tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem; color: red;">Invalid response from server. Check console for details.</td></tr>';
                     return;
                 }
-                
+
                 // Detect new orders by comparing with previous order IDs
                 // Only play sounds for orders matching the user's branch
                 if (previousOrderIds.size > 0) {
                     const currentOrderIds = new Set();
                     let hasNewOrders = false;
-                    
+
                     orders.forEach(order => {
                         const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
                         if (orderId) {
@@ -2198,9 +2287,9 @@
                                 // Check if this order belongs to the user's branch
                                 const orderBranch = (order.branch || '').toLowerCase();
                                 const userType = currentUser ? currentUser.user_type : null;
-                                
+
                                 let shouldNotify = false;
-                                
+
                                 if (userType === 'super_admin') {
                                     // Super admin gets all orders
                                     shouldNotify = true;
@@ -2214,20 +2303,20 @@
                                     // Islamabad users only get Islamabad orders
                                     shouldNotify = orderBranch.includes('islamabad');
                                 }
-                                
+
                                 if (shouldNotify) {
-                                hasNewOrders = true;
+                                    hasNewOrders = true;
                                     console.log(`🔔 New ${userType === 'super_admin' ? '' : userType + ' '}order detected:`, order.order_number || orderId, order.branch);
                                 }
                             }
                         }
                     });
-                    
+
                     // Start looping sound if new orders detected for this user's branch
                     if (hasNewOrders) {
                         startNotificationLoop();
                     }
-                    
+
                     // Update previous order IDs for next check
                     previousOrderIds = currentOrderIds;
                 } else {
@@ -2241,14 +2330,14 @@
                     });
                     previousOrderIds = currentOrderIds;
                 }
-                
+
                 if (orders.length === 0) {
                     if (isInitialLoad || tbody.children.length === 0) {
                         tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">No orders found. Place an order from the website to see it here.</td></tr>';
                     }
                     return;
                 }
-                
+
                 // Create a map of new orders
                 const newOrdersMap = new Map();
                 orders.forEach(order => {
@@ -2257,15 +2346,15 @@
                         newOrdersMap.set(orderId, order);
                     }
                 });
-                
+
                 // If this is initial load or table is empty, render everything
                 // Also update card view for mobile
                 const cardView = document.getElementById('ordersCardView');
-                
+
                 if (isInitialLoad || tbody.children.length === 0 || tbody.querySelector('tr[colspan]')) {
                     const ordersHTML = orders.map(order => renderOrderRow(order)).join('');
                     tbody.innerHTML = ordersHTML;
-                    
+
                     // Update card view
                     if (cardView) {
                         if (orders.length === 0) {
@@ -2275,7 +2364,7 @@
                             cardView.innerHTML = cardsHTML;
                         }
                     }
-                    
+
                     // Store current orders
                     orders.forEach(order => {
                         const orderId = order._id ? (order._id.toString ? order._id.toString() : String(order._id)) : (order.id ? String(order.id) : '');
@@ -2287,17 +2376,17 @@
                     // Smart update: only change what's different
                     const existingRows = Array.from(tbody.querySelectorAll('tr[data-order-id]'));
                     const existingOrderIds = new Set();
-                    
+
                     // Update existing rows or remove if order no longer exists
                     existingRows.forEach(row => {
                         const orderId = row.getAttribute('data-order-id');
                         existingOrderIds.add(orderId);
-                        
+
                         if (newOrdersMap.has(orderId)) {
                             // Order still exists - check if it changed
                             const newOrder = newOrdersMap.get(orderId);
                             const oldOrder = currentOrdersData.get(orderId);
-                            
+
                             if (!oldOrder || hasOrderChanged(oldOrder, newOrder)) {
                                 // Order changed - update the row smoothly
                                 const newRow = createOrderRowElement(newOrder);
@@ -2312,7 +2401,7 @@
                             currentOrdersData.delete(orderId);
                         }
                     });
-                    
+
                     // Add new orders (that don't exist in current table)
                     newOrdersMap.forEach((order, orderId) => {
                         if (!existingOrderIds.has(orderId)) {
@@ -2325,7 +2414,7 @@
                                 newRow.style.transition = 'opacity 0.3s';
                                 newRow.style.opacity = '1';
                             }, 10);
-                            
+
                             // Also update card view
                             if (cardView) {
                                 const newCardHTML = renderOrderCard(order);
@@ -2339,22 +2428,22 @@
                                     newCard.style.opacity = '1';
                                 }, 10);
                             }
-                            
+
                             currentOrdersData.set(orderId, order);
                         }
                     });
-                    
+
                     // Update card view for all orders
                     if (cardView && orders.length > 0) {
                         const cardsHTML = orders.map(order => renderOrderCard(order)).join('');
                         cardView.innerHTML = cardsHTML;
                     }
                 }
-                
+
                 console.log('Orders rendered successfully:', orders.length, 'orders');
                 console.log('Table body innerHTML length:', tbody.innerHTML.length);
                 console.log('Table body children count:', tbody.children.length);
-                
+
                 // Force table visibility - check all parent elements
                 const table = tbody.closest('table');
                 if (table) {
@@ -2366,7 +2455,7 @@
                 } else {
                     console.error('Table element not found!');
                 }
-                
+
                 const tableWrapper = tbody.closest('div[style*="overflow"]');
                 if (tableWrapper) {
                     tableWrapper.style.display = 'block';
@@ -2374,7 +2463,7 @@
                     tableWrapper.style.opacity = '1';
                     console.log('Table wrapper found and made visible');
                 }
-                
+
                 const ordersSection = document.querySelector('.orders-section');
                 if (ordersSection) {
                     ordersSection.style.display = 'block';
@@ -2387,14 +2476,14 @@
                 } else {
                     console.error('Orders section not found!');
                 }
-                
+
                 // Check if stats grid is covering the table
                 const statsGrid = document.getElementById('statsGrid');
                 if (statsGrid) {
                     console.log('Stats grid height:', statsGrid.offsetHeight);
                     console.log('Stats grid position:', window.getComputedStyle(statsGrid).position);
                 }
-                
+
                 // Verify table rows are actually in DOM
                 const rows = tbody.querySelectorAll('tr');
                 console.log('Number of rows in tbody:', rows.length);
@@ -2409,10 +2498,10 @@
                     const errorMsg = error.message || 'Unknown error';
                     const isFileProtocol = window.location.protocol === 'file:';
                     const protocolWarning = isFileProtocol ? '<br><br><strong style="color: red;">⚠️ WARNING: You are opening this file directly. Please access it through https://zoroburger.com/admin instead!</strong>' : '';
-                    
-                    tbody.innerHTML = 
+
+                    tbody.innerHTML =
                         '<tr><td colspan="9" style="text-align: center; padding: 2rem; color: red; background: #ffe6e6; border: 2px solid red; border-radius: 5px;">' +
-                        '<strong>Error loading orders:</strong><br>' + errorMsg + 
+                        '<strong>Error loading orders:</strong><br>' + errorMsg +
                         protocolWarning +
                         '<br><br><strong>Make sure:</strong><br>' +
                         '1. Backend is running on http://localhost:3000<br>' +
@@ -2437,24 +2526,24 @@
                 loadOrders(currentFilter, true);
             });
         });
-        
+
         // Date filter functions
         function applyDateFilter() {
             const startDate = document.getElementById('startDateFilter')?.value;
             const endDate = document.getElementById('endDateFilter')?.value;
-            
+
             // Validate dates
             if (startDate && endDate && startDate > endDate) {
                 alert('Start date cannot be after end date!');
                 document.getElementById('endDateFilter').value = '';
                 return;
             }
-            
+
             // Reset current orders data when filter changes
             currentOrdersData.clear();
             loadOrders(currentFilter, true);
         }
-        
+
         function clearDateFilter() {
             document.getElementById('startDateFilter').value = '';
             document.getElementById('endDateFilter').value = '';
@@ -2477,11 +2566,11 @@
 
         document.getElementById('updateForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const orderId = document.getElementById('updateOrderId').value;
             const status = document.getElementById('updateStatus').value;
             const paymentStatus = document.getElementById('updatePaymentStatus').value;
-            
+
             try {
                 const response = await fetch(`${API_URL}/orders/${orderId}`, {
                     method: 'PATCH',
@@ -2491,14 +2580,14 @@
                     },
                     body: JSON.stringify({ status, payment_status: paymentStatus })
                 });
-                
+
                 if (response.status === 401) {
                     logout();
                     return;
                 }
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     alert('Order updated successfully!');
                     closeUpdateModal();
@@ -2519,15 +2608,15 @@
                 const response = await fetch(`${API_URL}/orders/${orderId}`, {
                     headers: getAuthHeaders()
                 });
-                
+
                 if (response.status === 401) {
                     logout();
                     return;
                 }
                 const order = await response.json();
-                
+
                 const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
-                
+
                 document.getElementById('orderDetails').innerHTML = `
                     <div style="margin-bottom: 1.5rem;">
                         <h3 style="margin-bottom: 1rem;">Order #${order.order_number}</h3>
@@ -2581,8 +2670,8 @@
                     <div style="margin-bottom: 1.5rem;">
                         <h4 style="margin-bottom: 0.5rem;">Items</h4>
                         ${items.map(item => {
-                            const itemTotal = item.total || (item.price * (item.quantity || 1));
-                            const sizeInfo = item.size ? `
+                    const itemTotal = item.total || (item.price * (item.quantity || 1));
+                    const sizeInfo = item.size ? `
                                 <div style="margin-top: 0.5rem;">
                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                                         <span style="font-size: 0.85rem; color: #666; font-weight: 600;">Size:</span>
@@ -2592,8 +2681,8 @@
                                     </div>
                                 </div>
                             ` : '';
-                            const addonsInfo = item.addons && item.addons.length > 0 
-                                ? `
+                    const addonsInfo = item.addons && item.addons.length > 0
+                        ? `
                                     <div style="margin-top: 0.75rem;">
                                         <div style="font-size: 0.85rem; color: #666; font-weight: 600; margin-bottom: 0.5rem;">Add-ons:</div>
                                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
@@ -2605,13 +2694,13 @@
                                             `).join('')}
                                         </div>
                                     </div>
-                                ` 
-                                : '';
-                            const addonsPrice = item.addons && item.addons.length > 0 
-                                ? item.addons.reduce((sum, addon) => sum + (addon.price || 0), 0) 
-                                : 0;
-                            
-                            return `
+                                `
+                        : '';
+                    const addonsPrice = item.addons && item.addons.length > 0
+                        ? item.addons.reduce((sum, addon) => sum + (addon.price || 0), 0)
+                        : 0;
+
+                    return `
                                 <div style="padding: 1rem; margin-bottom: 0.75rem; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--primary-color);">
                                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
                                         <div style="flex: 1;">
@@ -2634,7 +2723,7 @@
                                     ` : ''}
                                 </div>
                             `;
-                        }).join('')}
+                }).join('')}
                     </div>
                     
                     <div style="border-top: 2px solid #eee; padding-top: 1rem;">
@@ -2660,7 +2749,7 @@
                     </div>
                     ` : ''}
                 `;
-                
+
                 document.getElementById('viewModal').classList.add('active');
             } catch (error) {
                 console.error('Error:', error);
@@ -2678,19 +2767,19 @@
                 const response = await fetch(`${API_URL}/orders/${orderId}`, {
                     headers: getAuthHeaders()
                 });
-                
+
                 if (response.status === 401) {
                     logout();
                     return;
                 }
                 const order = await response.json();
-                
+
                 // Check if order can be edited (not confirmed, in progress, delivered, or cancelled)
                 if (order.status === 'confirmed' || order.status === 'awaiting_rider' || order.status === 'in_kitchen' || order.status === 'rider_on_way' || order.status === 'delivered' || order.status === 'cancelled') {
                     alert('This order cannot be edited because it has already been confirmed, is in progress, delivered, or cancelled.');
                     return;
                 }
-                
+
                 // Populate form fields
                 document.getElementById('editOrderId').value = orderId;
                 document.getElementById('editCustomerName').value = order.customer_name || '';
@@ -2700,18 +2789,18 @@
                 document.getElementById('editBranch').value = order.branch || '';
                 document.getElementById('editOrderType').value = order.order_type || 'delivery';
                 document.getElementById('editPaymentMethod').value = order.payment_method || 'cash';
-                
+
                 // Initialize items
                 currentEditItems = Array.isArray(order.items) ? order.items : [];
                 updateItemsList();
                 document.getElementById('editItems').value = JSON.stringify(currentEditItems, null, 2);
-                
+
                 document.getElementById('editSubtotal').value = order.subtotal || 0;
                 document.getElementById('editDeliveryFee').value = order.delivery_fee || 0;
                 document.getElementById('editTax').value = order.tax || 0;
                 document.getElementById('editTotal').value = order.total || 0;
                 document.getElementById('editNotes').value = order.notes || '';
-                
+
                 document.getElementById('editModal').classList.add('active');
             } catch (error) {
                 console.error('Error:', error);
@@ -2730,9 +2819,9 @@
         function updateItemsList() {
             const itemsList = document.getElementById('editItemsList');
             const itemsTextarea = document.getElementById('editItems');
-            
+
             if (!itemsList) return;
-            
+
             if (currentEditItems.length === 0) {
                 itemsList.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>';
             } else {
@@ -2740,10 +2829,10 @@
                     const addonsPrice = (item.addons || []).reduce((sum, a) => sum + (a.price || 0), 0);
                     const itemTotal = (item.total || ((item.price || 0) + addonsPrice) * (item.quantity || 1));
                     const sizeInfo = item.size && item.size !== 'Regular' ? ` (${item.size})` : '';
-                    const addonsInfo = item.addons && item.addons.length > 0 
-                        ? ` + ${item.addons.map(a => a.name).join(', ')}` 
+                    const addonsInfo = item.addons && item.addons.length > 0
+                        ? ` + ${item.addons.map(a => a.name).join(', ')}`
                         : '';
-                    
+
                     return `
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; margin-bottom: 0.5rem; background: white; border-radius: 5px; border: 1px solid #e0e0e0;">
                             <div style="flex: 1;">
@@ -2760,12 +2849,12 @@
                     `;
                 }).join('');
             }
-            
+
             // Update textarea
             if (itemsTextarea) {
                 itemsTextarea.value = JSON.stringify(currentEditItems, null, 2);
             }
-            
+
             // Recalculate totals
             recalculateOrderTotals();
         }
@@ -2784,12 +2873,12 @@
             const subtotal = currentEditItems.reduce((sum, item) => {
                 return sum + (item.total || ((item.price || 0) + ((item.addons || []).reduce((aSum, a) => aSum + (a.price || 0), 0))) * (item.quantity || 1));
             }, 0);
-            
+
             const deliveryFee = parseFloat(document.getElementById('editDeliveryFee').value) || 0;
             const discount = 0; // Can be added later
             const tax = (subtotal - discount) * 0.16; // 16% tax
             const total = subtotal - discount + deliveryFee + tax;
-            
+
             document.getElementById('editSubtotal').value = subtotal.toFixed(2);
             document.getElementById('editTax').value = tax.toFixed(2);
             document.getElementById('editTotal').value = total.toFixed(2);
@@ -2800,12 +2889,12 @@
             isCreatingOrder = true;
             currentCreateItems = [];
             editingItemIndex = -1;
-            
+
             // Reset form
             document.getElementById('createOrderForm').reset();
             document.getElementById('createItems').value = '[]';
             document.getElementById('createItemsList').innerHTML = '<p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>';
-            
+
             // Set default branch based on user type
             const userType = currentUser ? currentUser.user_type : null;
             const branchSelect = document.getElementById('createBranch');
@@ -2818,19 +2907,19 @@
                     branchSelect.value = 'Islamabad';
                 }
             }
-            
+
             // Set up event listeners for delivery fee (tax is auto-calculated, so no listener needed)
             const deliveryFeeInput = document.getElementById('createDeliveryFee');
-            
+
             // Remove existing listeners if any
             if (deliveryFeeInput) {
                 deliveryFeeInput.removeEventListener('input', updateCreateOrderTotals);
                 deliveryFeeInput.addEventListener('input', updateCreateOrderTotals);
             }
-            
+
             // Auto-calculate totals including 16% tax
             updateCreateOrderTotals();
-            
+
             document.getElementById('createOrderModal').classList.add('active');
         }
 
@@ -2849,7 +2938,7 @@
         function updateCreateItemsList() {
             const itemsList = document.getElementById('createItemsList');
             if (!itemsList) return;
-            
+
             if (currentCreateItems.length === 0) {
                 itemsList.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem 0;">No items added yet. Click "Add Item" to add products.</p>';
             } else {
@@ -2857,10 +2946,10 @@
                     const addonsPrice = (item.addons || []).reduce((sum, a) => sum + (a.price || 0), 0);
                     const itemTotal = (item.total || ((item.price || 0) + addonsPrice) * (item.quantity || 1));
                     const sizeInfo = item.size ? ` (${item.size})` : '';
-                    const addonsInfo = item.addons && item.addons.length > 0 
+                    const addonsInfo = item.addons && item.addons.length > 0
                         ? ` + ${item.addons.map(a => a.name).join(', ')}`
                         : '';
-                    
+
                     return `
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; margin-bottom: 0.5rem; background: white; border-radius: 5px; border: 1px solid #e0e0e0;">
                             <div style="flex: 1;">
@@ -2877,7 +2966,7 @@
                     `;
                 }).join('');
             }
-            
+
             // Update hidden input
             document.getElementById('createItems').value = JSON.stringify(currentCreateItems, null, 2);
             updateCreateOrderTotals();
@@ -2897,12 +2986,12 @@
             const subtotal = currentCreateItems.reduce((sum, item) => {
                 return sum + (item.total || ((item.price || 0) + ((item.addons || []).reduce((aSum, a) => aSum + (a.price || 0), 0))) * (item.quantity || 1));
             }, 0);
-            
+
             const deliveryFee = parseFloat(document.getElementById('createDeliveryFee').value) || 0;
             const discount = 0; // Can be added later if needed
             const tax = Math.round((subtotal - discount) * 0.16); // 16% tax (rounded to whole number like checkout)
             const total = subtotal - discount + deliveryFee + tax;
-            
+
             document.getElementById('createSubtotal').value = subtotal.toFixed(2);
             document.getElementById('createTax').value = tax.toFixed(2);
             document.getElementById('createTotal').value = total.toFixed(2);
@@ -2911,12 +3000,12 @@
         // Handle create order form submission
         document.getElementById('createOrderForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             if (currentCreateItems.length === 0) {
                 alert('Please add at least one item to the order.');
                 return;
             }
-            
+
             const orderData = {
                 customer_name: document.getElementById('createCustomerName').value,
                 customer_phone: document.getElementById('createCustomerPhone').value,
@@ -2933,7 +3022,7 @@
                 notes: document.getElementById('createNotes').value,
                 source: 'call'
             };
-            
+
             try {
                 const response = await fetch(`${API_URL}/orders`, {
                     method: 'POST',
@@ -2943,14 +3032,14 @@
                     },
                     body: JSON.stringify(orderData)
                 });
-                
+
                 if (response.status === 401) {
                     logout();
                     return;
                 }
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     alert(`Order created successfully! Order #: ${data.order_number || 'N/A'}`);
                     closeCreateOrderModal();
@@ -3010,7 +3099,7 @@ Debug info:
                     return;
                 }
             }
-            
+
             editingItemIndex = index;
             document.getElementById('addItemModalTitle').textContent = item ? 'Edit Item' : 'Add Item';
             renderAddItemModal(item);
@@ -3026,10 +3115,10 @@ Debug info:
         function renderAddItemModal(item) {
             const modalBody = document.getElementById('addItemModalBody');
             if (!modalBody) return;
-            
+
             const isEdit = item !== null;
             let product = null;
-            
+
             if (item) {
                 // Try to find product by ID first (more reliable), then by name
                 if (item.id) {
@@ -3052,24 +3141,24 @@ Debug info:
                 // If still not found and item has category, try matching by category and similar name
                 if (!product && item.category && item.name) {
                     const baseName = item.name.split('(')[0].trim();
-                    product = allProducts.find(p => 
-                        p.category === item.category && 
+                    product = allProducts.find(p =>
+                        p.category === item.category &&
                         (p.name === baseName || p.name === item.name || item.name.startsWith(p.name))
                     );
                 }
             }
-            
+
             // Determine if product is wings early (needed for add-ons logic)
             const isWings = product && product.category === 'wings';
-            
+
             // Initialize basePricing and APPLY_DISCOUNTS at function level (needed for wing types)
             let basePricing = { original: product ? product.price : 0, discounted: product ? product.price : 0, discountRate: 0 };
             const APPLY_DISCOUNTS = typeof window !== 'undefined' && window.APPLY_DISCOUNTS !== undefined ? window.APPLY_DISCOUNTS : true;
-            
+
             if (product && typeof getDiscountedPrice === 'function') {
                 basePricing = getDiscountedPrice(product);
             }
-            
+
             // Product search/select
             if (allProducts.length === 0) {
                 console.error('No products available! allProducts length:', allProducts.length);
@@ -3081,7 +3170,7 @@ Debug info:
                 `;
                 return;
             }
-            
+
             const productsHTML = allProducts.map(p => {
                 const isSelected = product && product.id === p.id;
                 // Show discounted price for combos
@@ -3089,7 +3178,7 @@ Debug info:
                 if (p.isCombo) {
                     let basePricing = { original: p.price, discounted: p.price, discountRate: 0 };
                     const APPLY_DISCOUNTS = typeof window !== 'undefined' && window.APPLY_DISCOUNTS !== undefined ? window.APPLY_DISCOUNTS : true;
-                    
+
                     if (typeof getDiscountedPrice === 'function') {
                         basePricing = getDiscountedPrice(p);
                     }
@@ -3097,13 +3186,13 @@ Debug info:
                 }
                 return `<option value="${p.id}" ${isSelected ? 'selected' : ''}>${p.name} - Rs ${displayPrice.toLocaleString()}</option>`;
             }).join('');
-            
+
             // Size options - apply discounts like in menu-script.js
             let sizes = [];
             if (product) {
                 // Combo meals don't have size options
                 const isCombo = product.isCombo || false;
-                
+
                 if (!isCombo) {
                     // basePricing and APPLY_DISCOUNTS are already defined at function level
                     // Update basePricing if product exists
@@ -3112,16 +3201,16 @@ Debug info:
                     } else if (product) {
                         basePricing = { original: product.price, discounted: product.price, discountRate: 0 };
                     }
-                    
+
                     // isWings is already defined at function level, no need to redefine
                     const isChickenCrunchers = product.id === 26;
                     const isShakes = product.category === 'premium-shakes';
                     const isBurger = !isWings && !isChickenCrunchers && !isShakes && product.category && (
-                        product.category.includes('beef') || 
+                        product.category.includes('beef') ||
                         product.category.includes('chicken') ||
                         product.category.includes('burger')
                     );
-                    
+
                     if (isShakes) {
                         // Premium Shakes: Regular and Large sizes
                         // Pricing rules:
@@ -3131,7 +3220,7 @@ Debug info:
                         // - If regular is 1095, large is 1395
                         const regularPrice = product.price;
                         let largePrice;
-                        
+
                         if (regularPrice === 695) {
                             largePrice = 995;
                         } else if (regularPrice === 795) {
@@ -3144,7 +3233,7 @@ Debug info:
                             // Fallback calculation if price doesn't match
                             largePrice = regularPrice + 300;
                         }
-                        
+
                         const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
                         sizes = [
                             { name: 'Regular', originalPrice: regularPrice, price: APPLY_DISCOUNTS ? Math.round(regularPrice * (1 - discountRate)) : regularPrice },
@@ -3183,10 +3272,10 @@ Debug info:
                         const isPepperChicken = product.id === 12; // Pepper Chicken has id 12
                         const isTangyCrunch = product.id === 13; // Tangy Crunch has id 13
                         const isRoost = product.id === 14; // Roost has id 14
-                        
+
                         let singleOriginal, doubleOriginal, tripleOriginal;
                         let hasTriple = true;
-                        
+
                         if (isBeefSmashers) {
                             singleOriginal = 895;
                             doubleOriginal = 1295;
@@ -3234,12 +3323,12 @@ Debug info:
                             doubleOriginal = Math.round(product.price * 1.447);
                             tripleOriginal = Math.round(product.price * 1.894);
                         }
-                        
+
                         const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
                         sizes = [
                             { name: 'Single', originalPrice: singleOriginal, price: APPLY_DISCOUNTS ? Math.round(singleOriginal * (1 - discountRate)) : singleOriginal }
                         ];
-                        
+
                         if (hasTriple) {
                             sizes.push(
                                 { name: 'Double', originalPrice: doubleOriginal, price: APPLY_DISCOUNTS ? Math.round(doubleOriginal * (1 - discountRate)) : doubleOriginal },
@@ -3263,7 +3352,7 @@ Debug info:
                     { name: 'Triple', originalPrice: 0, price: 0 }
                 ];
             }
-            
+
             // Wing type options (Bone-in or Boneless) - only for wings
             // isWings is already defined at function level
             let wingTypes = [];
@@ -3273,7 +3362,7 @@ Debug info:
                     { name: 'Boneless', value: 'boneless' }
                 ];
             }
-            
+
             // For wings, default to "6 Pieces" if no size is set, otherwise use item size or first available size
             let defaultSize = 'Single';
             if (isWings) {
@@ -3297,7 +3386,7 @@ Debug info:
                     </div>
                 `;
             }).join('');
-            
+
             // Build wing types HTML with prices
             let wingTypesHTML = '';
             if (isWings && wingTypes.length > 0) {
@@ -3316,42 +3405,42 @@ Debug info:
                     `;
                 }).join('');
             }
-            
+
             // Addons
             let addons = [];
             if (product) {
                 // Combo meals don't have addon options
                 const isCombo = product.isCombo || false;
-                
+
                 // Wings don't have add-ons - explicitly check for wings category
                 // Use the isWings variable that was already determined earlier in the function
                 // This ensures we're using the same check that determines wing types
-                
+
                 if (!isCombo && !isWings) {
                     const category = product.category || '';
                     const isBeef = category === 'beef-smashers' || category === 'beef-speciality';
                     const isChicken = category === 'chicken-burgers';
-                    
+
                     // Only show add-ons for beef and chicken burgers (not wings)
                     if (isBeef || isChicken) {
                         addons = [
-                            { name: 'Pickles', price: 80 },
-                            { name: 'Onions', price: 80 },
-                            { name: 'Pickled Red Onions', price: 80 },
-                            { name: 'Tomatoes', price: 80 },
-                            { name: 'Crispy Onions', price: 100 },
-                            { name: 'Cheese Slice', price: 100 },
-                            { name: 'Bacon', price: 250 },
-                            { name: 'Double Cheese Slice', price: 200 },
-                            { name: 'Lettuce', price: 80 },
-                            { name: 'Grilled Onions', price: 100 },
-                            { name: 'Nachos', price: 80 },
-                            { name: 'Jalapenos', price: 80 }
+                            { name: 'Pickles', price: 195 },
+                            { name: 'Onions', price: 195 },
+                            { name: 'Pickled Red Onions', price: 195 },
+                            { name: 'Tomatoes', price: 195 },
+                            { name: 'Crispy Onions', price: 195 },
+                            { name: 'Cheese Slice', price: 195 },
+                            { name: 'Bacon', price: 195 },
+                            { name: 'Double Cheese Slice', price: 195 },
+                            { name: 'Lettuce', price: 195 },
+                            { name: 'Grilled Onions', price: 195 },
+                            { name: 'Nachos', price: 195 },
+                            { name: 'Jalapenos', price: 195 }
                         ];
                     }
                 }
             }
-            
+
             const selectedAddons = item ? (item.addons || []) : [];
             const addonsHTML = addons.map(addon => {
                 const isSelected = selectedAddons.some(a => a.name === addon.name);
@@ -3362,9 +3451,9 @@ Debug info:
                     </div>
                 `;
             }).join('');
-            
+
             const quantity = item ? (item.quantity || 1) : 1;
-            
+
             modalBody.innerHTML = `
                 <div style="margin-bottom: 1.5rem;">
                     <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Select Product</label>
@@ -3423,54 +3512,54 @@ Debug info:
                     </button>
                 </div>
             `;
-            
+
             // Initialize quantity
             window.currentItemQuantity = quantity;
-            
+
             // Set up wing price update function if it's a wing product
             if (isWings && product) {
                 setupWingPriceUpdate(product);
             }
         }
-        
+
         // Setup wing price update for admin modal
         function setupWingPriceUpdate(product) {
             // Get discount rate
             let basePricing = { original: product.price, discounted: product.price, discountRate: 0 };
             const APPLY_DISCOUNTS = typeof window !== 'undefined' && window.APPLY_DISCOUNTS !== undefined ? window.APPLY_DISCOUNTS : true;
-            
+
             if (typeof getDiscountedPrice === 'function') {
                 basePricing = getDiscountedPrice(product);
             }
-            
-            window.updateAdminWingPrice = function() {
+
+            window.updateAdminWingPrice = function () {
                 const selectedSize = document.querySelector('.size-option:not(.wing-type-option).selected');
                 const wingTypeOptions = document.querySelectorAll('.wing-type-option');
                 const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
-                
+
                 if (selectedSize && wingTypeOptions.length > 0) {
                     const sizeName = selectedSize.dataset.size;
-                    
+
                     wingTypeOptions.forEach(option => {
                         const typeValue = option.dataset.type;
                         let originalPrice = 0;
-                        
+
                         if (sizeName === '6 Pieces') {
                             originalPrice = typeValue === 'bone-in' ? 895 : 1095;
                         } else if (sizeName === '12 Pieces') {
                             originalPrice = typeValue === 'bone-in' ? 1495 : 1995;
                         }
-                        
+
                         const discountedPrice = APPLY_DISCOUNTS ? Math.round(originalPrice * (1 - discountRate)) : originalPrice;
-                        
+
                         const priceElement = option.querySelector('.wing-type-price');
                         if (priceElement) {
                             priceElement.textContent = `Rs ${discountedPrice.toLocaleString()}`;
                         }
-                        
+
                         option.dataset.originalPrice = originalPrice;
                         option.dataset.price = discountedPrice;
-                        
+
                         if (option.classList.contains('selected')) {
                             selectedSize.dataset.price = discountedPrice;
                             selectedSize.dataset.originalPrice = originalPrice;
@@ -3478,7 +3567,7 @@ Debug info:
                     });
                 }
             };
-            
+
             // Set initial price
             setTimeout(() => {
                 if (window.updateAdminWingPrice) {
@@ -3486,23 +3575,23 @@ Debug info:
                 }
             }, 100);
         }
-        
+
         // Select wing type handler
         function selectWingType(element) {
             document.querySelectorAll('.wing-type-option').forEach(opt => opt.classList.remove('selected'));
             element.classList.add('selected');
-            
+
             if (window.updateAdminWingPrice) {
                 window.updateAdminWingPrice();
             }
         }
-        
+
 
         function filterProducts() {
             const searchTerm = document.getElementById('productSearch').value.toLowerCase();
             const select = document.getElementById('productSelect');
             if (!select) return;
-            
+
             const options = Array.from(select.options);
             options.forEach(option => {
                 if (option.value === '') {
@@ -3517,13 +3606,13 @@ Debug info:
         function onProductSelectChange() {
             const productId = parseInt(document.getElementById('productSelect').value);
             const product = allProducts.find(p => p.id === productId);
-            
+
             if (product) {
                 // Create a temporary item object with the selected product to preserve selection
                 // Set default size based on product type
                 const isWingsProduct = product.category === 'wings';
                 const defaultSize = isWingsProduct ? '6 Pieces' : 'Single';
-                
+
                 const tempItem = {
                     id: product.id, // Include ID for better product matching
                     name: product.name,
@@ -3533,10 +3622,10 @@ Debug info:
                     quantity: window.currentItemQuantity || 1,
                     addons: []
                 };
-                
+
                 // Re-render with the selected product
                 renderAddItemModal(tempItem);
-                
+
                 // Set the selected product after a short delay to ensure DOM is updated
                 setTimeout(() => {
                     const select = document.getElementById('productSelect');
@@ -3561,7 +3650,7 @@ Debug info:
             // Only deselect other size options (not wing type options)
             document.querySelectorAll('.size-option:not(.wing-type-option)').forEach(opt => opt.classList.remove('selected'));
             element.classList.add('selected');
-            
+
             // Update wing price if wing type update function exists
             if (window.updateAdminWingPrice) {
                 window.updateAdminWingPrice();
@@ -3581,18 +3670,18 @@ Debug info:
         function saveItemToOrder() {
             const productSelect = document.getElementById('productSelect');
             const productId = parseInt(productSelect.value);
-            
+
             if (!productId) {
                 alert('Please select a product');
                 return;
             }
-            
+
             const product = allProducts.find(p => p.id === productId);
             if (!product) {
                 alert('Product not found');
                 return;
             }
-            
+
             const isCombo = product.isCombo || false;
             let sizeName = 'Regular';
             let sizePrice = product.price;
@@ -3600,16 +3689,16 @@ Debug info:
             let selectedAddons = [];
             let wingType = null;
             let displayName = product.name;
-            
+
             // For combo meals, apply discount
             if (isCombo) {
                 let basePricing = { original: product.price, discounted: product.price, discountRate: 0 };
                 const APPLY_DISCOUNTS = typeof window !== 'undefined' && window.APPLY_DISCOUNTS !== undefined ? window.APPLY_DISCOUNTS : true;
-                
+
                 if (typeof getDiscountedPrice === 'function') {
                     basePricing = getDiscountedPrice(product);
                 }
-                
+
                 sizePrice = APPLY_DISCOUNTS ? basePricing.discounted : product.price;
                 originalPrice = basePricing.original;
             } else {
@@ -3619,11 +3708,11 @@ Debug info:
                     alert('Please select a size');
                     return;
                 }
-                
+
                 sizeName = selectedSize.dataset.size;
                 sizePrice = parseInt(selectedSize.dataset.price);
                 originalPrice = parseInt(selectedSize.dataset.originalPrice) || sizePrice;
-                
+
                 // Handle wings - get wing type if applicable
                 const isWings = product.category === 'wings';
                 if (isWings) {
@@ -3638,17 +3727,17 @@ Debug info:
                         displayName = `${product.name} (${sizeName}, ${wingType === 'bone-in' ? 'Bone-in' : 'Boneless'})`;
                     }
                 }
-                
+
                 selectedAddons = Array.from(document.querySelectorAll('.addon-option.selected')).map(opt => ({
                     name: opt.dataset.addon,
                     price: parseInt(opt.dataset.price)
                 }));
             }
-            
+
             const quantity = window.currentItemQuantity || 1;
             const addonsPrice = selectedAddons.reduce((sum, a) => sum + a.price, 0);
             const itemTotal = (sizePrice + addonsPrice) * quantity;
-            
+
             const newItem = {
                 id: product.id,
                 name: displayName,
@@ -3664,7 +3753,7 @@ Debug info:
                 total: itemTotal,
                 isCombo: isCombo
             };
-            
+
             // Check if we're in create order mode or edit order mode
             if (isCreatingOrder) {
                 if (editingItemIndex >= 0 && editingItemIndex < currentCreateItems.length) {
@@ -3687,16 +3776,16 @@ Debug info:
                 updateItemsList();
                 editingItemIndex = -1; // Reset after saving
             }
-            
+
             closeAddItemModal();
         }
 
         // Handle edit form submission
         document.getElementById('editForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const orderId = document.getElementById('editOrderId').value;
-            
+
             // Parse items JSON
             let items;
             try {
@@ -3708,7 +3797,7 @@ Debug info:
                 alert('Invalid JSON format for items. Please check the items field.');
                 return;
             }
-            
+
             const orderData = {
                 customer_name: document.getElementById('editCustomerName').value,
                 customer_phone: document.getElementById('editCustomerPhone').value,
@@ -3724,7 +3813,7 @@ Debug info:
                 total: parseFloat(document.getElementById('editTotal').value),
                 notes: document.getElementById('editNotes').value
             };
-            
+
             try {
                 const response = await fetch(`${API_URL}/orders/${orderId}`, {
                     method: 'PATCH',
@@ -3734,14 +3823,14 @@ Debug info:
                     },
                     body: JSON.stringify(orderData)
                 });
-                
+
                 if (response.status === 401) {
                     logout();
                     return;
                 }
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     alert('Order updated successfully!');
                     closeEditModal();
@@ -3769,47 +3858,47 @@ Debug info:
                     console.error('customersTableBody element not found!');
                     return;
                 }
-                
+
                 tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">Loading customers...</td></tr>';
-                
+
                 if (!currentUser) {
                     console.error('Not authenticated');
                     return;
                 }
-                
+
                 const response = await fetch(`${API_URL}/customers`, {
                     headers: getAuthHeaders()
                 });
-                
+
                 if (response.status === 401) {
                     logout();
                     return;
                 }
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('API Error:', response.status, errorText);
                     throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
                 }
-                
+
                 const customers = await response.json();
                 console.log('Received customers:', customers);
-                
+
                 if (!Array.isArray(customers)) {
                     console.error('Expected array but got:', customers);
                     tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: red;">Invalid response from server. Check console for details.</td></tr>';
                     return;
                 }
-                
+
                 if (customers.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">No customers found. Customers will appear here after orders are placed.</td></tr>';
                     return;
                 }
-                
+
                 const customersHTML = customers.map(customer => {
                     const firstOrderDate = customer.first_order_date ? new Date(customer.first_order_date).toLocaleDateString() : 'N/A';
                     const lastOrderDate = customer.last_order_date ? new Date(customer.last_order_date).toLocaleDateString() : 'N/A';
-                    
+
                     return `
                         <tr style="display: table-row;">
                             <td><strong>${customer.name || 'N/A'}</strong></td>
@@ -3823,7 +3912,7 @@ Debug info:
                         </tr>
                     `;
                 }).join('');
-                
+
                 tbody.innerHTML = customersHTML;
                 console.log('Customers rendered successfully:', customers.length, 'customers');
             } catch (error) {
@@ -3831,9 +3920,9 @@ Debug info:
                 const tbody = document.getElementById('customersTableBody');
                 if (tbody) {
                     const errorMsg = error.message || 'Unknown error';
-                    tbody.innerHTML = 
+                    tbody.innerHTML =
                         '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: red; background: #ffe6e6; border: 2px solid red; border-radius: 5px;">' +
-                        '<strong>Error loading customers:</strong><br>' + errorMsg + 
+                        '<strong>Error loading customers:</strong><br>' + errorMsg +
                         '<br><br><strong>Make sure:</strong><br>' +
                         '1. Backend is running on http://localhost:3000<br>' +
                         '2. MongoDB is connected<br>' +
@@ -3854,43 +3943,43 @@ Debug info:
                     console.error('usersTableBody element not found!');
                     return;
                 }
-                
+
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">Loading users...</td></tr>';
-                
+
                 if (!currentUser) {
                     console.error('Not authenticated');
                     return;
                 }
-                
+
                 const response = await fetch(`${API_URL}/admin/users`, {
                     headers: getAuthHeaders()
                 });
-                
+
                 if (response.status === 401) {
                     logout();
                     return;
                 }
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('API Error:', response.status, errorText);
                     throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
                 }
-                
+
                 const users = await response.json();
                 console.log('Received users:', users);
-                
+
                 if (!Array.isArray(users)) {
                     console.error('Expected array but got:', users);
                     tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: red;">Invalid response from server. Check console for details.</td></tr>';
                     return;
                 }
-                
+
                 if (users.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No admin users found. Click "Add User" to create one.</td></tr>';
                     return;
                 }
-                
+
                 const usersHTML = users.map(user => {
                     const createdAt = user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A';
                     const updatedAt = user.updatedAt ? new Date(user.updatedAt).toLocaleString() : 'N/A';
@@ -3901,7 +3990,7 @@ Debug info:
                         'islamabad': 'Islamabad',
                         'super_admin': 'Super Admin'
                     };
-                    
+
                     return `
                         <tr style="display: table-row;">
                             <td><strong>${user.username || 'N/A'}</strong></td>
@@ -3915,7 +4004,7 @@ Debug info:
                         </tr>
                     `;
                 }).join('');
-                
+
                 tbody.innerHTML = usersHTML;
                 console.log('Users rendered successfully:', users.length, 'users');
             } catch (error) {
@@ -3923,9 +4012,9 @@ Debug info:
                 const tbody = document.getElementById('usersTableBody');
                 if (tbody) {
                     const errorMsg = error.message || 'Unknown error';
-                    tbody.innerHTML = 
+                    tbody.innerHTML =
                         '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: red; background: #ffe6e6; border: 2px solid red; border-radius: 5px;">' +
-                        '<strong>Error loading users:</strong><br>' + errorMsg + 
+                        '<strong>Error loading users:</strong><br>' + errorMsg +
                         '<br><br><strong>Make sure:</strong><br>' +
                         '1. Backend is running on http://localhost:3000<br>' +
                         '2. MongoDB is connected<br>' +
@@ -3956,15 +4045,15 @@ Debug info:
                 const response = await fetch(`${API_URL}/admin/users`, {
                     headers: getAuthHeaders()
                 });
-                
+
                 if (response.status === 401) {
                     logout();
                     return;
                 }
-                
+
                 const users = await response.json();
                 const user = users.find(u => u._id === userId);
-                
+
                 document.getElementById('userModalTitle').textContent = 'Edit Admin User';
                 document.getElementById('userId').value = userId;
                 document.getElementById('userUsername').value = username;
@@ -3991,15 +4080,15 @@ Debug info:
         // Handle user form submission
         document.getElementById('userForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const userId = document.getElementById('userId').value;
             const username = document.getElementById('userUsername').value;
             const password = document.getElementById('userPassword').value;
-            
+
             try {
                 let response;
                 const userType = document.getElementById('userType').value;
-                
+
                 if (userId) {
                     // Update existing user
                     const updateData = { username };
@@ -4009,7 +4098,7 @@ Debug info:
                     if (userType) {
                         updateData.user_type = userType;
                     }
-                    
+
                     response = await fetch(`${API_URL}/admin/users/${userId}`, {
                         method: 'PATCH',
                         headers: {
@@ -4018,7 +4107,7 @@ Debug info:
                         },
                         body: JSON.stringify(updateData)
                     });
-                    
+
                     if (response.status === 401) {
                         logout();
                         return;
@@ -4029,12 +4118,12 @@ Debug info:
                         alert('Password is required for new users');
                         return;
                     }
-                    
+
                     if (!userType) {
                         alert('User type is required');
                         return;
                     }
-                    
+
                     response = await fetch(`${API_URL}/admin/users`, {
                         method: 'POST',
                         headers: {
@@ -4043,15 +4132,15 @@ Debug info:
                         },
                         body: JSON.stringify({ username, password, user_type: userType })
                     });
-                    
+
                     if (response.status === 401) {
                         logout();
                         return;
                     }
                 }
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     alert(data.message || 'User saved successfully!');
                     closeUserModal();
@@ -4070,20 +4159,20 @@ Debug info:
             if (!confirm(`Are you sure you want to delete user "${username}"? This action cannot be undone.`)) {
                 return;
             }
-            
+
             try {
                 const response = await fetch(`${API_URL}/admin/users/${userId}`, {
                     method: 'DELETE',
                     headers: getAuthHeaders()
                 });
-                
+
                 if (response.status === 401) {
                     logout();
                     return;
                 }
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     alert(data.message || 'User deleted successfully!');
                     loadUsers();
@@ -4119,20 +4208,20 @@ Debug info:
         console.log('Current URL:', window.location.href);
         console.log('Protocol:', window.location.protocol);
         console.log('Table body element:', document.getElementById('ordersTableBody'));
-        
+
         // Warn if accessing via file://
         if (window.location.protocol === 'file:') {
             console.warn('⚠️ WARNING: Page opened via file:// protocol. CORS will block API calls.');
             console.warn('Please access via: https://zoroburger.com/admin');
         }
-        
+
         // Make sure DOM is ready
         const initDashboard = async () => {
             // Check authentication first
             if (!checkAuth()) {
                 return; // Show login screen
             }
-            
+
             const apiConnected = await testAPIConnection();
             if (!apiConnected) {
                 const tbody = document.getElementById('ordersTableBody');
@@ -4140,7 +4229,7 @@ Debug info:
                     tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem; color: red; background: #ffe6e6;">⚠️ Cannot connect to backend API. Make sure the server is running on http://localhost:3000</td></tr>';
                 }
             }
-            
+
             loadStats().catch(err => {
                 console.error('Failed to load stats:', err);
             });
@@ -4148,7 +4237,7 @@ Debug info:
                 console.error('Failed to load orders:', err);
             });
         };
-        
+
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initDashboard);
         } else {
@@ -4195,24 +4284,24 @@ Debug info:
                 document.querySelectorAll('.sidebar-menu li').forEach(li => {
                     li.classList.remove('active');
                 });
-                
+
                 // Add active class to clicked item
                 menuItem.classList.add('active');
-                
+
                 // Get the section to show
                 const section = menuItem.dataset.section;
-                
+
                 // Show/hide sections based on selection
                 const statsGrid = document.getElementById('statsGrid');
                 const ordersSection = document.getElementById('ordersSection');
                 const customersSection = document.getElementById('customersSection');
                 const usersSection = document.getElementById('usersSection');
-                
+
                 // Remove all hidden classes first
                 if (ordersSection) ordersSection.classList.remove('hidden');
                 if (customersSection) customersSection.classList.remove('hidden');
                 if (usersSection) usersSection.classList.remove('hidden');
-                
+
                 if (section === 'orders') {
                     // Show orders section and stats
                     if (ordersSection) {
@@ -4327,5 +4416,5 @@ Debug info:
         });
     </script>
 </body>
-</html>
 
+</html>

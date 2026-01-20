@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,33 +10,38 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-XXXXXXX');</script>
     <!-- End Google Tag Manager -->
-    
+
     <!-- Facebook Pixel Code -->
     <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '886908076899683');
-    fbq('track', 'PageView');
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '886908076899683');
+        fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=886908076899683&ev=PageView&noscript=1"
-    /></noscript>
+            src="https://www.facebook.com/tr?id=886908076899683&ev=PageView&noscript=1" /></noscript>
     <!-- End Facebook Pixel Code -->
-    
+
     <style>
         * {
             margin: 0;
@@ -54,7 +60,7 @@
             margin: 0 auto;
             background: white;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
@@ -318,7 +324,7 @@
             background: white;
             border: 1px solid #ddd;
             border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             z-index: 10;
             min-width: 150px;
             display: none;
@@ -529,7 +535,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -850,10 +856,11 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <div class="order-detail-container">
         <div class="order-header">
@@ -888,22 +895,26 @@
                     <div class="info-item">
                         <span class="info-item-icon">👤</span>
                         <span class="info-item-label">Customer Name:</span>
-                        <span class="info-item-value editable-field" id="customerName" onclick="startEdit('customerName')">-</span>
+                        <span class="info-item-value editable-field" id="customerName"
+                            onclick="startEdit('customerName')">-</span>
                     </div>
                     <div class="info-item">
                         <span class="info-item-icon">📞</span>
                         <span class="info-item-label">Phone Number:</span>
-                        <span class="info-item-value editable-field" id="customerPhone" onclick="startEdit('customerPhone')">-</span>
+                        <span class="info-item-value editable-field" id="customerPhone"
+                            onclick="startEdit('customerPhone')">-</span>
                     </div>
                     <div class="info-item">
                         <span class="info-item-icon">✉️</span>
                         <span class="info-item-label">Email:</span>
-                        <span class="info-item-value editable-field" id="customerEmail" onclick="startEdit('customerEmail')">-</span>
+                        <span class="info-item-value editable-field" id="customerEmail"
+                            onclick="startEdit('customerEmail')">-</span>
                     </div>
                     <div class="info-item">
                         <span class="info-item-icon">📍</span>
                         <span class="info-item-label">Delivery Address:</span>
-                        <span class="info-item-value editable-field" id="customerAddress" onclick="startEdit('customerAddress')">-</span>
+                        <span class="info-item-value editable-field" id="customerAddress"
+                            onclick="startEdit('customerAddress')">-</span>
                     </div>
                 </div>
 
@@ -967,16 +978,20 @@
                     <div class="summary-row">
                         <div class="summary-label">
                             <span>Discount:</span>
-                            <button class="edit-btn" onclick="editDiscount()" style="padding: 0; font-size: 0.8rem;">✏️</button>
+                            <button class="edit-btn" onclick="editDiscount()"
+                                style="padding: 0; font-size: 0.8rem;">✏️</button>
                         </div>
-                        <div class="summary-value editable-field" id="discount" onclick="startEdit('discount')">PKR 0</div>
+                        <div class="summary-value editable-field" id="discount" onclick="startEdit('discount')">PKR 0
+                        </div>
                     </div>
                     <div class="summary-row">
                         <div class="summary-label">
                             <span>Delivery Charges:</span>
-                            <button class="edit-btn" onclick="editDeliveryFee()" style="padding: 0; font-size: 0.8rem;">✏️</button>
+                            <button class="edit-btn" onclick="editDeliveryFee()"
+                                style="padding: 0; font-size: 0.8rem;">✏️</button>
                         </div>
-                        <div class="summary-value editable-field" id="deliveryFee" onclick="startEdit('deliveryFee')">PKR 0</div>
+                        <div class="summary-value editable-field" id="deliveryFee" onclick="startEdit('deliveryFee')">
+                            PKR 0</div>
                     </div>
                     <div class="summary-row">
                         <div class="summary-label">
@@ -1010,7 +1025,8 @@
                             <div class="timeline-date">Awaiting status</div>
                             <div class="timeline-status">Dispatched</div>
                             <div class="timeline-action">
-                                <button class="status-btn dispatched" onclick="updateStatus('dispatched')">Dispatched</button>
+                                <button class="status-btn dispatched"
+                                    onclick="updateStatus('dispatched')">Dispatched</button>
                             </div>
                         </div>
                     </div>
@@ -1020,7 +1036,8 @@
                             <div class="timeline-date">Awaiting status</div>
                             <div class="timeline-status">Delivered</div>
                             <div class="timeline-action">
-                                <button class="status-btn delivered" onclick="updateStatus('delivered')">Delivered</button>
+                                <button class="status-btn delivered"
+                                    onclick="updateStatus('delivered')">Delivered</button>
                             </div>
                         </div>
                     </div>
@@ -1041,12 +1058,7 @@
                     <div class="map-title">Geo Location</div>
                     <div class="map-coordinates" id="mapCoordinates">-</div>
                     <a href="#" target="_blank" class="map-link" id="mapLink">View larger map</a>
-                    <iframe 
-                        class="map-embed" 
-                        id="mapEmbed"
-                        frameborder="0" 
-                        style="border:0" 
-                        allowfullscreen>
+                    <iframe class="map-embed" id="mapEmbed" frameborder="0" style="border:0" allowfullscreen>
                     </iframe>
                 </div>
             </div>
@@ -1058,7 +1070,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="back-btn" onclick="closeItemModal()">←</button>
-                <h2 id="itemModalTitle" style="flex: 1; text-align: center; margin: 0; font-size: 1.2rem; font-weight: 600;">Add Item</h2>
+                <h2 id="itemModalTitle"
+                    style="flex: 1; text-align: center; margin: 0; font-size: 1.2rem; font-weight: 600;">Add Item</h2>
                 <button class="modal-close" onclick="closeItemModal()">✕</button>
             </div>
             <div id="itemModalBody">
@@ -1124,12 +1137,12 @@
                     console.log('✓ Loaded products from menu-script.js:', allProducts.length);
                     return;
                 }
-                
+
                 // Fallback: try to fetch from API
-            try {
-                const response = await fetch(`${API_URL}/products`);
+                try {
+                    const response = await fetch(`${API_URL}/products`);
                     if (response.ok) {
-                allProducts = await response.json();
+                        allProducts = await response.json();
                         console.log('✓ Loaded products from API:', allProducts.length);
                     } else {
                         throw new Error('API response not ok');
@@ -1172,11 +1185,11 @@
 
             // Header
             document.getElementById('orderNumber').textContent = currentOrder.order_number || 'N/A';
-            document.getElementById('paymentStatusBadge').textContent = 
+            document.getElementById('paymentStatusBadge').textContent =
                 currentOrder.payment_status === 'paid' ? 'Paid' : 'Unpaid';
-            document.getElementById('paymentStatusBadge').className = 
+            document.getElementById('paymentStatusBadge').className =
                 `order-status-badge ${currentOrder.payment_status === 'paid' ? 'status-paid' : 'status-unpaid'}`;
-            
+
             const orderDate = new Date(currentOrder.createdAt || currentOrder.created_at || currentOrder.date);
             document.getElementById('orderDate').textContent = orderDate.toLocaleString();
             document.getElementById('orderDateTimeline').textContent = orderDate.toLocaleString();
@@ -1190,11 +1203,11 @@
             // Delivery details
             const orderSource = currentOrder.source || 'website';
             const sourceDisplay = orderSource === 'website' ? 'Website' : 'Call';
-            const sourceBadge = orderSource === 'website' ? 
+            const sourceBadge = orderSource === 'website' ?
                 '<span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: #e3f2fd; color: #1976d2;">🌐 Website</span>' :
                 '<span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: #fff3e0; color: #f57c00;">📞 Call</span>';
             document.getElementById('orderSource').innerHTML = sourceBadge;
-            document.getElementById('orderType').textContent = 
+            document.getElementById('orderType').textContent =
                 currentOrder.order_type ? currentOrder.order_type.charAt(0).toUpperCase() + currentOrder.order_type.slice(1) : 'N/A';
             document.getElementById('staffNote').textContent = currentOrder.notes || '-';
 
@@ -1215,7 +1228,7 @@
             document.getElementById('total').textContent = `PKR ${total.toLocaleString()}`;
 
             // Status
-            document.getElementById('currentStatus').textContent = 
+            document.getElementById('currentStatus').textContent =
                 formatStatus(currentOrder.status || 'pending');
 
             // Map
@@ -1224,11 +1237,11 @@
                     const lat = currentOrder.delivery_location.latitude;
                     const lng = currentOrder.delivery_location.longitude;
                     document.getElementById('mapContainer').style.display = 'block';
-                    document.getElementById('mapCoordinates').textContent = 
+                    document.getElementById('mapCoordinates').textContent =
                         `${lat.toFixed(6)}°N ${lng.toFixed(6)}°E`;
-                    document.getElementById('mapLink').href = 
+                    document.getElementById('mapLink').href =
                         `https://www.google.com/maps?q=${lat},${lng}`;
-                    document.getElementById('mapEmbed').src = 
+                    document.getElementById('mapEmbed').src =
                         `https://www.google.com/maps?q=${lat},${lng}&output=embed`;
                 } else {
                     // Show location not provided message
@@ -1239,8 +1252,8 @@
                         <div style="padding: 1rem; background: #fff3cd; border-radius: 5px; margin-top: 1rem; color: #856404;">
                             <p style="margin: 0; font-size: 0.9rem;">
                                 The rider marked this order as delivered but did not provide location information.
-                                ${currentOrder.delivery_location && currentOrder.delivery_location.timestamp ? 
-                                    `<br><small>Delivered at: ${new Date(currentOrder.delivery_location.timestamp).toLocaleString()}</small>` : ''}
+                                ${currentOrder.delivery_location && currentOrder.delivery_location.timestamp ?
+                            `<br><small>Delivered at: ${new Date(currentOrder.delivery_location.timestamp).toLocaleString()}</small>` : ''}
                             </p>
                         </div>
                     `;
@@ -1261,7 +1274,7 @@
             tbody.innerHTML = items.map((item, index) => {
                 const itemTotal = item.total || (item.price * (item.quantity || 1));
                 const sizeInfo = item.size ? `<span class="item-detail-tag">${item.size}</span>` : '';
-                const addonsInfo = item.addons && item.addons.length > 0 
+                const addonsInfo = item.addons && item.addons.length > 0
                     ? item.addons.map(a => `<span class="item-detail-tag">${a.name}</span>`).join('')
                     : '';
 
@@ -1294,8 +1307,8 @@
 
         // Edit functions
         function startEdit(fieldId) {
-            if (currentOrder.status === 'confirmed' || currentOrder.status === 'awaiting_rider' || 
-                currentOrder.status === 'in_kitchen' || currentOrder.status === 'rider_on_way' || 
+            if (currentOrder.status === 'confirmed' || currentOrder.status === 'awaiting_rider' ||
+                currentOrder.status === 'in_kitchen' || currentOrder.status === 'rider_on_way' ||
                 currentOrder.status === 'delivered' || currentOrder.status === 'cancelled') {
                 alert('This order cannot be edited because it has already been confirmed, is in progress, delivered, or cancelled.');
                 return;
@@ -1311,7 +1324,7 @@
             editingField = fieldId;
             const currentValue = field.textContent.trim();
             const isTextarea = fieldId === 'customerAddress' || fieldId === 'staffNote';
-            
+
             if (isTextarea) {
                 field.innerHTML = `<textarea class="editable-textarea">${currentValue}</textarea>`;
                 field.classList.add('editing');
@@ -1366,11 +1379,11 @@
             if (fieldId === 'discount' || fieldId === 'deliveryFee') {
                 const numValue = parseFloat(newValue.replace(/[^0-9.]/g, '')) || 0;
                 field.textContent = `PKR ${numValue.toLocaleString()}`;
-                
+
                 // Update order
                 const updateData = {};
                 updateData[dbField] = numValue;
-                
+
                 try {
                     await fetch(`${API_URL}/orders/${currentOrderId}`, {
                         method: 'PATCH',
@@ -1384,11 +1397,11 @@
                 }
             } else {
                 field.textContent = newValue;
-                
+
                 // Update order
                 const updateData = {};
                 updateData[dbField] = newValue;
-                
+
                 try {
                     await fetch(`${API_URL}/orders/${currentOrderId}`, {
                         method: 'PATCH',
@@ -1441,8 +1454,8 @@
         }
 
         function deleteItem(index) {
-            if (currentOrder.status === 'confirmed' || currentOrder.status === 'awaiting_rider' || 
-                currentOrder.status === 'in_kitchen' || currentOrder.status === 'rider_on_way' || 
+            if (currentOrder.status === 'confirmed' || currentOrder.status === 'awaiting_rider' ||
+                currentOrder.status === 'in_kitchen' || currentOrder.status === 'rider_on_way' ||
                 currentOrder.status === 'delivered' || currentOrder.status === 'cancelled') {
                 alert('This order cannot be edited because it has already been confirmed, is in progress, delivered, or cancelled.');
                 toggleItemMenu(index);
@@ -1487,8 +1500,8 @@
 
         // Make function globally accessible for onclick handlers
         window.openAddItemModal = async function openAddItemModal() {
-            if (currentOrder.status === 'confirmed' || currentOrder.status === 'awaiting_rider' || 
-                currentOrder.status === 'in_kitchen' || currentOrder.status === 'rider_on_way' || 
+            if (currentOrder.status === 'confirmed' || currentOrder.status === 'awaiting_rider' ||
+                currentOrder.status === 'in_kitchen' || currentOrder.status === 'rider_on_way' ||
                 currentOrder.status === 'delivered' || currentOrder.status === 'cancelled') {
                 alert('This order cannot be edited because it has already been confirmed, is in progress, delivered, or cancelled.');
                 return;
@@ -1542,10 +1555,10 @@
                 console.error('Modal body not found');
                 return;
             }
-            
+
             const isEdit = item !== null && index !== undefined && index >= 0;
             let product = null;
-            
+
             // First, check if we have a selected product from dropdown
             if (selectedProductForModal) {
                 product = selectedProductForModal;
@@ -1564,7 +1577,7 @@
                     };
                 }
             }
-            
+
             console.log('Rendering modal:', { item, product, isEdit, selectedProductForModal });
 
             // Check if products are loaded
@@ -1591,12 +1604,12 @@
             let sizes = [];
             if (product) {
                 const isBurger = product.category && (
-                    product.category.includes('beef') || 
+                    product.category.includes('beef') ||
                     product.category.includes('chicken') ||
                     product.category.includes('burger') ||
                     product.name.toLowerCase().includes('burger')
                 );
-                
+
                 if (product.sizes && Array.isArray(product.sizes)) {
                     sizes = product.sizes;
                 } else if (isBurger) {
@@ -1615,11 +1628,11 @@
                 const basePrice = item.price || 0;
                 const itemSize = item.size || 'Regular';
                 if (itemSize === 'Regular' || itemSize === 'Single') {
-                sizes = [
-                    { name: 'Single', price: basePrice },
+                    sizes = [
+                        { name: 'Single', price: basePrice },
                         { name: 'Double', price: Math.round(basePrice * 1.447) },
                         { name: 'Triple', price: Math.round(basePrice * 1.894) }
-                ];
+                    ];
                 } else {
                     // If item has a specific size, show all options with that one selected
                     sizes = [
@@ -1663,21 +1676,21 @@
                 const isChicken = category && (category === 'chicken-burgers' || category.includes('chicken'));
                 const isWings = category && category === 'wings';
                 const isBurger = name.toLowerCase().includes('burger') || isBeef || isChicken;
-                
+
                 if (isBurger && !isWings) {
                     addons = [
-                        { name: 'Pickles', price: 80 },
-                        { name: 'Onions', price: 80 },
-                        { name: 'Pickled Red Onions', price: 80 },
-                        { name: 'Tomatoes', price: 80 },
-                        { name: 'Crispy Onions', price: 100 },
-                        { name: 'Cheese Slice', price: 100 },
-                        { name: 'Bacon', price: 250 },
-                        { name: 'Double Cheese Slice', price: 200 },
-                        { name: 'Lettuce', price: 80 },
-                        { name: 'Grilled Onions', price: 100 },
-                        { name: 'Nachos', price: 80 },
-                        { name: 'Jalapenos', price: 80 }
+                        { name: 'Pickles', price: 195 },
+                        { name: 'Onions', price: 195 },
+                        { name: 'Pickled Red Onions', price: 195 },
+                        { name: 'Tomatoes', price: 195 },
+                        { name: 'Crispy Onions', price: 195 },
+                        { name: 'Cheese Slice', price: 195 },
+                        { name: 'Bacon', price: 195 },
+                        { name: 'Double Cheese Slice', price: 195 },
+                        { name: 'Lettuce', price: 195 },
+                        { name: 'Grilled Onions', price: 195 },
+                        { name: 'Nachos', price: 195 },
+                        { name: 'Jalapenos', price: 195 }
                     ];
                 }
             }
@@ -1695,11 +1708,11 @@
             const productName = product ? product.name : (item ? item.name : 'Product');
             const productDescription = product ? (product.description || '') : (item ? (item.description || '') : '');
             const productImage = product ? (product.image || '') : (item ? (item.image || '') : '');
-            const categoryName = product && product.category ? 
-                (product.category.includes('beef') ? 'BEEF SMASHERS' : 
-                 product.category.includes('chicken') ? 'CHICKEN BURGERS' : 
-                 product.category.toUpperCase()) : '';
-            
+            const categoryName = product && product.category ?
+                (product.category.includes('beef') ? 'BEEF SMASHERS' :
+                    product.category.includes('chicken') ? 'CHICKEN BURGERS' :
+                        product.category.toUpperCase()) : '';
+
             // Ensure we always have at least one size option
             if (sizes.length === 0 && (product || item)) {
                 const basePrice = product ? product.price : (item ? item.price : 0);
@@ -1720,7 +1733,7 @@
                     `;
                 }).join('');
             }
-            
+
             modalBody.innerHTML = `
                 <div class="modal-options">
                     ${!isEdit ? `
@@ -1773,7 +1786,7 @@
 
             // Add event listeners for size selection
             document.querySelectorAll('.size-option').forEach(option => {
-                option.addEventListener('click', function() {
+                option.addEventListener('click', function () {
                     document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('selected'));
                     this.classList.add('selected');
                     window.selectedSize = this.dataset.size;
@@ -1782,7 +1795,7 @@
 
             // Add event listeners for add-ons
             document.querySelectorAll('.addon-option').forEach(option => {
-                option.addEventListener('click', function() {
+                option.addEventListener('click', function () {
                     this.classList.toggle('selected');
                 });
             });
@@ -1797,29 +1810,29 @@
         function onProductSelect() {
             const productSelect = document.getElementById('productSelect');
             if (!productSelect) return;
-            
+
             const productId = productSelect.value;
             if (!productId) {
                 selectedProductForModal = null;
                 return;
             }
-            
+
             const product = allProducts.find(p => {
                 const pId = p._id || p.id;
                 return String(pId) === String(productId);
             });
-            
+
             if (product) {
                 // Store the selected product
                 selectedProductForModal = product;
-                
+
                 // Reset selected size and quantity when product changes
                 window.selectedSize = null;
                 window.currentItemQuantity = 1;
-                
+
                 // Re-render modal with selected product
                 renderItemModal(null, -1);
-                
+
                 // Set the product select to the selected value after render
                 setTimeout(() => {
                     const select = document.getElementById('productSelect');
@@ -1841,9 +1854,9 @@
         async function saveItem(index) {
             const productSelect = document.getElementById('productSelect');
             const productId = productSelect ? productSelect.value : null;
-            
+
             let product = null;
-            
+
             if (index >= 0) {
                 // Editing existing item - use existing product
                 const existingItem = currentOrder.items[index];
@@ -1951,5 +1964,5 @@
         })();
     </script>
 </body>
-</html>
 
+</html>
