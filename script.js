@@ -787,7 +787,6 @@ function showProductModal(product) {
         { name: 'Crispy Onions', price: 195 },
         { name: 'Cheese Slice', price: 195 },
         { name: 'Bacon', price: 195 },
-        { name: 'Double Cheese Slice', price: 195 },
         { name: 'Lettuce', price: 195 },
         { name: 'Grilled Onions', price: 195 },
         { name: 'Nachos', price: 195 },
