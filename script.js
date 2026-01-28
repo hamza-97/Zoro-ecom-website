@@ -17,6 +17,8 @@ const productsGrid = document.getElementById('productsGrid');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    setupWelcomeModal();
+
     // Check if we're on the home page (index.html)
     const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
     
@@ -47,6 +49,133 @@ document.addEventListener('DOMContentLoaded', () => {
     setupLocationModal();
     initializeBranchSelection();
 });
+
+// Welcome modal (first thing user sees on entry) - Branch Selection
+function setupWelcomeModal() {
+    const modal = document.getElementById('welcomeModal');
+    if (!modal) return;
+
+    const closeBtn = document.getElementById('welcomeModalClose');
+    const continueBtn = document.getElementById('welcomeModalContinue');
+    const dontShowAgain = document.getElementById('welcomeModalDontShowAgain');
+    const branchButtons = document.querySelectorAll('.branch-option-btn');
+
+    const STORAGE_KEY = 'zoroWelcomeModalDismissed_v1';
+    let selectedBranch = null;
+    let selectedBranchName = null;
+
+    const open = () => {
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    };
+
+    const close = (persistDismissal) => {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+
+        if (persistDismissal) {
+            try {
+                localStorage.setItem(STORAGE_KEY, '1');
+            } catch (_) {}
+        }
+    };
+
+    // Handle branch selection
+    branchButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove selected class from all buttons
+            branchButtons.forEach(b => b.classList.remove('selected'));
+            // Add selected class to clicked button
+            btn.classList.add('selected');
+            // Get branch values
+            selectedBranch = btn.dataset.branch;
+            selectedBranchName = btn.dataset.branchName;
+            // Enable continue button
+            if (continueBtn) {
+                continueBtn.disabled = false;
+            }
+        });
+    });
+
+    const shouldPersist = () => !!(dontShowAgain && dontShowAgain.checked);
+
+    // Handle continue button
+    if (continueBtn) {
+        continueBtn.addEventListener('click', () => {
+            if (!selectedBranch) {
+                alert('Please select a branch first');
+                return;
+            }
+            
+            // Save selected branch to localStorage (matching menu-script.js format)
+            try {
+                localStorage.setItem('selectedBranch', selectedBranch);
+                // Also save the full branch name for checkout/order processing
+                localStorage.setItem('selectedBranchName', selectedBranchName);
+            } catch (_) {}
+            
+            // Close modal
+            close(shouldPersist());
+        });
+    }
+
+    // Show immediately unless previously dismissed OR branch already selected
+    let dismissed = false;
+    let hasBranch = false;
+    try {
+        dismissed = localStorage.getItem(STORAGE_KEY) === '1';
+        hasBranch = !!localStorage.getItem('selectedBranch');
+    } catch (_) {
+        dismissed = false;
+        hasBranch = false;
+    }
+    
+    // Only show if not dismissed AND no branch selected yet
+    if (!dismissed && !hasBranch) {
+        open();
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            // If branch was selected before closing, save it
+            if (selectedBranch) {
+                try {
+                    localStorage.setItem('selectedBranch', selectedBranch);
+                    localStorage.setItem('selectedBranchName', selectedBranchName);
+                } catch (_) {}
+            }
+            close(shouldPersist());
+        });
+    }
+
+    // Click outside content closes (but don't save branch if none selected)
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            if (selectedBranch) {
+                try {
+                    localStorage.setItem('selectedBranch', selectedBranch);
+                    localStorage.setItem('selectedBranchName', selectedBranchName);
+                } catch (_) {}
+            }
+            close(shouldPersist());
+        }
+    });
+
+    // ESC closes
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            if (selectedBranch) {
+                try {
+                    localStorage.setItem('selectedBranch', selectedBranch);
+                    localStorage.setItem('selectedBranchName', selectedBranchName);
+                } catch (_) {}
+            }
+            close(shouldPersist());
+        }
+    });
+}
 
 
 // Setup Event Listeners

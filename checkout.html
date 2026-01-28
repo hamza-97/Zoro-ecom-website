@@ -622,8 +622,31 @@
     </div>
 
     <script>
-        // Mobile menu toggle
+        // Mobile menu toggle and auto-select branch from welcome modal
         document.addEventListener('DOMContentLoaded', () => {
+            // Auto-select branch early (before map initialization)
+            const branchSelect = document.getElementById('branch');
+            if (branchSelect) {
+                const savedBranchName = localStorage.getItem('selectedBranchName');
+                if (savedBranchName) {
+                    const branchOptions = Array.from(branchSelect.options).map(opt => opt.value);
+                    if (branchOptions.includes(savedBranchName)) {
+                        branchSelect.value = savedBranchName;
+                    } else {
+                        // Fallback: map branch codes to full names if needed
+                        const savedBranch = localStorage.getItem('selectedBranch');
+                        const branchMap = {
+                            'gulberg': 'Gulberg II, Lahore',
+                            'jt': 'Johar Town, Lahore',
+                            'islamabad': 'Islamabad'
+                        };
+                        if (savedBranch && branchMap[savedBranch] && branchOptions.includes(branchMap[savedBranch])) {
+                            branchSelect.value = branchMap[savedBranch];
+                        }
+                    }
+                }
+            }
+            
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const navMenu = document.getElementById('navMenu');
             
@@ -1282,7 +1305,38 @@
         document.addEventListener('DOMContentLoaded', () => {
             const branchSelect = document.getElementById('branch');
             if (branchSelect) {
+                // Auto-select branch from welcome modal selection
+                const savedBranchName = localStorage.getItem('selectedBranchName');
+                let branchWasSet = false;
+                
+                if (savedBranchName) {
+                    // Check if the saved branch name matches one of the options
+                    const branchOptions = Array.from(branchSelect.options).map(opt => opt.value);
+                    if (branchOptions.includes(savedBranchName)) {
+                        branchSelect.value = savedBranchName;
+                        branchWasSet = true;
+                    } else {
+                        // Fallback: map branch codes to full names if needed
+                        const savedBranch = localStorage.getItem('selectedBranch');
+                        const branchMap = {
+                            'gulberg': 'Gulberg II, Lahore',
+                            'jt': 'Johar Town, Lahore',
+                            'islamabad': 'Islamabad'
+                        };
+                        if (savedBranch && branchMap[savedBranch] && branchOptions.includes(branchMap[savedBranch])) {
+                            branchSelect.value = branchMap[savedBranch];
+                            branchWasSet = true;
+                        }
+                    }
+                }
+                
                 branchSelect.addEventListener('change', updateBranchStatus);
+                
+                // If branch was auto-selected, trigger change event to update map and other listeners
+                if (branchWasSet) {
+                    branchSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                
                 // Check status initially
                 updateBranchStatus();
                 // Update status every minute
