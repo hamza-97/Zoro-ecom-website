@@ -13,7 +13,7 @@ const adminUserSchema = new mongoose.Schema({
     user_type: {
         type: String,
         required: true,
-        enum: ['gulberg', 'jt', 'islamabad', 'super_admin'],
+        enum: ['gulberg', 'jt', 'islamabad', 'marketing', 'super_admin'],
         default: 'super_admin'
     }
 }, {

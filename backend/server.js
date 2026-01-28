@@ -14,6 +14,8 @@ const AdminUser = require('./models/AdminUser');
 const Rider = require('./models/Rider');
 const Customer = require('./models/Customer');
 const Branch = require('./models/Branch');
+const ExcelJS = require('exceljs');
+const { Parser: Json2CsvParser } = require('json2csv');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -502,6 +504,54 @@ async function authenticateAdmin(req, res, next) {
     }
 }
 
+function requireExportRole(req, res, next) {
+    const userType = req?.user?.user_type;
+    if (userType !== 'super_admin' && userType !== 'marketing') {
+        return res.status(403).json({ error: 'Access denied. Marketing or super admin only.' });
+    }
+    next();
+}
+
+function toPlainValue(value) {
+    if (value === null || value === undefined) return '';
+    if (value instanceof Date) return value.toISOString();
+    if (typeof value === 'object') {
+        try {
+            return JSON.stringify(value);
+        } catch (e) {
+            return String(value);
+        }
+    }
+    return value;
+}
+
+function rowsToCsv(rows) {
+    const parser = new Json2CsvParser({
+        withBOM: true,
+        excelStrings: true
+    });
+    return parser.parse(rows);
+}
+
+async function rowsToXlsxBuffer(rows, sheetName = 'Export') {
+    const workbook = new ExcelJS.Workbook();
+    const ws = workbook.addWorksheet(sheetName);
+
+    const headers = rows.length > 0 ? Object.keys(rows[0]) : [];
+    ws.addRow(headers);
+    ws.getRow(1).font = { bold: true };
+
+    for (const row of rows) {
+        ws.addRow(headers.map((h) => toPlainValue(row[h])));
+    }
+
+    ws.columns.forEach((col) => {
+        col.width = Math.min(60, Math.max(12, (col.header ? String(col.header).length : 10) + 2));
+    });
+
+    return workbook.xlsx.writeBuffer();
+}
+
 // Get all orders (for admin)
 app.get('/api/orders', authenticateAdmin, async (req, res) => {
     try {
@@ -765,9 +815,9 @@ app.get('/api/stats', authenticateAdmin, async (req, res) => {
 // Get all customers (extracted from orders)
 app.get('/api/customers', authenticateAdmin, async (req, res) => {
     try {
-        // Only super_admin can view customers
-        if (req.user.user_type !== 'super_admin') {
-            return res.status(403).json({ error: 'Access denied. Super admin only.' });
+        // Only super_admin/marketing can view customers
+        if (req.user.user_type !== 'super_admin' && req.user.user_type !== 'marketing') {
+            return res.status(403).json({ error: 'Access denied. Marketing or super admin only.' });
         }
         
         // Aggregate unique customers from orders
@@ -806,6 +856,163 @@ app.get('/api/customers', authenticateAdmin, async (req, res) => {
         res.json(customers);
     } catch (error) {
         console.error('Error fetching customers:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Export data (CSV/XLSX) for marketing/super_admin
+// Query params:
+// - dataset: orders | customers | products
+// - format: csv | xlsx
+// - startDate/endDate: optional (orders/customers)
+// - status: optional (orders)
+app.get('/api/export', authenticateAdmin, requireExportRole, async (req, res) => {
+    try {
+        const dataset = String(req.query.dataset || 'orders').toLowerCase();
+        const format = String(req.query.format || 'csv').toLowerCase();
+        const { startDate, endDate, status } = req.query;
+
+        if (!['orders', 'customers', 'products'].includes(dataset)) {
+            return res.status(400).json({ error: 'Invalid dataset. Use orders, customers, or products.' });
+        }
+        if (!['csv', 'xlsx'].includes(format)) {
+            return res.status(400).json({ error: 'Invalid format. Use csv or xlsx.' });
+        }
+
+        let rows = [];
+        let filenameBase = dataset;
+
+        if (dataset === 'orders') {
+            const query = status ? { status: String(status) } : {};
+
+            if (startDate || endDate) {
+                query.createdAt = {};
+                if (startDate) {
+                    const start = new Date(String(startDate));
+                    start.setHours(0, 0, 0, 0);
+                    query.createdAt.$gte = start;
+                }
+                if (endDate) {
+                    const end = new Date(String(endDate));
+                    end.setHours(23, 59, 59, 999);
+                    query.createdAt.$lte = end;
+                }
+            }
+
+            const orders = await Order.find(query).sort({ createdAt: -1 }).lean();
+            rows = orders.map((o) => ({
+                order_number: o.order_number,
+                createdAt: o.createdAt,
+                status: o.status,
+                payment_status: o.payment_status,
+                source: o.source,
+                branch: o.branch,
+                order_type: o.order_type,
+                customer_name: o.customer_name,
+                customer_phone: o.customer_phone,
+                customer_email: o.customer_email,
+                customer_address: o.customer_address,
+                items: o.items,
+                subtotal: o.subtotal,
+                delivery_fee: o.delivery_fee,
+                tax: o.tax,
+                discount: o.discount,
+                total: o.total,
+                notes: o.notes
+            }));
+
+            filenameBase = `orders${status ? `_${status}` : ''}`;
+        } else if (dataset === 'customers') {
+            const match = {};
+            if (startDate || endDate) {
+                match.createdAt = {};
+                if (startDate) {
+                    const start = new Date(String(startDate));
+                    start.setHours(0, 0, 0, 0);
+                    match.createdAt.$gte = start;
+                }
+                if (endDate) {
+                    const end = new Date(String(endDate));
+                    end.setHours(23, 59, 59, 999);
+                    match.createdAt.$lte = end;
+                }
+            }
+
+            const pipeline = [];
+            if (Object.keys(match).length > 0) pipeline.push({ $match: match });
+
+            pipeline.push(
+                {
+                    $group: {
+                        _id: '$customer_phone',
+                        name: { $first: '$customer_name' },
+                        phone: { $first: '$customer_phone' },
+                        email: { $first: '$customer_email' },
+                        address: { $first: '$customer_address' },
+                        total_orders: { $sum: 1 },
+                        total_spent: { $sum: '$total' },
+                        first_order_date: { $min: '$createdAt' },
+                        last_order_date: { $max: '$createdAt' }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        name: 1,
+                        phone: 1,
+                        email: 1,
+                        address: 1,
+                        total_orders: 1,
+                        total_spent: 1,
+                        first_order_date: 1,
+                        last_order_date: 1
+                    }
+                },
+                { $sort: { last_order_date: -1 } }
+            );
+
+            rows = await Order.aggregate(pipeline);
+            filenameBase = 'customers';
+        } else if (dataset === 'products') {
+            const products = await Product.find({}).sort({ category: 1, name: 1 }).lean();
+            rows = products.map((p) => ({
+                name: p.name,
+                category: p.category,
+                price: p.price,
+                available: p.available,
+                description: p.description,
+                image: p.image,
+                createdAt: p.createdAt,
+                updatedAt: p.updatedAt
+            }));
+            filenameBase = 'products';
+        }
+
+        const ts = new Date().toISOString().slice(0, 10);
+
+        if (format === 'csv') {
+            const csvRows = rows.map((r) => {
+                const out = {};
+                for (const [k, v] of Object.entries(r)) out[k] = toPlainValue(v);
+                return out;
+            });
+            const csv = rowsToCsv(csvRows);
+            res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+            res.setHeader('Content-Disposition', `attachment; filename="${filenameBase}_${ts}.csv"`);
+            return res.send(csv);
+        }
+
+        const xlsxRows = rows.map((r) => {
+            const out = {};
+            for (const [k, v] of Object.entries(r)) out[k] = toPlainValue(v);
+            return out;
+        });
+        const buffer = await rowsToXlsxBuffer(xlsxRows, dataset);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename="${filenameBase}_${ts}.xlsx"`);
+        return res.send(Buffer.from(buffer));
+    } catch (error) {
+        console.error('Error exporting data:', error);
         res.status(500).json({ error: error.message });
     }
 });

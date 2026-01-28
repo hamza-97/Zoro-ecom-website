@@ -983,6 +983,10 @@
                     <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                         <button class="action-btn btn-update" onclick="openCreateOrderModal()"
                             style="background: #28a745; white-space: nowrap;">📞 Create Call Order</button>
+                        <div id="exportOrdersControls" style="display: none; gap: 0.5rem; align-items: center;">
+                            <button class="action-btn btn-update" onclick="downloadExport('orders','csv')" style="white-space: nowrap;">Download Orders (CSV)</button>
+                            <button class="action-btn btn-update" onclick="downloadExport('orders','xlsx')" style="white-space: nowrap;">Download Orders (Excel)</button>
+                        </div>
                         <div
                             style="display: flex; gap: 0.5rem; align-items: center; background: white; padding: 0.5rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                             <label style="font-size: 0.9rem; color: #666; white-space: nowrap;">From:</label>
@@ -1039,7 +1043,13 @@
             <div class="orders-section" id="customersSection" style="display: none;">
                 <div class="section-header">
                     <h2>Customers</h2>
-                    <button class="action-btn btn-update" onclick="refreshCustomers()">Refresh</button>
+                    <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                        <button class="action-btn btn-update" onclick="refreshCustomers()">Refresh</button>
+                        <div id="exportCustomersControls" style="display: none; gap: 0.5rem; align-items: center;">
+                            <button class="action-btn btn-update" onclick="downloadExport('customers','csv')" style="white-space: nowrap;">Download Customers (CSV)</button>
+                            <button class="action-btn btn-update" onclick="downloadExport('customers','xlsx')" style="white-space: nowrap;">Download Customers (Excel)</button>
+                        </div>
+                    </div>
                 </div>
                 <div style="overflow-x: auto; display: block; visibility: visible;">
                     <table class="orders-table" style="display: table; visibility: visible; width: 100%;">
@@ -1527,6 +1537,7 @@
                         <option value="gulberg">Gulberg User</option>
                         <option value="jt">JT User</option>
                         <option value="islamabad">Islamabad User</option>
+                        <option value="marketing">Marketing</option>
                         <option value="super_admin">Super Admin</option>
                     </select>
                 </div>
@@ -1736,6 +1747,7 @@
                     'gulberg': 'Gulberg Admin',
                     'jt': 'JT Admin',
                     'islamabad': 'Islamabad Admin',
+                    'marketing': 'Marketing',
                     'super_admin': 'Super Admin'
                 };
                 document.getElementById('userInfo').textContent =
@@ -1744,6 +1756,17 @@
 
             // Hide/show tabs based on user type
             updateSidebarVisibility();
+
+            // Enable export buttons for marketing/super_admin
+            updateExportVisibility();
+        }
+
+        function updateExportVisibility() {
+            const canExport = currentUser && (currentUser.user_type === 'super_admin' || currentUser.user_type === 'marketing');
+            const ordersControls = document.getElementById('exportOrdersControls');
+            const customersControls = document.getElementById('exportCustomersControls');
+            if (ordersControls) ordersControls.style.display = canExport ? 'flex' : 'none';
+            if (customersControls) customersControls.style.display = canExport ? 'flex' : 'none';
         }
 
         // Update sidebar visibility based on user type
@@ -1757,6 +1780,13 @@
                 // Gulberg, JT, and Islamabad users only see Orders tab
                 if (currentUser.user_type === 'gulberg' || currentUser.user_type === 'jt' || currentUser.user_type === 'islamabad') {
                     if (section !== 'orders') {
+                        item.style.display = 'none';
+                    } else {
+                        item.style.display = 'flex';
+                    }
+                } else if (currentUser.user_type === 'marketing') {
+                    // Marketing users see Orders + Customers only
+                    if (section !== 'orders' && section !== 'customers') {
                         item.style.display = 'none';
                     } else {
                         item.style.display = 'flex';
@@ -3954,6 +3984,56 @@ Debug info:
             loadCustomers();
         }
 
+        async function downloadExport(dataset, format) {
+            try {
+                if (!currentUser) {
+                    alert('Not authenticated');
+                    return;
+                }
+
+                // Reuse Orders date filter if present (applies to orders/customers)
+                const startEl = document.getElementById('startDateFilter');
+                const endEl = document.getElementById('endDateFilter');
+                const startDate = startEl && startEl.value ? startEl.value : '';
+                const endDate = endEl && endEl.value ? endEl.value : '';
+
+                const params = new URLSearchParams();
+                params.set('dataset', dataset);
+                params.set('format', format);
+                if (startDate) params.set('startDate', startDate);
+                if (endDate) params.set('endDate', endDate);
+
+                const url = `${API_URL}/export?${params.toString()}`;
+                const response = await fetch(url, { headers: getAuthHeaders() });
+
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || `Export failed with status ${response.status}`);
+                }
+
+                const blob = await response.blob();
+                const disposition = response.headers.get('content-disposition') || '';
+                const match = disposition.match(/filename="([^"]+)"/i);
+                const filename = match && match[1] ? match[1] : `${dataset}.${format === 'xlsx' ? 'xlsx' : 'csv'}`;
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(link.href);
+            } catch (err) {
+                console.error('Export error:', err);
+                alert('Export failed: ' + (err.message || 'Unknown error'));
+            }
+        }
+
         // Load admin users
         async function loadUsers() {
             try {
@@ -4007,6 +4087,7 @@ Debug info:
                         'gulberg': 'Gulberg',
                         'jt': 'JT',
                         'islamabad': 'Islamabad',
+                        'marketing': 'Marketing',
                         'super_admin': 'Super Admin'
                     };
 
