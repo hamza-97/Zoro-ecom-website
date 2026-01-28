@@ -953,6 +953,7 @@
                 <div class="header-actions">
                     <span id="userInfo" style="color: #666; font-size: 0.9rem;"></span>
                     <button class="action-btn btn-update" onclick="refreshOrders()">Refresh</button>
+                    <button class="action-btn btn-update" onclick="testNotificationSound()" style="background: #28a745;">🔊 Test Sound</button>
                     <button class="logout-btn" onclick="logout()">Logout</button>
                 </div>
             </div>
@@ -1889,7 +1890,7 @@
                     audioContext.resume();
                 }
 
-                // Create a loud two-tone notification sound (buzz)
+                // Create a very loud notification sound (buzz)
                 const playTone = (frequency, duration, startTime) => {
                     const oscillator = audioContext.createOscillator();
                     const gainNode = audioContext.createGain();
@@ -1898,10 +1899,10 @@
                     gainNode.connect(audioContext.destination);
 
                     oscillator.frequency.value = frequency;
-                    oscillator.type = 'sine'; // Changed to 'sine' for clearer sound
+                    oscillator.type = 'sine';
 
-                    // Increased volume from 0.3 to 0.8 for much louder sound
-                    gainNode.gain.setValueAtTime(0.8, startTime);
+                    // Maximum volume (1.0) for very loud sound
+                    gainNode.gain.setValueAtTime(1.0, startTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
 
                     oscillator.start(startTime);
@@ -1910,8 +1911,8 @@
 
                 // Play two tones: a higher tone followed by a lower tone (like a doorbell)
                 const now = audioContext.currentTime;
-                playTone(800, 0.15, now); // First tone (higher)
-                playTone(600, 0.15, now + 0.2); // Second tone (lower, slightly delayed)
+                playTone(800, 0.2, now); // First tone (higher, longer duration)
+                playTone(600, 0.2, now + 0.25); // Second tone (lower, slightly delayed, longer duration)
             } catch (error) {
                 console.error('Error playing notification sound:', error);
             }
@@ -1949,6 +1950,16 @@
                 stopNotificationSound();
                 console.log('✅ New orders acknowledged');
             }
+        }
+
+        // Test notification sound function (for testing purposes)
+        function testNotificationSound() {
+            console.log('🔊 Testing notification sound...');
+            // Play the sound 3 times in quick succession to test
+            playSingleNotificationSound();
+            setTimeout(() => playSingleNotificationSound(), 500);
+            setTimeout(() => playSingleNotificationSound(), 1000);
+            alert('Notification sound test played! Check your volume settings if you cannot hear it.');
         }
 
         // Format status for display
@@ -2313,6 +2324,9 @@
                                 if (shouldNotify) {
                                     hasNewOrders = true;
                                     console.log(`🔔 New ${userType === 'super_admin' ? '' : userType + ' '}order detected:`, order.order_number || orderId, order.branch);
+                                    console.log(`   Order branch: "${order.branch}", User type: "${userType}", Should notify: ${shouldNotify}`);
+                                } else {
+                                    console.log(`🔕 Order skipped (not for this branch):`, order.order_number || orderId, `Branch: "${order.branch}", User: "${userType}"`);
                                 }
                             }
                         }
