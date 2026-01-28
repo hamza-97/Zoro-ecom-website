@@ -682,12 +682,39 @@
         // Get cart from localStorage
         const cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
         
-        // Business hours configuration (in Pakistan Standard Time - PKT, UTC+5)
-        const BUSINESS_HOURS = {
-            'Gulberg II, Lahore': { open: 12, close: 1.75 }, // 12pm-1:45am (1.75 = 1:45am)
-            'Johar Town, Lahore': { open: 12, close: 3.75 }, // 12pm-3:45am (3.75 = 3:45am)
-            'Islamabad': { open: 12, close: 1.75 } // 12pm-1:45am (1.75 = 1:45am)
-        };
+        // Business hours - loaded from API
+        let BUSINESS_HOURS = {};
+        
+        // Load business hours from API
+        async function loadBusinessHours() {
+            try {
+                const response = await fetch(`${API_URL}/branches`);
+                if (response.ok) {
+                    const branches = await response.json();
+                    branches.forEach(branch => {
+                        BUSINESS_HOURS[branch.name] = {
+                            open: branch.open_hour,
+                            close: branch.close_hour
+                        };
+                    });
+                } else {
+                    // Fallback to defaults if API fails
+                    BUSINESS_HOURS = {
+                        'Gulberg II, Lahore': { open: 12, close: 1.75 },
+                        'Johar Town, Lahore': { open: 12, close: 3.75 },
+                        'Islamabad': { open: 12, close: 1.75 }
+                    };
+                }
+            } catch (error) {
+                console.error('Error loading business hours:', error);
+                // Fallback to defaults
+                BUSINESS_HOURS = {
+                    'Gulberg II, Lahore': { open: 12, close: 1.75 },
+                    'Johar Town, Lahore': { open: 12, close: 3.75 },
+                    'Islamabad': { open: 12, close: 1.75 }
+                };
+            }
+        }
         
         // Check if current time is within business hours for a branch
         // Note: Assumes user's local time is Pakistan Standard Time (PKT)
@@ -738,6 +765,9 @@
             
             return `${closeHour}:${closeMinute.toString().padStart(2, '0')}${period}`;
         }
+        
+        // Load business hours on page load
+        loadBusinessHours();
         
         // Map variables
         let map;

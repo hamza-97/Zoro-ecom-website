@@ -13,6 +13,7 @@ const Product = require('./models/Product');
 const AdminUser = require('./models/AdminUser');
 const Rider = require('./models/Rider');
 const Customer = require('./models/Customer');
+const Branch = require('./models/Branch');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -252,6 +253,7 @@ async function initializeRiders() {
         await connectDB();
         await initializeAdmin();
         await initializeRiders();
+        await initializeBranches();
     } catch (error) {
         console.error('Failed to initialize:', error);
     }
@@ -282,21 +284,50 @@ app.get('/api/products/:id', async (req, res) => {
     }
 });
 
-// Business hours configuration (in Pakistan Standard Time - PKT, UTC+5)
-const BUSINESS_HOURS = {
-    'Gulberg II, Lahore': { open: 12, close: 1.75 }, // 12pm-1:45am (1.75 = 1:45am)
-    'Johar Town, Lahore': { open: 12, close: 3.75 }, // 12pm-3:45am (3.75 = 3:45am)
-    'Islamabad': { open: 12, close: 1.75 } // 12pm-1:45am (1.75 = 1:45am)
-};
+// Initialize default branches if they don't exist
+async function initializeBranches() {
+    try {
+        const branches = await Branch.find();
+        if (branches.length === 0) {
+            await Branch.insertMany([
+                { name: 'Gulberg II, Lahore', open_hour: 12, close_hour: 1.75 },
+                { name: 'Johar Town, Lahore', open_hour: 12, close_hour: 3.75 },
+                { name: 'Islamabad', open_hour: 12, close_hour: 1.75 }
+            ]);
+            console.log('✅ Default branches initialized');
+        }
+    } catch (error) {
+        console.error('Error initializing branches:', error);
+    }
+}
+
+// Get business hours from database (with fallback to defaults)
+async function getBusinessHours(branchName) {
+    try {
+        const branch = await Branch.findOne({ name: branchName, is_active: true });
+        if (branch) {
+            return { open: branch.open_hour, close: branch.close_hour };
+        }
+    } catch (error) {
+        console.error('Error fetching business hours:', error);
+    }
+    // Fallback to defaults
+    const defaults = {
+        'Gulberg II, Lahore': { open: 12, close: 1.75 },
+        'Johar Town, Lahore': { open: 12, close: 3.75 },
+        'Islamabad': { open: 12, close: 1.75 }
+    };
+    return defaults[branchName] || { open: 12, close: 1.75 };
+}
 
 // Check if current time is within business hours for a branch
 // Note: Server should be running in Pakistan Standard Time (PKT) timezone
-function isWithinBusinessHours(branch) {
-    if (!branch || !BUSINESS_HOURS[branch]) {
+async function isWithinBusinessHours(branch) {
+    if (!branch) {
         return true; // If branch not found, allow order (fallback)
     }
     
-    const hours = BUSINESS_HOURS[branch];
+    const hours = await getBusinessHours(branch);
     const now = new Date();
     
     // Get current time (assumes server is in PKT timezone)
@@ -327,12 +358,12 @@ function isWithinBusinessHours(branch) {
 }
 
 // Get closing time message for a branch
-function getClosingTimeMessage(branch) {
-    if (!branch || !BUSINESS_HOURS[branch]) {
+async function getClosingTimeMessage(branch) {
+    if (!branch) {
         return '';
     }
     
-    const hours = BUSINESS_HOURS[branch];
+    const hours = await getBusinessHours(branch);
     let closeHour = Math.floor(hours.close);
     let closeMinute = Math.round((hours.close - closeHour) * 60);
     
@@ -370,8 +401,9 @@ app.post('/api/orders', async (req, res) => {
         }
         
         // Validate business hours
-        if (!isWithinBusinessHours(branch)) {
-            const closingTime = getClosingTimeMessage(branch);
+        const isOpen = await isWithinBusinessHours(branch);
+        if (!isOpen) {
+            const closingTime = await getClosingTimeMessage(branch);
             return res.status(400).json({ 
                 error: `Sorry, we are currently closed. This branch closes at ${closingTime}. Please place your order during business hours (12pm-${closingTime}).` 
             });
@@ -960,6 +992,94 @@ app.delete('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
         });
     } catch (error) {
         console.error('Error deleting admin user:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ==================== BRANCH API ENDPOINTS ====================
+
+// Get all branches with their timings (public endpoint for checkout page)
+app.get('/api/branches', async (req, res) => {
+    try {
+        const branches = await Branch.find({ is_active: true }).select('name open_hour close_hour');
+        const branchesData = branches.map(branch => ({
+            name: branch.name,
+            open_hour: branch.open_hour,
+            close_hour: branch.close_hour
+        }));
+        res.json(branchesData);
+    } catch (error) {
+        console.error('Error fetching branches:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get all branches (admin endpoint - includes inactive)
+app.get('/api/admin/branches', authenticateAdmin, async (req, res) => {
+    try {
+        // Only super_admin can view branch settings
+        if (req.user.user_type !== 'super_admin') {
+            return res.status(403).json({ error: 'Access denied. Super admin only.' });
+        }
+        
+        const branches = await Branch.find().sort({ name: 1 });
+        res.json(branches);
+    } catch (error) {
+        console.error('Error fetching branches:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Update branch timings (super admin only)
+app.put('/api/admin/branches/:id', authenticateAdmin, async (req, res) => {
+    try {
+        // Only super_admin can update branch timings
+        if (req.user.user_type !== 'super_admin') {
+            return res.status(403).json({ error: 'Access denied. Super admin only.' });
+        }
+        
+        const { id } = req.params;
+        const { open_hour, close_hour, is_active } = req.body;
+        
+        // Validate input
+        if (open_hour === undefined || close_hour === undefined) {
+            return res.status(400).json({ error: 'open_hour and close_hour are required' });
+        }
+        
+        if (typeof open_hour !== 'number' || typeof close_hour !== 'number') {
+            return res.status(400).json({ error: 'open_hour and close_hour must be numbers' });
+        }
+        
+        if (open_hour < 0 || open_hour >= 24 || close_hour < 0 || close_hour >= 24) {
+            return res.status(400).json({ error: 'Hours must be between 0 and 24' });
+        }
+        
+        const updateData = {
+            open_hour,
+            close_hour
+        };
+        
+        if (is_active !== undefined) {
+            updateData.is_active = is_active;
+        }
+        
+        const updatedBranch = await Branch.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true, runValidators: true }
+        );
+        
+        if (!updatedBranch) {
+            return res.status(404).json({ error: 'Branch not found' });
+        }
+        
+        res.json({
+            success: true,
+            branch: updatedBranch,
+            message: 'Branch timings updated successfully'
+        });
+    } catch (error) {
+        console.error('Error updating branch:', error);
         res.status(500).json({ error: error.message });
     }
 });
