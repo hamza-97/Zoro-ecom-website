@@ -1889,7 +1889,7 @@
                     audioContext.resume();
                 }
 
-                // Create a pleasant two-tone notification sound
+                // Create a loud two-tone notification sound (buzz)
                 const playTone = (frequency, duration, startTime) => {
                     const oscillator = audioContext.createOscillator();
                     const gainNode = audioContext.createGain();
@@ -1898,9 +1898,10 @@
                     gainNode.connect(audioContext.destination);
 
                     oscillator.frequency.value = frequency;
-                    oscillator.type = 'sine';
+                    oscillator.type = 'sine'; // Changed to 'sine' for clearer sound
 
-                    gainNode.gain.setValueAtTime(0.3, startTime);
+                    // Increased volume from 0.3 to 0.8 for much louder sound
+                    gainNode.gain.setValueAtTime(0.8, startTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
 
                     oscillator.start(startTime);
@@ -1923,29 +1924,23 @@
                 return;
             }
 
-            // Only loop if the page is hidden (user not viewing the dashboard)
-            if (!document.hidden) {
-                // Page is visible - just play once
-                playSingleNotificationSound();
-                console.log('🔔 New order detected! (Dashboard is visible, playing once)');
-                return;
-            }
-
             hasUnacknowledgedOrders = true;
-            console.log('🔔 New order detected! Starting notification loop (dashboard is hidden)...');
+            console.log('🔔 New order detected! Starting loud notification loop...');
 
             // Play immediately
             playSingleNotificationSound();
 
-            // Then play every 3 seconds in a loop
+            // Then play every 2 seconds in a loop until user sees/interacts with dashboard
+            // Removed the check for document.hidden - it will keep playing until acknowledged
             notificationInterval = setInterval(() => {
-                // Stop if page becomes visible or orders are acknowledged
-                if (!hasUnacknowledgedOrders || !document.hidden) {
+                // Only stop if orders are acknowledged (user interacted with dashboard)
+                if (!hasUnacknowledgedOrders) {
                     stopNotificationSound();
                     return;
                 }
+                // Keep playing regardless of page visibility - user must interact to stop
                 playSingleNotificationSound();
-            }, 3000); // Play every 3 seconds
+            }, 2000); // Play every 2 seconds for more frequent alerts
         }
 
         // Acknowledge new orders (stop the loop)
@@ -4255,13 +4250,8 @@ Debug info:
         }
 
         // Stop notification sound when user opens/interacts with the dashboard
-        // Listen for page visibility changes (when user switches to this tab/window)
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                // Page became visible - user opened the dashboard
-                acknowledgeNewOrders();
-            }
-        });
+        // Note: Removed visibility change listener - sound will only stop on user interaction
+        // This ensures the sound keeps playing until user actually sees and interacts with dashboard
 
         // Stop notification sound on any user interaction
         const stopOnInteraction = () => {
@@ -4462,21 +4452,37 @@ Debug info:
         
         async function loadBranches() {
             try {
-                const token = localStorage.getItem('adminToken');
-                if (!token) {
+                // Check if user is logged in
+                if (!currentUser) {
+                    const savedUser = localStorage.getItem('adminUser');
+                    if (savedUser) {
+                        try {
+                            currentUser = JSON.parse(savedUser);
+                        } catch (e) {
+                            console.error('Error parsing saved user:', e);
+                        }
+                    }
+                }
+
+                if (!currentUser || !currentUser.id) {
                     alert('Please login first');
+                    window.location.href = 'admin.html';
                     return;
                 }
 
                 const response = await fetch(`${API_URL}/admin/branches`, {
-                    headers: {
-                        'user-id': localStorage.getItem('adminUserId'),
-                        'user-type': localStorage.getItem('adminUserType')
-                    }
+                    headers: getAuthHeaders()
                 });
 
+                if (response.status === 401) {
+                    alert('Session expired. Please login again.');
+                    logout();
+                    return;
+                }
+
                 if (!response.ok) {
-                    throw new Error('Failed to load branches');
+                    const errorData = await response.json().catch(() => ({ error: 'Failed to load branches' }));
+                    throw new Error(errorData.error || 'Failed to load branches');
                 }
 
                 const branches = await response.json();
@@ -4583,8 +4589,7 @@ Debug info:
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'user-id': localStorage.getItem('adminUserId'),
-                        'user-type': localStorage.getItem('adminUserType')
+                        ...getAuthHeaders()
                     },
                     body: JSON.stringify({
                         open_hour: openHour,
@@ -4593,8 +4598,14 @@ Debug info:
                     })
                 });
 
+                if (response.status === 401) {
+                    alert('Session expired. Please login again.');
+                    logout();
+                    return;
+                }
+
                 if (!response.ok) {
-                    const error = await response.json();
+                    const error = await response.json().catch(() => ({ error: 'Failed to save branch' }));
                     throw new Error(error.error || 'Failed to save branch');
                 }
 
