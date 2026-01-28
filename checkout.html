@@ -691,13 +691,16 @@
                 const response = await fetch(`${API_URL}/branches`);
                 if (response.ok) {
                     const branches = await response.json();
+                    console.log('✅ Loaded business hours from API:', branches);
                     branches.forEach(branch => {
                         BUSINESS_HOURS[branch.name] = {
                             open: branch.open_hour,
                             close: branch.close_hour
                         };
                     });
+                    console.log('✅ BUSINESS_HOURS object:', BUSINESS_HOURS);
                 } else {
+                    console.warn('⚠️ API response not OK, using fallback hours');
                     // Fallback to defaults if API fails
                     BUSINESS_HOURS = {
                         'Gulberg II, Lahore': { open: 12, close: 1.75 },
@@ -706,7 +709,7 @@
                     };
                 }
             } catch (error) {
-                console.error('Error loading business hours:', error);
+                console.error('❌ Error loading business hours:', error);
                 // Fallback to defaults
                 BUSINESS_HOURS = {
                     'Gulberg II, Lahore': { open: 12, close: 1.75 },
@@ -766,8 +769,7 @@
             return `${closeHour}:${closeMinute.toString().padStart(2, '0')}${period}`;
         }
         
-        // Load business hours on page load
-        loadBusinessHours();
+        // Business hours will be loaded in DOMContentLoaded event
         
         // Map variables
         let map;
@@ -1308,7 +1310,10 @@
             const branchSelect = document.getElementById('branch');
             const branchStatus = document.getElementById('branchStatus');
             
-            if (!branchSelect || !branchStatus) return;
+            if (!branchSelect || !branchStatus) {
+                console.warn('⚠️ Branch select or status element not found');
+                return;
+            }
             
             const branch = branchSelect.value;
             
@@ -1317,8 +1322,25 @@
                 return;
             }
             
+            console.log('🔄 Updating branch status for:', branch);
+            console.log('📊 BUSINESS_HOURS:', BUSINESS_HOURS);
+            
+            // Check if business hours are loaded
+            if (!BUSINESS_HOURS || Object.keys(BUSINESS_HOURS).length === 0) {
+                console.warn('⚠️ Business hours not loaded yet, waiting...');
+                // Retry after a short delay
+                setTimeout(() => {
+                    if (Object.keys(BUSINESS_HOURS).length > 0) {
+                        updateBranchStatus();
+                    }
+                }, 500);
+                return;
+            }
+            
             const isOpen = isWithinBusinessHours(branch);
             const closingTime = getClosingTimeMessage(branch);
+            
+            console.log('⏰ Branch status:', { branch, isOpen, closingTime });
             
             if (isOpen) {
                 branchStatus.textContent = `✓ We're open! Closes at ${closingTime}`;
@@ -1332,7 +1354,10 @@
         }
         
         // Update branch status when branch selection changes
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Wait for business hours to load first
+            await loadBusinessHours();
+            
             const branchSelect = document.getElementById('branch');
             if (branchSelect) {
                 // Auto-select branch from welcome modal selection
@@ -1367,7 +1392,7 @@
                     branchSelect.dispatchEvent(new Event('change', { bubbles: true }));
                 }
                 
-                // Check status initially
+                // Check status initially (after business hours are loaded)
                 updateBranchStatus();
                 // Update status every minute
                 setInterval(updateBranchStatus, 60000);
