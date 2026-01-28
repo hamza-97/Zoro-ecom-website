@@ -943,7 +943,8 @@
                 <li data-section="stats" onclick="closeMobileMenu()">Statistics</li>
                 <li data-section="customers" onclick="closeMobileMenu()">Customers</li>
                 <li data-section="users" onclick="closeMobileMenu()">Users</li>
-                <li data-section="branches" onclick="closeMobileMenu()" id="branchesTab" style="display: none;">Branch Settings</li>
+                <li data-section="branches" onclick="closeMobileMenu()" id="branchesTab" style="display: none;">Branch
+                    Settings</li>
             </ul>
         </div>
 
@@ -953,7 +954,7 @@
                 <div class="header-actions">
                     <span id="userInfo" style="color: #666; font-size: 0.9rem;"></span>
                     <button class="action-btn btn-update" onclick="refreshOrders()">Refresh</button>
-                    <button class="action-btn btn-update" onclick="testNotificationSound()" style="background: #28a745;">🔊 Test Sound</button>
+                    <!-- <button class="action-btn btn-update" onclick="testNotificationSound()" style="background: #28a745;">🔊 Test Sound</button> -->
                     <button class="logout-btn" onclick="logout()">Logout</button>
                 </div>
             </div>
@@ -984,8 +985,10 @@
                         <button class="action-btn btn-update" onclick="openCreateOrderModal()"
                             style="background: #28a745; white-space: nowrap;">📞 Create Call Order</button>
                         <div id="exportOrdersControls" style="display: none; gap: 0.5rem; align-items: center;">
-                            <button class="action-btn btn-update" onclick="downloadExport('orders','csv')" style="white-space: nowrap;">Download Orders (CSV)</button>
-                            <button class="action-btn btn-update" onclick="downloadExport('orders','xlsx')" style="white-space: nowrap;">Download Orders (Excel)</button>
+                            <button class="action-btn btn-update" onclick="downloadExport('orders','csv')"
+                                style="white-space: nowrap;">Download Orders (CSV)</button>
+                            <button class="action-btn btn-update" onclick="downloadExport('orders','xlsx')"
+                                style="white-space: nowrap;">Download Orders (Excel)</button>
                         </div>
                         <div
                             style="display: flex; gap: 0.5rem; align-items: center; background: white; padding: 0.5rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -1046,8 +1049,10 @@
                     <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                         <button class="action-btn btn-update" onclick="refreshCustomers()">Refresh</button>
                         <div id="exportCustomersControls" style="display: none; gap: 0.5rem; align-items: center;">
-                            <button class="action-btn btn-update" onclick="downloadExport('customers','csv')" style="white-space: nowrap;">Download Customers (CSV)</button>
-                            <button class="action-btn btn-update" onclick="downloadExport('customers','xlsx')" style="white-space: nowrap;">Download Customers (Excel)</button>
+                            <button class="action-btn btn-update" onclick="downloadExport('customers','csv')"
+                                style="white-space: nowrap;">Download Customers (CSV)</button>
+                            <button class="action-btn btn-update" onclick="downloadExport('customers','xlsx')"
+                                style="white-space: nowrap;">Download Customers (Excel)</button>
                         </div>
                     </div>
                 </div>
@@ -4544,7 +4549,7 @@ Debug info:
         });
 
         // ==================== BRANCH MANAGEMENT FUNCTIONS ====================
-        
+
         async function loadBranches() {
             try {
                 // Check if user is logged in
@@ -4586,7 +4591,7 @@ Debug info:
                 console.error('Error loading branches:', error);
                 const container = document.getElementById('branchesContainer');
                 if (container) {
-                    container.innerHTML = 
+                    container.innerHTML =
                         `<div style="text-align: center; padding: 2rem; color: #dc3545;">Error loading branches: ${error.message}</div>`;
                 }
             }
@@ -4595,7 +4600,7 @@ Debug info:
         function displayBranches(branches) {
             const container = document.getElementById('branchesContainer');
             if (!container) return;
-            
+
             if (!branches || branches.length === 0) {
                 container.innerHTML = '<div style="text-align: center; padding: 2rem;">No branches found</div>';
                 return;
@@ -4606,7 +4611,7 @@ Debug info:
                 const openMinute = Math.round((branch.open_hour - openHour) * 60);
                 const closeHour = Math.floor(branch.close_hour);
                 const closeMinute = Math.round((branch.close_hour - closeHour) * 60);
-                
+
                 const openHour12 = openHour > 12 ? openHour - 12 : (openHour === 0 ? 12 : openHour);
                 const openPeriod = openHour >= 12 ? 'pm' : 'am';
                 const closeHour12 = closeHour > 12 ? closeHour - 12 : (closeHour === 0 ? 12 : closeHour);
@@ -4671,7 +4676,7 @@ Debug info:
                 let openHour24 = openHour12;
                 if (openPeriod === 'pm' && openHour12 !== 12) openHour24 = openHour12 + 12;
                 if (openPeriod === 'am' && openHour12 === 12) openHour24 = 0;
-                
+
                 let closeHour24 = closeHour12;
                 if (closePeriod === 'pm' && closeHour12 !== 12) closeHour24 = closeHour12 + 12;
                 if (closePeriod === 'am' && closeHour12 === 12) closeHour24 = 0;
