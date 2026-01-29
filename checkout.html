@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,33 +10,38 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-XXXXXXX');</script>
     <!-- End Google Tag Manager -->
-    
+
     <!-- Facebook Pixel Code -->
     <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '886908076899683');
-    fbq('track', 'PageView');
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '886908076899683');
+        fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=886908076899683&ev=PageView&noscript=1"
-    /></noscript>
+            src="https://www.facebook.com/tr?id=886908076899683&ev=PageView&noscript=1" /></noscript>
     <!-- End Facebook Pixel Code -->
-    
+
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Leaflet JavaScript -->
@@ -54,14 +60,14 @@
             background: white;
             padding: 2rem;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .order-summary {
             background: white;
             padding: 0;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             height: fit-content;
             position: sticky;
             top: 100px;
@@ -480,10 +486,11 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <!-- Navigation -->
     <nav class="navbar">
@@ -508,7 +515,7 @@
     <div class="checkout-container">
         <div class="checkout-form">
             <h2 style="margin-bottom: 2rem; color: var(--dark-color);">Checkout</h2>
-            
+
             <form id="checkoutForm">
                 <input type="hidden" id="orderType" name="order_type" value="delivery">
 
@@ -520,7 +527,9 @@
                         <option value="Johar Town, Lahore">Johar Town, Lahore</option>
                         <option value="Islamabad">Islamabad</option>
                     </select>
-                    <div id="branchStatus" style="margin-top: 0.5rem; padding: 0.75rem; border-radius: 5px; display: none; font-size: 0.9rem; font-weight: 600;"></div>
+                    <div id="branchStatus"
+                        style="margin-top: 0.5rem; padding: 0.75rem; border-radius: 5px; display: none; font-size: 0.9rem; font-weight: 600;">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -543,7 +552,8 @@
                     <label id="addressLabel">Delivery Address *</label>
                     <div class="map-instructions">
                         <strong>📍 Select your location on the map</strong>
-                        Click on the map to set your delivery address, or use the button below to use your current location.
+                        Click on the map to set your delivery address, or use the button below to use your current
+                        location.
                     </div>
                     <div class="map-container">
                         <div id="map"></div>
@@ -551,14 +561,17 @@
                     <button type="button" class="location-btn" id="useCurrentLocationBtn">
                         📍 Use My Current Location
                     </button>
-                    <textarea id="customerAddress" name="customer_address" required placeholder="Address will be filled automatically when you select a location on the map" style="margin-top: 1rem;"></textarea>
+                    <textarea id="customerAddress" name="customer_address" required
+                        placeholder="Address will be filled automatically when you select a location on the map"
+                        style="margin-top: 1rem;"></textarea>
                     <input type="hidden" id="selectedLatitude" name="latitude">
                     <input type="hidden" id="selectedLongitude" name="longitude">
                 </div>
 
                 <div class="form-group">
                     <label>Payment Method *</label>
-                    <div style="padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; background: #f5f5f5; color: var(--dark-color); font-weight: 600;">
+                    <div
+                        style="padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; background: #f5f5f5; color: var(--dark-color); font-weight: 600;">
                         Cash on Delivery
                     </div>
                     <input type="hidden" id="paymentMethod" name="payment_method" value="cash" required>
@@ -587,7 +600,7 @@
                     <div id="orderItems"></div>
                 </div>
             </div>
-            
+
             <div class="summary-section">
                 <div class="summary-section-header" onclick="toggleSummarySection('orderTotal')">
                     <div class="summary-section-title">Order total</div>
@@ -600,8 +613,8 @@
                     </div>
                 </div>
             </div>
-    
-            
+
+
             <div class="summary-section" style="border-bottom: 2px solid #e0e0e0; padding-bottom: 1rem;">
                 <div class="summary-total-row">
                     <span class="summary-total-label">Tax</span>
@@ -611,13 +624,16 @@
                     <span class="summary-total-label">Delivery Fee</span>
                     <span class="summary-item-price">Rs 150</span>
                 </div>
-                <div class="summary-total-row" style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e0e0e0;">
+                <div class="summary-total-row"
+                    style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e0e0e0;">
                     <span class="summary-total-label" style="font-weight: 700; font-size: 1.1rem;">Total</span>
                     <span class="summary-total-value" id="total">Rs 0</span>
                 </div>
             </div>
-            
-            <button type="button" class="place-order-btn" id="placeOrderBtn" onclick="document.getElementById('checkoutForm').dispatchEvent(new Event('submit'))">Place order</button>
+
+            <button type="button" class="place-order-btn" id="placeOrderBtn"
+                onclick="document.getElementById('checkoutForm').dispatchEvent(new Event('submit'))">Place
+                order</button>
         </div>
     </div>
 
@@ -646,17 +662,17 @@
                     }
                 }
             }
-            
+
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const navMenu = document.getElementById('navMenu');
-            
+
             if (mobileMenuToggle && navMenu) {
                 mobileMenuToggle.addEventListener('click', () => {
                     mobileMenuToggle.classList.toggle('active');
                     navMenu.classList.toggle('active');
                     document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
                 });
-                
+
                 navMenu.querySelectorAll('a').forEach(link => {
                     link.addEventListener('click', () => {
                         mobileMenuToggle.classList.remove('active');
@@ -664,10 +680,10 @@
                         document.body.style.overflow = '';
                     });
                 });
-                
+
                 document.addEventListener('click', (e) => {
-                    if (navMenu.classList.contains('active') && 
-                        !navMenu.contains(e.target) && 
+                    if (navMenu.classList.contains('active') &&
+                        !navMenu.contains(e.target) &&
                         !mobileMenuToggle.contains(e.target)) {
                         mobileMenuToggle.classList.remove('active');
                         navMenu.classList.remove('active');
@@ -678,13 +694,13 @@
         });
 
         const API_URL = 'https://zoroburger.com/api';
-        
+
         // Get cart from localStorage
         const cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
-        
+
         // Business hours - loaded from API
         let BUSINESS_HOURS = {};
-        
+
         // Load business hours from API
         async function loadBusinessHours() {
             try {
@@ -718,29 +734,29 @@
                 };
             }
         }
-        
+
         // Get tax rate based on branch (15% for Islamabad, 16% for others)
         function getTaxRate(branch) {
             if (!branch) return 0.16; // Default to 16% if branch not specified
             const branchLower = branch.toLowerCase();
             return branchLower.includes('islamabad') ? 0.15 : 0.16;
         }
-        
+
         // Check if current time is within business hours for a branch
         // Note: Assumes user's local time is Pakistan Standard Time (PKT)
         function isWithinBusinessHours(branch) {
             if (!branch || !BUSINESS_HOURS[branch]) {
                 return true; // If branch not found, allow order (fallback)
             }
-            
+
             const hours = BUSINESS_HOURS[branch];
             const now = new Date();
-            
+
             // Get current time in local timezone (assumed to be PKT for Pakistani users)
             let currentHour = now.getHours();
             const currentMinute = now.getMinutes();
             const currentTime = currentHour + (currentMinute / 60);
-            
+
             // Handle closing times that are after midnight (e.g., 1:45am = 1.75)
             if (hours.close < hours.open) {
                 // Closing time is after midnight (e.g., 1:45am)
@@ -754,40 +770,40 @@
                     return true;
                 }
             }
-            
+
             return false;
         }
-        
+
         // Get closing time message for a branch
         function getClosingTimeMessage(branch) {
             if (!branch || !BUSINESS_HOURS[branch]) {
                 return '';
             }
-            
+
             const hours = BUSINESS_HOURS[branch];
             let closeHour = Math.floor(hours.close);
             let closeMinute = Math.round((hours.close - closeHour) * 60);
-            
+
             // Format closing time
             const period = closeHour >= 12 ? 'pm' : 'am';
             if (closeHour > 12) closeHour -= 12;
             if (closeHour === 0) closeHour = 12;
-            
+
             return `${closeHour}:${closeMinute.toString().padStart(2, '0')}${period}`;
         }
-        
+
         // Business hours will be loaded in DOMContentLoaded event
-        
+
         // Map variables
         let map;
         let marker;
         let deliveryRadiusCircle;
         const defaultLocation = [31.5204, 74.3587]; // Lahore, Pakistan [lat, lng]
-        
+
         // Islamabad branch location and delivery radius
         const ISLAMABAD_CENTER = [33.678753, 73.031342]; // Islamabad branch coordinates
         const ISLAMABAD_DELIVERY_RADIUS_KM = 9; // 9 km radius
-        
+
         // Initialize map
         function initMap() {
             // Check if order type is delivery before initializing map
@@ -796,20 +812,20 @@
                 setupMap();
             }
         }
-        
+
         // Calculate distance between two coordinates using Haversine formula
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371; // Earth's radius in kilometers
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = 
+            const a =
                 Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
                 Math.sin(dLon / 2) * Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             return R * c; // Distance in kilometers
         }
-        
+
         // Check if location is within delivery radius for Islamabad
         function isWithinDeliveryRadius(lat, lng, branch) {
             if (branch !== 'Islamabad') {
@@ -818,14 +834,14 @@
             const distance = calculateDistance(lat, lng, ISLAMABAD_CENTER[0], ISLAMABAD_CENTER[1]);
             return distance <= ISLAMABAD_DELIVERY_RADIUS_KM;
         }
-        
+
         // Validate delivery location and show error if outside radius
         function validateDeliveryLocation(lat, lng) {
             const branch = document.getElementById('branch').value;
-            
+
             if (branch === 'Islamabad' && lat && lng) {
                 const distance = calculateDistance(lat, lng, ISLAMABAD_CENTER[0], ISLAMABAD_CENTER[1]);
-                
+
                 if (!isWithinDeliveryRadius(lat, lng, branch)) {
                     const errorMsg = `Delivery location is ${distance.toFixed(1)} km away from Islamabad branch. We only deliver within ${ISLAMABAD_DELIVERY_RADIUS_KM} km radius. Please select a location closer to the branch.`;
                     alert(errorMsg);
@@ -834,14 +850,14 @@
             }
             return true;
         }
-        
+
         // Update delivery radius circle on map based on selected branch
         function updateDeliveryRadiusCircle(branch) {
             if (deliveryRadiusCircle) {
                 map.removeLayer(deliveryRadiusCircle);
                 deliveryRadiusCircle = null;
             }
-            
+
             if (branch === 'Islamabad') {
                 // Add circle showing delivery radius for Islamabad
                 deliveryRadiusCircle = L.circle(ISLAMABAD_CENTER, {
@@ -852,46 +868,46 @@
                     weight: 2,
                     dashArray: '5, 5'
                 }).addTo(map);
-                
+
                 // Add label to circle
                 deliveryRadiusCircle.bindPopup(`Delivery Area: ${ISLAMABAD_DELIVERY_RADIUS_KM} km radius from Islamabad branch`);
             }
         }
-        
+
         function setupMap() {
             const mapContainer = document.getElementById('map');
             if (!mapContainer || map) return; // Don't reinitialize if map exists
-            
+
             // Check selected branch to determine initial map center
             const branch = document.getElementById('branch').value;
             let initialCenter = defaultLocation;
             let initialZoom = 13;
-            
+
             if (branch === 'Islamabad') {
                 initialCenter = ISLAMABAD_CENTER;
                 initialZoom = 12; // Zoom out a bit to show the radius
             }
-            
+
             // Initialize Leaflet map
             map = L.map('map').setView(initialCenter, initialZoom);
-            
+
             // Add OpenStreetMap tiles
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors',
                 maxZoom: 19
             }).addTo(map);
-            
+
             // Add delivery radius circle if Islamabad is selected
             if (branch === 'Islamabad') {
                 updateDeliveryRadiusCircle(branch);
             }
-            
+
             // Add click listener to map
             map.on('click', (e) => {
                 const lat = e.latlng.lat;
                 const lng = e.latlng.lng;
                 const branch = document.getElementById('branch').value;
-                
+
                 // Show warning if outside radius but still allow placing marker
                 if (branch === 'Islamabad') {
                     const distance = calculateDistance(lat, lng, ISLAMABAD_CENTER[0], ISLAMABAD_CENTER[1]);
@@ -902,11 +918,11 @@
                         }
                     }
                 }
-                
+
                 placeMarker([lat, lng]);
                 updateAddressFromCoordinates(lat, lng);
             });
-            
+
             // Try to get user's current location
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -925,7 +941,7 @@
                 placeMarker(defaultLocation);
             }
         }
-        
+
         function placeMarker(location) {
             // Store last valid position
             if (marker) {
@@ -943,19 +959,19 @@
                     iconAnchor: [16, 32],
                     popupAnchor: [0, -32]
                 });
-                
-                marker = L.marker(location, { 
+
+                marker = L.marker(location, {
                     draggable: true,
                     icon: customIcon
                 }).addTo(map);
                 marker.lastValidPosition = location;
-                
+
                 // Update address when marker is dragged
                 marker.on('dragend', (e) => {
                     const position = marker.getLatLng();
                     const lat = position.lat;
                     const lng = position.lng;
-                    
+
                     // Validate location after dragging
                     const branch = document.getElementById('branch').value;
                     if (branch === 'Islamabad' && lat && lng) {
@@ -981,19 +997,19 @@
                         // Not Islamabad branch, always valid
                         marker.lastValidPosition = [lat, lng];
                     }
-                    
+
                     updateAddressFromCoordinates(lat, lng);
                 });
             }
-            
+
             // Center map on marker
             map.setView(location, map.getZoom());
         }
-        
+
         function updateAddressFromCoordinates(lat, lng) {
             document.getElementById('selectedLatitude').value = lat;
             document.getElementById('selectedLongitude').value = lng;
-            
+
             // Use Nominatim (OpenStreetMap) geocoding service
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
                 .then(response => response.json())
@@ -1009,7 +1025,7 @@
                     document.getElementById('customerAddress').value = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
                 });
         }
-        
+
         // Use current location button
         document.addEventListener('DOMContentLoaded', () => {
             const useCurrentLocationBtn = document.getElementById('useCurrentLocationBtn');
@@ -1019,17 +1035,17 @@
                         alert('Geolocation is not supported by your browser.');
                         return;
                     }
-                    
+
                     useCurrentLocationBtn.disabled = true;
                     useCurrentLocationBtn.textContent = 'Getting location...';
-                    
+
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
                             const location = {
                                 lat: position.coords.latitude,
                                 lng: position.coords.longitude
                             };
-                            
+
                             if (map) {
                                 // Validate location before using it
                                 if (validateDeliveryLocation(location.lat, location.lng)) {
@@ -1039,7 +1055,7 @@
                                     updateAddressFromCoordinates(location.lat, location.lng);
                                 }
                             }
-                            
+
                             useCurrentLocationBtn.disabled = false;
                             useCurrentLocationBtn.textContent = '📍 Use My Current Location';
                         },
@@ -1052,33 +1068,42 @@
                 });
             }
         });
-        
+
         // Display order items
         function displayOrderItems() {
+            // Reload cart from localStorage to ensure we have the latest data
+            const cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
+
             const orderItemsDiv = document.getElementById('orderItems');
             const subtotalEl = document.getElementById('subtotal');
             const totalEl = document.getElementById('total');
             const deliveryRow = document.getElementById('deliveryRow');
             const deliveryFeeEl = document.getElementById('deliveryFee');
-            
+
+            if (!orderItemsDiv || !subtotalEl || !totalEl) {
+                // DOM not ready yet, try again later
+                setTimeout(displayOrderItems, 100);
+                return;
+            }
+
             if (cart.length === 0) {
                 orderItemsDiv.innerHTML = '<p>Your cart is empty. <a href="menu.html">Browse menu</a></p>';
                 return;
             }
-            
+
             let subtotal = 0;
             const itemCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
             document.getElementById('itemCount').textContent = itemCount;
-            
+
             orderItemsDiv.innerHTML = cart.map((item, index) => {
                 // Use item.total if available (includes addons), otherwise calculate
                 const itemTotal = item.total || (item.price * (item.quantity || 1));
                 subtotal += itemTotal;
-                
+
                 // Create unique ID for this item
                 const itemKey = item.key || `${item.id}-${item.size || 'default'}-${(item.addons || []).map(a => a.name).join(',')}-${index}`;
                 const safeItemKey = itemKey.replace(/[^a-zA-Z0-9-]/g, '-');
-                
+
                 // Build size info
                 const sizeInfo = item.size ? `
                     <div style="margin-top: 0.75rem;">
@@ -1090,9 +1115,9 @@
                         </div>
                     </div>
                 ` : '';
-                
+
                 // Build add-ons info
-                const addonsInfo = item.addons && item.addons.length > 0 
+                const addonsInfo = item.addons && item.addons.length > 0
                     ? `
                         <div style="margin-top: 0.75rem;">
                             <div style="font-size: 0.85rem; color: #666; font-weight: 600; margin-bottom: 0.5rem;">Add-ons:</div>
@@ -1105,11 +1130,11 @@
                                 `).join('')}
                             </div>
                         </div>
-                    ` 
+                    `
                     : '';
-                
+
                 const hasDetails = item.size || (item.addons && item.addons.length > 0);
-                
+
                 return `
                     <div class="summary-item-row">
                         <span class="summary-item-name">${item.quantity || 1}x ${item.name}</span>
@@ -1117,27 +1142,27 @@
                     </div>
                 `;
             }).join('');
-            
+
             // Always delivery, so delivery fee is always 150
             const deliveryFee = 150;
             const branch = document.getElementById('branch')?.value || '';
             const taxRate = getTaxRate(branch);
             const tax = Math.round(subtotal * taxRate);
             const total = subtotal + deliveryFee + tax;
-            
+
             subtotalEl.textContent = `Rs ${subtotal.toLocaleString()}`;
             document.getElementById('taxAmount').textContent = `Rs ${tax.toLocaleString()}`;
             totalEl.textContent = `Rs ${total.toLocaleString()}`;
         }
-        
+
         // Toggle summary section
         function toggleSummarySection(sectionId) {
             const content = document.getElementById(`content-${sectionId}`);
             const arrow = document.getElementById(`arrow-${sectionId}`);
-            
+
             if (content && arrow) {
                 const isExpanded = content.classList.contains('expanded');
-                
+
                 if (isExpanded) {
                     content.classList.remove('expanded');
                     arrow.classList.remove('expanded');
@@ -1147,26 +1172,26 @@
                 }
             }
         }
-        
+
         // Always show address field and map for delivery
         document.addEventListener('DOMContentLoaded', () => {
             const addressGroup = document.getElementById('addressGroup');
             const addressInput = document.getElementById('customerAddress');
             const addressLabel = document.getElementById('addressLabel');
-            
+
             if (addressGroup) {
                 addressGroup.style.display = 'block';
                 addressInput.required = true;
                 addressLabel.textContent = 'Delivery Address *';
             }
-            
+
             // Initialize map
             if (typeof L !== 'undefined') {
                 setTimeout(() => {
                     initMap();
                 }, 500);
             }
-            
+
             // Update delivery radius circle when branch changes
             const branchSelect = document.getElementById('branch');
             if (branchSelect) {
@@ -1174,7 +1199,7 @@
                     const branch = branchSelect.value;
                     if (map) {
                         updateDeliveryRadiusCircle(branch);
-                        
+
                         // Recenter map if Islamabad is selected
                         if (branch === 'Islamabad') {
                             map.setView(ISLAMABAD_CENTER, 12);
@@ -1197,22 +1222,25 @@
                 });
             }
         });
-        
+
         // Handle form submission
         document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
+            // Reload cart from localStorage to ensure we have the latest data
+            const cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
+
             if (cart.length === 0) {
                 alert('Your cart is empty!');
                 return;
             }
-            
+
             const submitBtn = document.getElementById('submitBtn');
             const loading = document.getElementById('loading');
-            
+
             submitBtn.disabled = true;
             loading.classList.add('active');
-            
+
             const subtotal = cart.reduce((sum, item) => {
                 // Use item.total if available (includes addons), otherwise calculate
                 return sum + (item.total || (item.price * (item.quantity || 1)));
@@ -1221,18 +1249,17 @@
             const branch = document.getElementById('branch').value;
             const taxRate = getTaxRate(branch);
             const tax = Math.round(subtotal * taxRate);
-            
+
             // Get coordinates if available
             const latitude = document.getElementById('selectedLatitude').value;
             const longitude = document.getElementById('selectedLongitude').value;
-            const branch = document.getElementById('branch').value;
-            
+
             // Validate delivery location for Islamabad branch ONLY if coordinates are provided
             // If no coordinates provided, allow order to proceed (user can provide address manually)
             if (branch === 'Islamabad' && latitude && longitude) {
                 const lat = parseFloat(latitude);
                 const lng = parseFloat(longitude);
-                
+
                 // Only validate if coordinates are valid numbers
                 if (!isNaN(lat) && !isNaN(lng)) {
                     if (!validateDeliveryLocation(lat, lng)) {
@@ -1243,7 +1270,7 @@
                 }
             }
             // If no coordinates provided, proceed with order (address may be provided manually)
-            
+
             const formData = {
                 customer_name: document.getElementById('customerName').value,
                 customer_email: document.getElementById('customerEmail').value,
@@ -1265,7 +1292,7 @@
                     timestamp: new Date().toISOString()
                 } : null
             };
-            
+
             try {
                 const response = await fetch(`${API_URL}/orders`, {
                     method: 'POST',
@@ -1274,9 +1301,9 @@
                     },
                     body: JSON.stringify(formData)
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     // Clear cart
                     localStorage.removeItem('zoroCart');
@@ -1299,15 +1326,15 @@
                 loading.classList.remove('active');
             }
         });
-        
+
         // Toggle order item details
         function toggleOrderItemDetails(itemKey) {
             const detailsSection = document.getElementById(`details-${itemKey}`);
             const arrow = document.getElementById(`arrow-${itemKey}`);
-            
+
             if (detailsSection && arrow) {
                 const isExpanded = detailsSection.classList.contains('expanded');
-                
+
                 if (isExpanded) {
                     detailsSection.classList.remove('expanded');
                     arrow.classList.remove('expanded');
@@ -1317,27 +1344,27 @@
                 }
             }
         }
-        
+
         // Update branch status indicator
         function updateBranchStatus() {
             const branchSelect = document.getElementById('branch');
             const branchStatus = document.getElementById('branchStatus');
-            
+
             if (!branchSelect || !branchStatus) {
                 console.warn('⚠️ Branch select or status element not found');
                 return;
             }
-            
+
             const branch = branchSelect.value;
-            
+
             if (!branch) {
                 branchStatus.style.display = 'none';
                 return;
             }
-            
+
             console.log('🔄 Updating branch status for:', branch);
             console.log('📊 BUSINESS_HOURS:', BUSINESS_HOURS);
-            
+
             // Check if business hours are loaded
             if (!BUSINESS_HOURS || Object.keys(BUSINESS_HOURS).length === 0) {
                 console.warn('⚠️ Business hours not loaded yet, waiting...');
@@ -1349,12 +1376,12 @@
                 }, 500);
                 return;
             }
-            
+
             const isOpen = isWithinBusinessHours(branch);
             const closingTime = getClosingTimeMessage(branch);
-            
+
             console.log('⏰ Branch status:', { branch, isOpen, closingTime });
-            
+
             if (isOpen) {
                 branchStatus.textContent = `✓ We're open! Closes at ${closingTime}`;
                 branchStatus.className = 'branch-status-open';
@@ -1365,18 +1392,18 @@
                 branchStatus.style.display = 'block';
             }
         }
-        
+
         // Update branch status when branch selection changes
         document.addEventListener('DOMContentLoaded', async () => {
             // Wait for business hours to load first
             await loadBusinessHours();
-            
+
             const branchSelect = document.getElementById('branch');
             if (branchSelect) {
                 // Auto-select branch from welcome modal selection
                 const savedBranchName = localStorage.getItem('selectedBranchName');
                 let branchWasSet = false;
-                
+
                 if (savedBranchName) {
                     // Check if the saved branch name matches one of the options
                     const branchOptions = Array.from(branchSelect.options).map(opt => opt.value);
@@ -1397,24 +1424,34 @@
                         }
                     }
                 }
-                
+
                 branchSelect.addEventListener('change', updateBranchStatus);
-                
+
                 // If branch was auto-selected, trigger change event to update map and other listeners
                 if (branchWasSet) {
                     branchSelect.dispatchEvent(new Event('change', { bubbles: true }));
                 }
-                
+
                 // Check status initially (after business hours are loaded)
                 updateBranchStatus();
                 // Update status every minute
                 setInterval(updateBranchStatus, 60000);
             }
         });
-        
-        // Initialize
-        displayOrderItems();
+
+        // Initialize - wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', () => {
+            displayOrderItems();
+        });
+
+        // Also call it immediately in case DOM is already loaded
+        if (document.readyState === 'loading') {
+            // DOM is still loading, wait for it
+        } else {
+            // DOM is already loaded
+            displayOrderItems();
+        }
     </script>
 </body>
-</html>
 
+</html>
