@@ -1912,8 +1912,35 @@
             console.log('🔇 Notification sound stopped');
         }
 
+        // Initialize audio context on user interaction (required by browser autoplay policy)
+        function initializeAudioContext() {
+            if (!audioContext) {
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    console.log('🔊 Audio context initialized');
+                    // Try to resume immediately if possible
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume().then(() => {
+                            console.log('🔊 Audio context resumed successfully');
+                        }).catch(err => {
+                            console.warn('⚠️ Could not resume audio context:', err);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error initializing audio context:', error);
+                }
+            } else if (audioContext.state === 'suspended') {
+                // If audio context exists but is suspended, try to resume
+                audioContext.resume().then(() => {
+                    console.log('🔊 Audio context resumed successfully');
+                }).catch(err => {
+                    console.warn('⚠️ Could not resume audio context:', err);
+                });
+            }
+        }
+
         // Play a single notification sound
-        function playSingleNotificationSound() {
+        async function playSingleNotificationSound() {
             try {
                 // Create or reuse audio context
                 if (!audioContext) {
@@ -1921,8 +1948,10 @@
                 }
 
                 // Resume audio context if suspended (browser autoplay policy)
+                // This returns a Promise that must be awaited
                 if (audioContext.state === 'suspended') {
-                    audioContext.resume();
+                    await audioContext.resume();
+                    console.log('🔊 Audio context resumed');
                 }
 
                 // Create a very loud notification sound (buzz)
@@ -1963,8 +1992,8 @@
             hasUnacknowledgedOrders = true;
             console.log('🔔 New order detected! Starting loud notification loop...');
 
-            // Play immediately
-            playSingleNotificationSound();
+            // Play immediately (async)
+            playSingleNotificationSound().catch(err => console.error('Error playing initial notification:', err));
 
             // Then play every 2 seconds in a loop until user sees/interacts with dashboard
             // Removed the check for document.hidden - it will keep playing until acknowledged
@@ -1975,7 +2004,7 @@
                     return;
                 }
                 // Keep playing regardless of page visibility - user must interact to stop
-                playSingleNotificationSound();
+                playSingleNotificationSound().catch(err => console.error('Error playing loop notification:', err));
             }, 2000); // Play every 2 seconds for more frequent alerts
         }
 
@@ -1988,12 +2017,18 @@
         }
 
         // Test notification sound function (for testing purposes)
-        function testNotificationSound() {
+        async function testNotificationSound() {
             console.log('🔊 Testing notification sound...');
+            // Initialize audio context first
+            initializeAudioContext();
             // Play the sound 3 times in quick succession to test
-            playSingleNotificationSound();
-            setTimeout(() => playSingleNotificationSound(), 500);
-            setTimeout(() => playSingleNotificationSound(), 1000);
+            await playSingleNotificationSound().catch(err => console.error('Error:', err));
+            setTimeout(async () => {
+                await playSingleNotificationSound().catch(err => console.error('Error:', err));
+            }, 500);
+            setTimeout(async () => {
+                await playSingleNotificationSound().catch(err => console.error('Error:', err));
+            }, 1000);
             alert('Notification sound test played! Check your volume settings if you cannot hear it.');
         }
 
@@ -4385,6 +4420,22 @@ Debug info:
         // Stop notification sound when user opens/interacts with the dashboard
         // Note: Removed visibility change listener - sound will only stop on user interaction
         // This ensures the sound keeps playing until user actually sees and interacts with dashboard
+
+        // Initialize audio context on first user interaction (required by browser autoplay policy)
+        const enableAudioOnInteraction = () => {
+            initializeAudioContext();
+            // Remove listeners after first interaction
+            document.removeEventListener('click', enableAudioOnInteraction);
+            document.removeEventListener('keydown', enableAudioOnInteraction);
+            document.removeEventListener('mousemove', enableAudioOnInteraction);
+            document.removeEventListener('touchstart', enableAudioOnInteraction);
+        };
+
+        // Listen for user interactions to enable audio (click, keyboard, mouse movement, touch)
+        document.addEventListener('click', enableAudioOnInteraction, { once: true });
+        document.addEventListener('keydown', enableAudioOnInteraction, { once: true });
+        document.addEventListener('mousemove', enableAudioOnInteraction, { once: true });
+        document.addEventListener('touchstart', enableAudioOnInteraction, { once: true });
 
         // Stop notification sound on any user interaction
         const stopOnInteraction = () => {
