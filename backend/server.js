@@ -46,6 +46,13 @@ if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
 
 console.log('✅ VAPID keys loaded successfully');
 
+// Get tax rate based on branch (15% for Islamabad, 16% for others)
+function getTaxRate(branch) {
+    if (!branch) return 0.16; // Default to 16% if branch not specified
+    const branchLower = branch.toLowerCase();
+    return branchLower.includes('islamabad') ? 0.15 : 0.16;
+}
+
 webpush.setVapidDetails(
     'mailto:admin@zoroburger.com',
     VAPID_PUBLIC_KEY,
@@ -686,7 +693,9 @@ app.patch('/api/orders/:id', authenticateAdmin, async (req, res) => {
                     order.subtotal);
                 const currentDiscount = discount !== undefined ? discount : (order.discount || 0);
                 const currentDeliveryFee = delivery_fee !== undefined ? delivery_fee : (order.delivery_fee || 0);
-                const currentTax = tax !== undefined ? tax : ((currentSubtotal - currentDiscount) * 0.16); // 16% tax on subtotal after discount
+                const branch = order.branch || '';
+                const taxRate = getTaxRate(branch);
+                const currentTax = tax !== undefined ? tax : ((currentSubtotal - currentDiscount) * taxRate); // Tax based on branch on subtotal after discount
                 const calculatedTotal = currentSubtotal - currentDiscount + currentDeliveryFee + currentTax;
                 updateData.total = calculatedTotal;
                 if (tax === undefined) updateData.tax = currentTax;

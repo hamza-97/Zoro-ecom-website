@@ -719,6 +719,13 @@
             }
         }
         
+        // Get tax rate based on branch (15% for Islamabad, 16% for others)
+        function getTaxRate(branch) {
+            if (!branch) return 0.16; // Default to 16% if branch not specified
+            const branchLower = branch.toLowerCase();
+            return branchLower.includes('islamabad') ? 0.15 : 0.16;
+        }
+        
         // Check if current time is within business hours for a branch
         // Note: Assumes user's local time is Pakistan Standard Time (PKT)
         function isWithinBusinessHours(branch) {
@@ -1113,7 +1120,9 @@
             
             // Always delivery, so delivery fee is always 150
             const deliveryFee = 150;
-            const tax = Math.round(subtotal * 0.16); // 16% tax
+            const branch = document.getElementById('branch')?.value || '';
+            const taxRate = getTaxRate(branch);
+            const tax = Math.round(subtotal * taxRate);
             const total = subtotal + deliveryFee + tax;
             
             subtotalEl.textContent = `Rs ${subtotal.toLocaleString()}`;
@@ -1183,6 +1192,8 @@
                             }
                         }
                     }
+                    // Recalculate tax when branch changes
+                    displayOrderItems();
                 });
             }
         });
@@ -1207,7 +1218,9 @@
                 return sum + (item.total || (item.price * (item.quantity || 1)));
             }, 0);
             const deliveryFee = 150;
-            const tax = Math.round(subtotal * 0.16); // 16% tax
+            const branch = document.getElementById('branch').value;
+            const taxRate = getTaxRate(branch);
+            const tax = Math.round(subtotal * taxRate);
             
             // Get coordinates if available
             const latitude = document.getElementById('selectedLatitude').value;

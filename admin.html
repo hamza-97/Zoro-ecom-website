@@ -2856,6 +2856,22 @@
                 document.getElementById('editTotal').value = order.total || 0;
                 document.getElementById('editNotes').value = order.notes || '';
 
+                // Set up event listeners for delivery fee and branch (tax is auto-calculated)
+                const editDeliveryFeeInput = document.getElementById('editDeliveryFee');
+                const editBranchInput = document.getElementById('editBranch');
+
+                // Remove existing listeners if any
+                if (editDeliveryFeeInput) {
+                    editDeliveryFeeInput.removeEventListener('input', recalculateOrderTotals);
+                    editDeliveryFeeInput.addEventListener('input', recalculateOrderTotals);
+                }
+
+                // Recalculate tax when branch changes
+                if (editBranchInput) {
+                    editBranchInput.removeEventListener('input', recalculateOrderTotals);
+                    editBranchInput.addEventListener('input', recalculateOrderTotals);
+                }
+
                 document.getElementById('editModal').classList.add('active');
             } catch (error) {
                 console.error('Error:', error);
@@ -2924,6 +2940,13 @@
             openAddItemModal(currentEditItems[index], index);
         }
 
+        // Get tax rate based on branch (15% for Islamabad, 16% for others)
+        function getTaxRate(branch) {
+            if (!branch) return 0.16; // Default to 16% if branch not specified
+            const branchLower = branch.toLowerCase();
+            return branchLower.includes('islamabad') ? 0.15 : 0.16;
+        }
+
         function recalculateOrderTotals() {
             const subtotal = currentEditItems.reduce((sum, item) => {
                 return sum + (item.total || ((item.price || 0) + ((item.addons || []).reduce((aSum, a) => aSum + (a.price || 0), 0))) * (item.quantity || 1));
@@ -2931,7 +2954,9 @@
 
             const deliveryFee = parseFloat(document.getElementById('editDeliveryFee').value) || 0;
             const discount = 0; // Can be added later
-            const tax = (subtotal - discount) * 0.16; // 16% tax
+            const branch = document.getElementById('editBranch')?.value || '';
+            const taxRate = getTaxRate(branch);
+            const tax = (subtotal - discount) * taxRate;
             const total = subtotal - discount + deliveryFee + tax;
 
             document.getElementById('editSubtotal').value = subtotal.toFixed(2);
@@ -2963,7 +2988,7 @@
                 }
             }
 
-            // Set up event listeners for delivery fee (tax is auto-calculated, so no listener needed)
+            // Set up event listeners for delivery fee and branch (tax is auto-calculated)
             const deliveryFeeInput = document.getElementById('createDeliveryFee');
 
             // Remove existing listeners if any
@@ -2972,7 +2997,13 @@
                 deliveryFeeInput.addEventListener('input', updateCreateOrderTotals);
             }
 
-            // Auto-calculate totals including 16% tax
+            // Recalculate tax when branch changes
+            if (branchSelect) {
+                branchSelect.removeEventListener('change', updateCreateOrderTotals);
+                branchSelect.addEventListener('change', updateCreateOrderTotals);
+            }
+
+            // Auto-calculate totals including tax based on branch
             updateCreateOrderTotals();
 
             document.getElementById('createOrderModal').classList.add('active');
@@ -3044,7 +3075,9 @@
 
             const deliveryFee = parseFloat(document.getElementById('createDeliveryFee').value) || 0;
             const discount = 0; // Can be added later if needed
-            const tax = Math.round((subtotal - discount) * 0.16); // 16% tax (rounded to whole number like checkout)
+            const branch = document.getElementById('createBranch')?.value || '';
+            const taxRate = getTaxRate(branch);
+            const tax = Math.round((subtotal - discount) * taxRate); // Tax based on branch (rounded to whole number like checkout)
             const total = subtotal - discount + deliveryFee + tax;
 
             document.getElementById('createSubtotal').value = subtotal.toFixed(2);

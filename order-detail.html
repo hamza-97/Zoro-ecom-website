@@ -1090,6 +1090,13 @@
         let editingField = null;
         let allProducts = [];
 
+        // Get tax rate based on branch (15% for Islamabad, 16% for others)
+        function getTaxRate(branch) {
+            if (!branch) return 0.16; // Default to 16% if branch not specified
+            const branchLower = branch.toLowerCase();
+            return branchLower.includes('islamabad') ? 0.15 : 0.16;
+        }
+
         // Get order ID from URL
         function getOrderIdFromURL() {
             const params = new URLSearchParams(window.location.search);
@@ -1477,7 +1484,9 @@
             const subtotal = newItems.reduce((sum, item) => sum + (item.total || (item.price * (item.quantity || 1))), 0);
             const discount = parseFloat(currentOrder.discount || 0);
             const deliveryFee = parseFloat(currentOrder.delivery_fee || 0);
-            const tax = (subtotal - discount) * 0.16; // 16% tax on subtotal after discount
+            const branch = currentOrder.branch || '';
+            const taxRate = getTaxRate(branch);
+            const tax = (subtotal - discount) * taxRate; // Tax based on branch on subtotal after discount
             const total = subtotal - discount + deliveryFee + tax;
 
             try {
