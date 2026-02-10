@@ -27,7 +27,7 @@
         !function (f, b, e, v, n, t, s) {
             if (f.fbq) return; n = f.fbq = function () {
                 n.callMethod ?
-                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
             };
             if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
             n.queue = []; t = b.createElement(e); t.async = !0;
@@ -525,7 +525,6 @@
                         <option value="">Select a branch</option>
                         <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
                         <option value="Johar Town, Lahore">Johar Town, Lahore</option>
-                        <option value="Islamabad">Islamabad</option>
                     </select>
                     <div id="branchStatus"
                         style="margin-top: 0.5rem; padding: 0.75rem; border-radius: 5px; display: none; font-size: 0.9rem; font-weight: 600;">
@@ -653,8 +652,7 @@
                         const savedBranch = localStorage.getItem('selectedBranch');
                         const branchMap = {
                             'gulberg': 'Gulberg II, Lahore',
-                            'jt': 'Johar Town, Lahore',
-                            'islamabad': 'Islamabad'
+                            'jt': 'Johar Town, Lahore'
                         };
                         if (savedBranch && branchMap[savedBranch] && branchOptions.includes(branchMap[savedBranch])) {
                             branchSelect.value = branchMap[savedBranch];
@@ -720,8 +718,7 @@
                     // Fallback to defaults if API fails
                     BUSINESS_HOURS = {
                         'Gulberg II, Lahore': { open: 12, close: 1.75 },
-                        'Johar Town, Lahore': { open: 12, close: 3.75 },
-                        'Islamabad': { open: 12, close: 1.75 }
+                        'Johar Town, Lahore': { open: 12, close: 3.75 }
                     };
                 }
             } catch (error) {
@@ -729,8 +726,7 @@
                 // Fallback to defaults
                 BUSINESS_HOURS = {
                     'Gulberg II, Lahore': { open: 12, close: 1.75 },
-                    'Johar Town, Lahore': { open: 12, close: 3.75 },
-                    'Islamabad': { open: 12, close: 1.75 }
+                    'Johar Town, Lahore': { open: 12, close: 3.75 }
                 };
             }
         }
