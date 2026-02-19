@@ -3227,6 +3227,7 @@ Debug info:
             }
 
             editingItemIndex = index;
+            window.addItemCategoryFilter = window.addItemCategoryFilter || 'all';
             document.getElementById('addItemModalTitle').textContent = item ? 'Edit Item' : 'Add Item';
             renderAddItemModal(item);
             document.getElementById('addItemModal').classList.add('active');
@@ -3297,7 +3298,13 @@ Debug info:
                 return;
             }
 
-            const productsHTML = allProducts.map(p => {
+            // Filter products by category when "Ramadan Deals" is selected (options specific to deals for customers)
+            const productFilter = window.addItemCategoryFilter || 'all';
+            const productsToShow = productFilter === 'ramadan-deals'
+                ? allProducts.filter(p => p.category === 'ramadan-deals')
+                : allProducts;
+
+            const productsHTML = productsToShow.map(p => {
                 const isSelected = product && product.id === p.id;
                 // Show discounted price for combos
                 let displayPrice = p.price;
@@ -3314,12 +3321,22 @@ Debug info:
             }).join('');
 
             // Size options - apply discounts like in menu-script.js
+            // Ramadan deals (customer-facing) get Pick Size (Single/Double/Triple) and Add Ons like the menu
+            const isRamadanDeal = product && product.category === 'ramadan-deals';
             let sizes = [];
             if (product) {
-                // Combo meals don't have size options
                 const isCombo = product.isCombo || false;
 
-                if (!isCombo) {
+                if (isRamadanDeal) {
+                    // Ramadan deal sizes: Single/Double/Triple with 20% off (same as customer menu)
+                    const singleOriginal = 895, doubleOriginal = 1295, tripleOriginal = 1695;
+                    const discountRate = 0.20;
+                    sizes = [
+                        { name: 'Single', originalPrice: singleOriginal, price: Math.round(singleOriginal * (1 - discountRate)) },
+                        { name: 'Double', originalPrice: doubleOriginal, price: Math.round(doubleOriginal * (1 - discountRate)) },
+                        { name: 'Triple', originalPrice: tripleOriginal, price: Math.round(tripleOriginal * (1 - discountRate)) }
+                    ];
+                } else if (!isCombo) {
                     // basePricing and APPLY_DISCOUNTS are already defined at function level
                     // Update basePricing if product exists
                     if (product && typeof getDiscountedPrice === 'function') {
@@ -3532,37 +3549,29 @@ Debug info:
                 }).join('');
             }
 
-            // Addons
+            // Addons (including for Ramadan deals - same options as for customers)
             let addons = [];
             if (product) {
-                // Combo meals don't have addon options
                 const isCombo = product.isCombo || false;
+                const category = product.category || '';
+                const isBeef = category === 'beef-smashers' || category === 'beef-speciality';
+                const isChicken = category === 'chicken-burgers';
 
-                // Wings don't have add-ons - explicitly check for wings category
-                // Use the isWings variable that was already determined earlier in the function
-                // This ensures we're using the same check that determines wing types
-
-                if (!isCombo && !isWings) {
-                    const category = product.category || '';
-                    const isBeef = category === 'beef-smashers' || category === 'beef-speciality';
-                    const isChicken = category === 'chicken-burgers';
-
-                    // Only show add-ons for beef and chicken burgers (not wings)
-                    if (isBeef || isChicken) {
-                        addons = [
-                            { name: 'Pickles', price: 195 },
-                            { name: 'Onions', price: 195 },
-                            { name: 'Pickled Red Onions', price: 195 },
-                            { name: 'Tomatoes', price: 195 },
-                            { name: 'Crispy Onions', price: 195 },
-                            { name: 'Cheese Slice', price: 195 },
-                            { name: 'Bacon', price: 195 },
-                            { name: 'Lettuce', price: 195 },
-                            { name: 'Grilled Onions', price: 195 },
-                            { name: 'Nachos', price: 195 },
-                            { name: 'Jalapenos', price: 195 }
-                        ];
-                    }
+                // Show add-ons for beef, chicken burgers, and Ramadan deals (not wings, not other combos)
+                if ((!isCombo || isRamadanDeal) && !isWings && (isBeef || isChicken || isRamadanDeal)) {
+                    addons = [
+                        { name: 'Pickles', price: 195 },
+                        { name: 'Onions', price: 195 },
+                        { name: 'Pickled Red Onions', price: 195 },
+                        { name: 'Tomatoes', price: 195 },
+                        { name: 'Crispy Onions', price: 195 },
+                        { name: 'Cheese Slice', price: 195 },
+                        { name: 'Bacon', price: 195 },
+                        { name: 'Lettuce', price: 195 },
+                        { name: 'Grilled Onions', price: 195 },
+                        { name: 'Nachos', price: 195 },
+                        { name: 'Jalapenos', price: 195 }
+                    ];
                 }
             }
 
@@ -3579,7 +3588,15 @@ Debug info:
 
             const quantity = item ? (item.quantity || 1) : 1;
 
+            const categoryFilterValue = window.addItemCategoryFilter || 'all';
             modalBody.innerHTML = `
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Deal / Category</label>
+                    <select id="addItemCategoryFilter" onchange="onAddItemCategoryFilterChange()" style="width: 100%; padding: 0.5rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
+                        <option value="all" ${categoryFilterValue === 'all' ? 'selected' : ''}>All products</option>
+                        <option value="ramadan-deals" ${categoryFilterValue === 'ramadan-deals' ? 'selected' : ''}>Ramadan Deals</option>
+                    </select>
+                </div>
                 <div style="margin-bottom: 1.5rem;">
                     <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Select Product</label>
                     <input type="text" id="productSearch" placeholder="Search products..." oninput="filterProducts()" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; margin-bottom: 0.5rem;">
@@ -3728,6 +3745,23 @@ Debug info:
             });
         }
 
+        function onAddItemCategoryFilterChange() {
+            const filterSelect = document.getElementById('addItemCategoryFilter');
+            if (!filterSelect) return;
+            window.addItemCategoryFilter = filterSelect.value;
+            const productSelect = document.getElementById('productSelect');
+            const productId = productSelect ? parseInt(productSelect.value) : 0;
+            const currentItem = (isCreatingOrder ? currentCreateItems : currentEditItems) && (editingItemIndex >= 0 && (isCreatingOrder ? currentCreateItems[editingItemIndex] : currentEditItems[editingItemIndex]));
+            renderAddItemModal(currentItem || (productId ? { id: productId } : null));
+            if (productSelect && productId) {
+                setTimeout(() => {
+                    productSelect.value = productId;
+                    const firstSize = document.querySelector('.size-option:not(.wing-type-option)');
+                    if (firstSize) firstSize.click();
+                }, 50);
+            }
+        }
+
         function onProductSelectChange() {
             const productId = parseInt(document.getElementById('productSelect').value);
             const product = allProducts.find(p => p.id === productId);
@@ -3807,6 +3841,7 @@ Debug info:
                 return;
             }
 
+            const isRamadanDeal = product.category === 'ramadan-deals';
             const isCombo = product.isCombo || false;
             let sizeName = 'Regular';
             let sizePrice = product.price;
@@ -3815,8 +3850,10 @@ Debug info:
             let wingType = null;
             let displayName = product.name;
 
-            // For combo meals, apply discount
-            if (isCombo) {
+            // Ramadan deals use Pick Size + Add Ons (same as customer menu); other combos use single discounted price
+            const useSizeAndAddons = isRamadanDeal || !isCombo;
+
+            if (isCombo && !isRamadanDeal) {
                 let basePricing = { original: product.price, discounted: product.price, discountRate: 0 };
                 const APPLY_DISCOUNTS = typeof window !== 'undefined' && window.APPLY_DISCOUNTS !== undefined ? window.APPLY_DISCOUNTS : true;
 
@@ -3826,9 +3863,9 @@ Debug info:
 
                 sizePrice = APPLY_DISCOUNTS ? basePricing.discounted : product.price;
                 originalPrice = basePricing.original;
-            } else {
-                // For non-combo items, get price from selected size (already includes discount)
-                const selectedSize = document.querySelector('.size-option.selected');
+            } else if (useSizeAndAddons) {
+                // Non-combo items and Ramadan deals: get price from selected size (already includes discount)
+                const selectedSize = document.querySelector('.size-option.selected:not(.wing-type-option)');
                 if (!selectedSize) {
                     alert('Please select a size');
                     return;
@@ -3844,7 +3881,6 @@ Debug info:
                     const selectedType = document.querySelector('.wing-type-option.selected');
                     if (selectedType) {
                         wingType = selectedType.dataset.type;
-                        // Get prices from wing type option
                         const typeOriginalPrice = parseInt(selectedType.dataset.originalPrice) || originalPrice;
                         const typePrice = parseInt(selectedType.dataset.price) || sizePrice;
                         originalPrice = typeOriginalPrice;
@@ -3867,16 +3903,16 @@ Debug info:
                 id: product.id,
                 name: displayName,
                 category: product.category,
-                price: sizePrice, // Discounted price
-                originalPrice: originalPrice, // Store original price
+                price: sizePrice,
+                originalPrice: originalPrice,
                 image: product.image || '',
                 description: product.description || '',
                 quantity: quantity,
-                size: isCombo ? undefined : sizeName,
+                size: useSizeAndAddons ? sizeName : undefined,
                 wingType: wingType || undefined,
                 addons: selectedAddons.length > 0 ? selectedAddons : undefined,
                 total: itemTotal,
-                isCombo: isCombo
+                isCombo: isCombo && !isRamadanDeal
             };
 
             // Check if we're in create order mode or edit order mode
