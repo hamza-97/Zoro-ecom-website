@@ -1716,6 +1716,100 @@ html {
     background: #fff5f5;
 }
 
+/* Drink selection (e.g. Solo Iftaar modal) */
+.drink-options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.drink-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.drink-option:hover {
+    border-color: var(--primary-color);
+}
+
+.drink-option.selected {
+    border-color: var(--primary-color);
+    background: #fff5f5;
+}
+
+.drink-option-name {
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+/* Wing Frenzy flavour selection */
+.wing-flavor-options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.wing-flavor-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.wing-flavor-option:hover {
+    border-color: var(--primary-color);
+}
+
+.wing-flavor-option.selected {
+    border-color: var(--primary-color);
+    background: #fff5f5;
+}
+
+.wing-flavor-name {
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+/* Zoro For Two: burger and drink options (reuse wing-flavor look) */
+.zoro-burger-option,
+.zoro-drink-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.zoro-burger-option:hover,
+.zoro-drink-option:hover {
+    border-color: var(--primary-color);
+}
+
+.zoro-burger-option.selected,
+.zoro-drink-option.selected {
+    border-color: var(--primary-color);
+    background: #fff5f5;
+}
+
+.zoro-burger-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
 .addon-name {
     font-weight: 500;
     color: var(--text-color);

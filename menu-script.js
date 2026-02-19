@@ -1,6 +1,38 @@
 // Products Data organized according to official menu structure from zoroburger.com/menu
 // Make products globally accessible
 const products = [
+    // RAMADAN DEALS (shown first)
+    {
+        id: 101,
+        name: 'Solo Iftaar',
+        category: 'ramadan-deals',
+        price: 1385,
+        discountedPrice: 895,
+        image: 'ZoroImages/ZoroMeals/Ramadan/SoloIftaar.png',
+        description: 'Perfect Iftaar deal for one – 1 Classic Chicken, plain fries & drink',
+        isCombo: true
+    },
+    {
+        id: 102,
+        name: 'Wing Frenzy',
+        category: 'ramadan-deals',
+        price: 3285,
+        discountedPrice: 2395,
+        image: 'ZoroImages/ZoroMeals/Ramadan/WingFrenzy.png',
+        description: 'Wings deal – 6 Boneless Wings, 6 Bone-in Wings and 1 Loaded Fries',
+        isCombo: true
+    },
+    {
+        id: 103,
+        name: 'Zoro For Two',
+        category: 'ramadan-deals',
+        price: 3170,
+        discountedPrice: 2395,
+        image: 'ZoroImages/ZoroMeals/Ramadan/ZoroForTwo.png',
+        description: 'Iftaar for two - any 2 Single Patty Burgers, 2 Plain Fries and 2 Drinks',
+        isCombo: true
+    },
+
     // BEEF SMASHERS
     {
         id: 1,
@@ -553,6 +585,7 @@ if (typeof window !== 'undefined') {
 
 // Category display names
 const categoryNames = {
+    'ramadan-deals': 'Ramadan Deals',
     'beef-smashers': 'Beef Smashers',
     'beef-speciality': 'Beef Speciality',
     'chicken-burgers': 'Chicken Burgers',
@@ -582,6 +615,7 @@ const categoryImages = {
 
 // Category order (official menu order)
 const categoryOrder = [
+    'ramadan-deals',
     'beef-smasher-meals',
     'beef-specialty-meals',
     'chicken-specialty-meals',
@@ -605,6 +639,7 @@ const APPLY_DISCOUNTS = true;
 // Only combo meals have custom discount rates
 // All other items (beef-smashers, beef-speciality, chicken-burgers, wings, loaded-fries, appetizers, desserts, premium-shakes, soft-drinks) get 20% off (default)
 const discountRates = {
+    'ramadan-deals': 0,              // Ramadan deal price is final (no extra discount)
     'beef-smasher-meals': 0.1980,    // 19.8% off (1490 → 1195)
     'beef-specialty-meals': 0.1855,  // 18.55% off (1590 → 1295)
     'chicken-specialty-meals': 0.1855, // 18.55% off (1590 → 1295)
@@ -615,6 +650,17 @@ const discountRates = {
 // Calculate discounted price for a product
 function getDiscountedPrice(product) {
     const originalPrice = product.price;
+    
+    // If product has explicit discounted price (e.g. Ramadan deals), use it
+    if (product.discountedPrice != null) {
+        const discounted = APPLY_DISCOUNTS ? product.discountedPrice : originalPrice;
+        const rate = originalPrice > 0 ? 1 - (discounted / originalPrice) : 0;
+        return {
+            original: originalPrice,
+            discounted: discounted,
+            discountRate: rate
+        };
+    }
     
     // If discounts are disabled, return original price for both
     if (!APPLY_DISCOUNTS) {
@@ -711,11 +757,36 @@ function setupEventListeners() {
         });
     }
     
-    cartBtn.addEventListener('click', () => toggleCart());
-    closeCart.addEventListener('click', () => toggleCart());
-    cartOverlay.addEventListener('click', () => toggleCart());
-    closeModal.addEventListener('click', () => closeProductModal());
-    checkoutBtn.addEventListener('click', () => handleCheckout());
+    // Cart event listeners
+    console.log('Setting up cart listeners (menu-script.js):', { cartBtn: !!cartBtn, closeCart: !!closeCart, cartOverlay: !!cartOverlay });
+    if (cartBtn) {
+        cartBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Cart button clicked (menu-script.js)!');
+            toggleCart();
+        };
+    }
+    if (closeCart) {
+        closeCart.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleCart();
+        };
+    }
+    if (cartOverlay) {
+        cartOverlay.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleCart();
+        };
+    }
+    if (closeModal) {
+        closeModal.addEventListener('click', () => closeProductModal());
+    }
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => handleCheckout());
+    }
     
     categoryTabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -829,7 +900,22 @@ function createProductCard(product) {
         const productId = parseInt(addToCartBtn.dataset.productId);
         const productToAdd = products.find(p => p.id === productId);
         if (productToAdd) {
-            // If it's a combo, add directly to cart without showing modal
+            // Solo Iftaar (id 101): open drink selection modal
+            if (productToAdd.id === 101) {
+                showProductModal(productToAdd);
+                return;
+            }
+            // Wing Frenzy (id 102): open flavour selection modal
+            if (productToAdd.id === 102) {
+                showProductModal(productToAdd);
+                return;
+            }
+            // Zoro For Two (id 103): open burger + 2 drinks selection modal
+            if (productToAdd.id === 103) {
+                showProductModal(productToAdd);
+                return;
+            }
+            // Other combos: add directly to cart without showing modal
             if (productToAdd.isCombo) {
                 addComboToCart(productToAdd);
             } 
@@ -1099,9 +1185,19 @@ window.toggleCartItemDetails = function(itemIndex) {
 
 // Toggle Cart
 function toggleCart() {
-    cartSidebar.classList.toggle('active');
-    cartOverlay.classList.toggle('active');
+    console.log('toggleCart called (menu-script)');
+    if (cartSidebar) {
+        cartSidebar.classList.toggle('active');
+        console.log('Cart sidebar active:', cartSidebar.classList.contains('active'));
+    }
+    if (cartOverlay) {
+        cartOverlay.classList.toggle('active');
+        console.log('Cart overlay active:', cartOverlay.classList.contains('active'));
+    }
 }
+
+// Make toggleCart globally accessible
+window.toggleCart = toggleCart;
 
 // Show Product Modal
 function showProductModal(product) {

@@ -180,6 +180,14 @@ function setupWelcomeModal() {
 
 // Setup Event Listeners
 function setupEventListeners() {
+    // Get DOM elements (they may be declared in menu-script.js, but we'll get them here too for safety)
+    const cartBtn = document.getElementById('cartBtn');
+    const closeCart = document.getElementById('closeCart');
+    const cartOverlay = document.getElementById('cartOverlay');
+    const closeModal = document.getElementById('closeModal');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const cartSidebar = document.getElementById('cartSidebar');
+    
     // Mobile menu toggle
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navMenu = document.getElementById('navMenu');
@@ -212,11 +220,36 @@ function setupEventListeners() {
         });
     }
     
-    cartBtn.addEventListener('click', () => toggleCart());
-    closeCart.addEventListener('click', () => toggleCart());
-    cartOverlay.addEventListener('click', () => toggleCart());
-    closeModal.addEventListener('click', () => closeProductModal());
-    checkoutBtn.addEventListener('click', () => handleCheckout());
+    // Cart event listeners
+    console.log('Setting up cart listeners (script.js):', { cartBtn: !!cartBtn, closeCart: !!closeCart, cartOverlay: !!cartOverlay });
+    if (cartBtn) {
+        cartBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Cart button clicked (script.js)!');
+            toggleCart();
+        };
+    }
+    if (closeCart) {
+        closeCart.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleCart();
+        };
+    }
+    if (cartOverlay) {
+        cartOverlay.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleCart();
+        };
+    }
+    if (closeModal) {
+        closeModal.addEventListener('click', () => closeProductModal());
+    }
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => handleCheckout());
+    }
     
     // Order Now buttons - links now work directly to menu.html
     // Location selection will be handled on menu.html if needed
@@ -410,9 +443,25 @@ function createProductCard(product) {
         e.preventDefault();
         e.stopPropagation();
         const productId = parseInt(addToCartBtn.dataset.productId);
-        const productToAdd = products.find(p => p.id === productId);
+        const allProducts = typeof products !== 'undefined' ? products : (typeof window.products !== 'undefined' ? window.products : []);
+        const productToAdd = allProducts.find(p => p.id === productId);
         if (productToAdd) {
-            // If it's a combo, add directly to cart without showing modal
+            // Solo Iftaar (id 101): open drink selection modal
+            if (productToAdd.id === 101) {
+                showProductModal(productToAdd);
+                return;
+            }
+            // Wing Frenzy (id 102): open flavour selection modal
+            if (productToAdd.id === 102) {
+                showProductModal(productToAdd);
+                return;
+            }
+            // Zoro For Two (id 103): open burger + 2 drinks selection modal
+            if (productToAdd.id === 103) {
+                showProductModal(productToAdd);
+                return;
+            }
+            // Other combos: add directly to cart without showing modal
             if (productToAdd.isCombo && typeof addComboToCart === 'function') {
                 addComboToCart(productToAdd);
             } 
@@ -577,7 +626,11 @@ function updateCartUI() {
             const hasSize = item.size && item.size !== 'default';
             const hasWingType = item.wingType;
             const hasAddons = item.addons && item.addons.length > 0;
-            const hasDetails = hasSize || hasWingType || hasAddons;
+            const hasSelectedDrink = item.selectedDrink && item.selectedDrink.name;
+            const hasWingFrenzyFlavors = item.wing1Flavor && item.wing2Flavor;
+            const hasLoadedFries = item.loadedFries;
+            const hasZoroForTwoSelections = (item.burger1 && item.burger2) || (item.selectedBurger && (item.drink1 || item.drink2));
+            const hasDetails = hasSize || hasWingType || hasAddons || hasSelectedDrink || hasWingFrenzyFlavors || hasLoadedFries || hasZoroForTwoSelections;
             
             // Size detail - show per item (always 1x since each item has one size)
             const sizeDetail = hasSize ? `
@@ -589,6 +642,35 @@ function updateCartUI() {
             const wingTypeDetail = hasWingType ? `
                 <div class="cart-detail-label">Type:</div>
                 <div class="cart-detail-value">${item.wingType === 'bone-in' ? 'Bone-in' : 'Boneless'}</div>
+            ` : '';
+            
+            // Drink selection (e.g. Solo Iftaar)
+            const drinkDetail = hasSelectedDrink ? `
+                <div class="cart-detail-label">Drink:</div>
+                <div class="cart-detail-value">${item.selectedDrink.name}</div>
+            ` : '';
+            
+            // Wing Frenzy flavours + loaded fries
+            const wingFrenzyDetail = (hasWingFrenzyFlavors || hasLoadedFries) ? `
+                ${hasWingFrenzyFlavors ? `
+                <div class="cart-detail-label">Wing 1:</div>
+                <div class="cart-detail-value">${item.wing1Flavor}</div>
+                <div class="cart-detail-label">Wing 2:</div>
+                <div class="cart-detail-value">${item.wing2Flavor}</div>
+                ` : ''}
+                ${hasLoadedFries ? `
+                <div class="cart-detail-label">Loaded Fries:</div>
+                <div class="cart-detail-value">${item.loadedFries}</div>
+                ` : ''}
+            ` : '';
+            
+            // Zoro For Two: 2 burgers + 2 drinks
+            const zoroForTwoDetail = hasZoroForTwoSelections ? `
+                ${item.burger1 ? `<div class="cart-detail-label">Burger 1:</div><div class="cart-detail-value">${item.burger1.name}</div>` : ''}
+                ${item.burger2 ? `<div class="cart-detail-label">Burger 2:</div><div class="cart-detail-value">${item.burger2.name}</div>` : ''}
+                ${item.selectedBurger && !item.burger1 ? `<div class="cart-detail-label">Burger:</div><div class="cart-detail-value">${item.selectedBurger.name}</div>` : ''}
+                ${item.drink1 ? `<div class="cart-detail-label">Drink 1:</div><div class="cart-detail-value">${item.drink1.name}</div>` : ''}
+                ${item.drink2 ? `<div class="cart-detail-label">Drink 2:</div><div class="cart-detail-value">${item.drink2.name}</div>` : ''}
             ` : '';
             
             // Addons detail - show per item (always 1x for each addon per item)
@@ -629,6 +711,9 @@ function updateCartUI() {
                     <div class="cart-item-details-content hidden" id="cart-details-${index}">
                         ${sizeDetail}
                         ${wingTypeDetail}
+                        ${drinkDetail}
+                        ${wingFrenzyDetail}
+                        ${zoroForTwoDetail}
                         ${addonsDetail}
                     </div>
                     ` : ''}
@@ -682,13 +767,41 @@ window.toggleCartItemDetails = function(itemIndex) {
 
 // Toggle Cart
 function toggleCart() {
-    cartSidebar.classList.toggle('active');
-    cartOverlay.classList.toggle('active');
+    console.log('toggleCart called');
+    const cartSidebar = document.getElementById('cartSidebar');
+    const cartOverlay = document.getElementById('cartOverlay');
+    console.log('Cart elements:', { cartSidebar: !!cartSidebar, cartOverlay: !!cartOverlay });
+    if (cartSidebar) {
+        cartSidebar.classList.toggle('active');
+        console.log('Cart sidebar active:', cartSidebar.classList.contains('active'));
+    }
+    if (cartOverlay) {
+        cartOverlay.classList.toggle('active');
+        console.log('Cart overlay active:', cartOverlay.classList.contains('active'));
+    }
 }
+
+// Make toggleCart globally accessible
+window.toggleCart = toggleCart;
 
 // Show Product Modal
 function showProductModal(product) {
-    // If it's a combo, check if addComboToCart exists (from menu-script.js)
+    // Solo Iftaar: show drink selection modal instead of adding directly
+    if (product.id === 101) {
+        showSoloIftaarDrinkModal(product);
+        return;
+    }
+    // Wing Frenzy: show flavor selection modal for 2 wings
+    if (product.id === 102) {
+        showWingFrenzyModal(product);
+        return;
+    }
+    // Zoro For Two: select 1 burger + 2 drinks
+    if (product.id === 103) {
+        showZoroForTwoModal(product);
+        return;
+    }
+    // Other combos: add directly to cart
     if (product.isCombo && typeof addComboToCart === 'function') {
         addComboToCart(product);
         return;
@@ -696,6 +809,7 @@ function showProductModal(product) {
     
     // Determine category name
     const categoryMap = {
+        'ramadan-deals': 'Ramadan Deals',
         'beef-smashers': 'Beef Smashers',
         'beef-speciality': 'Beef Speciality',
         'chicken-burgers': 'Chicken Burgers',
@@ -1096,6 +1210,470 @@ function showProductModal(product) {
     
     productModal.classList.add('active');
     document.body.style.overflow = 'hidden';
+}
+
+// Solo Iftaar: modal to select drink, then add to cart
+function showSoloIftaarDrinkModal(product) {
+    console.log('showSoloIftaarDrinkModal called for:', product);
+    const allProducts = typeof products !== 'undefined' ? products : (window.products || []);
+    console.log('Available products:', allProducts.length);
+    const drinks = allProducts.filter(p => p.category === 'soft-drinks');
+    console.log('Available drinks:', drinks.length);
+    const pricing = typeof getDiscountedPrice === 'function' ? getDiscountedPrice(product) : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price };
+    const discountedPrice = pricing.discounted;
+
+    const drinksHTML = drinks.map(d => `
+        <div class="drink-option" data-drink-id="${d.id}" data-drink-name="${d.name.replace(/"/g, '&quot;')}">
+            <div class="drink-option-name">${d.name}</div>
+        </div>
+    `).join('');
+
+    const modalBody = document.getElementById('modalBody');
+    if (!modalBody) {
+        console.error('modalBody not found!');
+        return;
+    }
+    modalBody.innerHTML = `
+        <div class="modal-image-container">
+            <img src="${product.image}" alt="${product.name}" class="modal-image" onerror="this.src='https://via.placeholder.com/600x300?text=Solo+Iftaar'">
+        </div>
+        <div class="modal-options">
+            <div class="modal-options-header">
+                <div class="modal-category">Ramadan Deals</div>
+                <h2 class="modal-product-name">${product.name}</h2>
+                <p class="modal-product-description">${product.description}</p>
+                <p class="modal-price">Rs ${discountedPrice.toLocaleString()}</p>
+            </div>
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Choose your drink</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="drink-options-grid">
+                    ${drinksHTML}
+                </div>
+            </div>
+            <div class="quantity-controls">
+                <div class="quantity-selector">
+                    <button class="quantity-btn" id="decreaseQty" type="button">−</button>
+                    <span class="quantity-value" id="quantityValue">1</span>
+                    <button class="quantity-btn" id="increaseQty" type="button">+</button>
+                </div>
+                <button class="add-to-cart-modal-btn" id="addSoloIftaarToCartBtn" type="button" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2L7 6m0 0L5 10M7 6h10M7 6l-2 8h12l-2-8M5 10h14M9 20a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm8 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    `;
+
+    let selectedDrinkId = null;
+    let selectedDrinkName = null;
+    let quantity = 1;
+
+    modalBody.querySelectorAll('.drink-option').forEach(el => {
+        el.addEventListener('click', function() {
+            modalBody.querySelectorAll('.drink-option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedDrinkId = parseInt(this.dataset.drinkId);
+            selectedDrinkName = this.dataset.drinkName;
+            modalBody.querySelector('#addSoloIftaarToCartBtn').disabled = false;
+        });
+    });
+
+    modalBody.querySelector('#decreaseQty').addEventListener('click', () => {
+        quantity = Math.max(1, quantity - 1);
+        modalBody.querySelector('#quantityValue').textContent = quantity;
+    });
+    modalBody.querySelector('#increaseQty').addEventListener('click', () => {
+        quantity += 1;
+        modalBody.querySelector('#quantityValue').textContent = quantity;
+    });
+
+    modalBody.querySelector('#addSoloIftaarToCartBtn').addEventListener('click', () => {
+        if (selectedDrinkId == null) return;
+        addSoloIftaarToCartWithDrink(product, { id: selectedDrinkId, name: selectedDrinkName }, quantity);
+        closeProductModal();
+    });
+
+    // Set up close button handler
+    const closeModal = document.getElementById('closeModal');
+    if (closeModal) {
+        closeModal.onclick = () => closeProductModal();
+    }
+
+    const productModal = document.getElementById('productModal');
+    if (productModal) {
+        productModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    } else {
+        console.error('Product modal not found!');
+    }
+}
+
+function addSoloIftaarToCartWithDrink(product, selectedDrink, quantity) {
+    const pricing = typeof getDiscountedPrice === 'function' ? getDiscountedPrice(product) : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price };
+    const itemKey = `101-combo-${selectedDrink.id}`;
+    const existingIndex = cart.findIndex(item => item.key === itemKey || (item.id === 101 && item.selectedDrink && item.selectedDrink.id === selectedDrink.id));
+    if (existingIndex >= 0) {
+        cart[existingIndex].quantity += quantity;
+        cart[existingIndex].total = pricing.discounted * cart[existingIndex].quantity;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            image: product.image,
+            category: product.category,
+            price: pricing.discounted,
+            originalPrice: pricing.original != null ? pricing.original : product.price,
+            quantity: quantity,
+            key: itemKey,
+            total: pricing.discounted * quantity,
+            isCombo: true,
+            selectedDrink: { id: selectedDrink.id, name: selectedDrink.name }
+        });
+    }
+    if (typeof saveCart === 'function') saveCart();
+    if (typeof updateCartUI === 'function') updateCartUI();
+    if (typeof showCartNotification === 'function') showCartNotification('Solo Iftaar added to cart!');
+}
+
+// Wing Frenzy flavor options
+const WING_FRENZY_FLAVORS = ['Carolina Reaper', 'Korean BBQ', 'Buffalo', 'Thai'];
+const WING_FRENZY_LOADED_FRIES = ['French Truffle', 'Chicken Parma', 'Funky Cheese', 'Philly Cheese'];
+
+// Wing Frenzy: modal to select flavor for each of 2 wings + loaded fries
+function showWingFrenzyModal(product) {
+    const pricing = typeof getDiscountedPrice === 'function' ? getDiscountedPrice(product) : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price };
+    const discountedPrice = pricing.discounted;
+
+    const flavorOption = (name, groupId) => `
+        <div class="wing-flavor-option" data-flavor="${name.replace(/"/g, '&quot;')}" data-group="${groupId}">
+            <div class="wing-flavor-name">${name}</div>
+        </div>
+    `;
+    const wing1Options = WING_FRENZY_FLAVORS.map(f => flavorOption(f, 'wing1')).join('');
+    const wing2Options = WING_FRENZY_FLAVORS.map(f => flavorOption(f, 'wing2')).join('');
+    const loadedFriesOptions = WING_FRENZY_LOADED_FRIES.map(f => flavorOption(f, 'loadedFries')).join('');
+
+    const modalBody = document.getElementById('modalBody');
+    if (!modalBody) return;
+    modalBody.innerHTML = `
+        <div class="modal-image-container">
+            <img src="${product.image}" alt="${product.name}" class="modal-image" onerror="this.src='https://via.placeholder.com/600x300?text=Wing+Frenzy'">
+        </div>
+        <div class="modal-options">
+            <div class="modal-options-header">
+                <div class="modal-category">Ramadan Deals</div>
+                <h2 class="modal-product-name">${product.name}</h2>
+                <p class="modal-product-description">${product.description}</p>
+                <p class="modal-price">Rs ${discountedPrice.toLocaleString()}</p>
+            </div>
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Wing 1 – Choose flavour</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid">
+                    ${wing1Options}
+                </div>
+            </div>
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Wing 2 – Choose flavour</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid">
+                    ${wing2Options}
+                </div>
+            </div>
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Choose your loaded fries</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid">
+                    ${loadedFriesOptions}
+                </div>
+            </div>
+            <div class="quantity-controls">
+                <div class="quantity-selector">
+                    <button class="quantity-btn" id="wingFrenzyDecreaseQty" type="button">−</button>
+                    <span class="quantity-value" id="wingFrenzyQuantityValue">1</span>
+                    <button class="quantity-btn" id="wingFrenzyIncreaseQty" type="button">+</button>
+                </div>
+                <button class="add-to-cart-modal-btn" id="addWingFrenzyToCartBtn" type="button" disabled>
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    `;
+
+    let wing1Flavor = null;
+    let wing2Flavor = null;
+    let loadedFries = null;
+    let quantity = 1;
+
+    const updateAddButton = () => {
+        const btn = modalBody.querySelector('#addWingFrenzyToCartBtn');
+        if (btn) btn.disabled = !(wing1Flavor && wing2Flavor && loadedFries);
+    };
+
+    modalBody.querySelectorAll('.wing-flavor-option').forEach(el => {
+        el.addEventListener('click', function() {
+            const group = this.dataset.group;
+            const flavor = this.dataset.flavor;
+            modalBody.querySelectorAll(`.wing-flavor-option[data-group="${group}"]`).forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            if (group === 'wing1') wing1Flavor = flavor;
+            else if (group === 'wing2') wing2Flavor = flavor;
+            else if (group === 'loadedFries') loadedFries = flavor;
+            updateAddButton();
+        });
+    });
+
+    modalBody.querySelector('#wingFrenzyDecreaseQty').addEventListener('click', () => {
+        quantity = Math.max(1, quantity - 1);
+        modalBody.querySelector('#wingFrenzyQuantityValue').textContent = quantity;
+    });
+    modalBody.querySelector('#wingFrenzyIncreaseQty').addEventListener('click', () => {
+        quantity += 1;
+        modalBody.querySelector('#wingFrenzyQuantityValue').textContent = quantity;
+    });
+
+    modalBody.querySelector('#addWingFrenzyToCartBtn').addEventListener('click', () => {
+        if (!wing1Flavor || !wing2Flavor || !loadedFries) return;
+        addWingFrenzyToCartWithFlavors(product, wing1Flavor, wing2Flavor, loadedFries, quantity);
+        closeProductModal();
+    });
+
+    const closeModal = document.getElementById('closeModal');
+    if (closeModal) closeModal.onclick = () => closeProductModal();
+
+    const productModal = document.getElementById('productModal');
+    if (productModal) {
+        productModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function addWingFrenzyToCartWithFlavors(product, wing1Flavor, wing2Flavor, loadedFries, quantity) {
+    const pricing = typeof getDiscountedPrice === 'function' ? getDiscountedPrice(product) : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price };
+    const itemKey = `102-combo-${wing1Flavor}-${wing2Flavor}-${loadedFries}`.replace(/\s+/g, '-');
+    const existingIndex = cart.findIndex(item => item.key === itemKey || (item.id === 102 && item.wing1Flavor === wing1Flavor && item.wing2Flavor === wing2Flavor && item.loadedFries === loadedFries));
+    if (existingIndex >= 0) {
+        cart[existingIndex].quantity += quantity;
+        cart[existingIndex].total = pricing.discounted * cart[existingIndex].quantity;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            image: product.image,
+            category: product.category,
+            price: pricing.discounted,
+            originalPrice: pricing.original != null ? pricing.original : product.price,
+            quantity: quantity,
+            key: itemKey,
+            total: pricing.discounted * quantity,
+            isCombo: true,
+            wing1Flavor: wing1Flavor,
+            wing2Flavor: wing2Flavor,
+            loadedFries: loadedFries
+        });
+    }
+    if (typeof saveCart === 'function') saveCart();
+    if (typeof updateCartUI === 'function') updateCartUI();
+    if (typeof showCartNotification === 'function') showCartNotification('Wing Frenzy added to cart!');
+}
+
+// Zoro For Two: allowed single patty burgers (by name)
+const ZORO_FOR_TWO_BURGER_NAMES = [
+    'Classic American',
+'Big Ben',
+'Onion Melt', 
+'Frankie',
+'Pepper Chicken',
+'Roost',
+'Tangy Crunch'
+];
+
+// Zoro For Two: modal to select 1 burger + 2 drinks
+function showZoroForTwoModal(product) {
+    const allProducts = typeof products !== 'undefined' ? products : (window.products || []);
+    const burgers = allProducts.filter(p => ZORO_FOR_TWO_BURGER_NAMES.includes(p.name));
+    const drinks = allProducts.filter(p => p.category === 'soft-drinks');
+
+    const pricing = typeof getDiscountedPrice === 'function' ? getDiscountedPrice(product) : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price };
+    const discountedPrice = pricing.discounted;
+
+    const burgerOption = (b, groupId) => `
+        <div class="zoro-burger-option" data-burger-id="${b.id}" data-burger-name="${b.name.replace(/"/g, '&quot;')}" data-group="${groupId}">
+            <div class="wing-flavor-name">${b.name}</div>
+        </div>
+    `;
+    const burger1Options = burgers.map(b => burgerOption(b, 'burger1')).join('');
+    const burger2Options = burgers.map(b => burgerOption(b, 'burger2')).join('');
+
+    const drinkOption = (d, groupId) => `
+        <div class="zoro-drink-option" data-drink-id="${d.id}" data-drink-name="${d.name.replace(/"/g, '&quot;')}" data-group="${groupId}">
+            <div class="wing-flavor-name">${d.name}</div>
+        </div>
+    `;
+    const drink1Options = drinks.map(d => drinkOption(d, 'drink1')).join('');
+    const drink2Options = drinks.map(d => drinkOption(d, 'drink2')).join('');
+
+    const modalBody = document.getElementById('modalBody');
+    if (!modalBody) return;
+    modalBody.innerHTML = `
+        <div class="modal-image-container">
+            <img src="${product.image}" alt="${product.name}" class="modal-image" onerror="this.src='https://via.placeholder.com/600x300?text=Zoro+For+Two'">
+        </div>
+        <div class="modal-options">
+            <div class="modal-options-header">
+                <div class="modal-category">Ramadan Deals</div>
+                <h2 class="modal-product-name">${product.name}</h2>
+                <p class="modal-product-description">${product.description}</p>
+                <p class="modal-price">Rs ${discountedPrice.toLocaleString()}</p>
+            </div>
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Burger 1 – Choose your single patty burger</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid zoro-burger-grid">
+                    ${burger1Options}
+                </div>
+            </div>
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Burger 2 – Choose your single patty burger</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid zoro-burger-grid">
+                    ${burger2Options}
+                </div>
+            </div>
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Drink 1</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid">
+                    ${drink1Options}
+                </div>
+            </div>
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Drink 2</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid">
+                    ${drink2Options}
+                </div>
+            </div>
+            <div class="quantity-controls">
+                <div class="quantity-selector">
+                    <button class="quantity-btn" id="zoroDecreaseQty" type="button">−</button>
+                    <span class="quantity-value" id="zoroQuantityValue">1</span>
+                    <button class="quantity-btn" id="zoroIncreaseQty" type="button">+</button>
+                </div>
+                <button class="add-to-cart-modal-btn" id="addZoroForTwoToCartBtn" type="button" disabled>
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    `;
+
+    let burger1 = null;
+    let burger2 = null;
+    let drink1 = null;
+    let drink2 = null;
+    let quantity = 1;
+
+    const updateAddButton = () => {
+        const btn = modalBody.querySelector('#addZoroForTwoToCartBtn');
+        if (btn) btn.disabled = !(burger1 && burger2 && drink1 && drink2);
+    };
+
+    modalBody.querySelectorAll('.zoro-burger-option').forEach(el => {
+        el.addEventListener('click', function() {
+            const group = this.dataset.group;
+            const burgerId = parseInt(this.dataset.burgerId);
+            const burgerName = this.dataset.burgerName;
+            modalBody.querySelectorAll(`.zoro-burger-option[data-group="${group}"]`).forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            if (group === 'burger1') burger1 = { id: burgerId, name: burgerName };
+            else burger2 = { id: burgerId, name: burgerName };
+            updateAddButton();
+        });
+    });
+
+    modalBody.querySelectorAll('.zoro-drink-option').forEach(el => {
+        el.addEventListener('click', function() {
+            const group = this.dataset.group;
+            const drinkId = parseInt(this.dataset.drinkId);
+            const drinkName = this.dataset.drinkName;
+            modalBody.querySelectorAll(`.zoro-drink-option[data-group="${group}"]`).forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            if (group === 'drink1') drink1 = { id: drinkId, name: drinkName };
+            else drink2 = { id: drinkId, name: drinkName };
+            updateAddButton();
+        });
+    });
+
+    modalBody.querySelector('#zoroDecreaseQty').addEventListener('click', () => {
+        quantity = Math.max(1, quantity - 1);
+        modalBody.querySelector('#zoroQuantityValue').textContent = quantity;
+    });
+    modalBody.querySelector('#zoroIncreaseQty').addEventListener('click', () => {
+        quantity += 1;
+        modalBody.querySelector('#zoroQuantityValue').textContent = quantity;
+    });
+
+    modalBody.querySelector('#addZoroForTwoToCartBtn').addEventListener('click', () => {
+        if (!burger1 || !burger2 || !drink1 || !drink2) return;
+        addZoroForTwoToCartWithSelections(product, burger1, burger2, drink1, drink2, quantity);
+        closeProductModal();
+    });
+
+    const closeModal = document.getElementById('closeModal');
+    if (closeModal) closeModal.onclick = () => closeProductModal();
+
+    const productModal = document.getElementById('productModal');
+    if (productModal) {
+        productModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function addZoroForTwoToCartWithSelections(product, burger1, burger2, drink1, drink2, quantity) {
+    const pricing = typeof getDiscountedPrice === 'function' ? getDiscountedPrice(product) : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price };
+    const itemKey = `103-combo-${burger1.id}-${burger2.id}-${drink1.id}-${drink2.id}`;
+    const existingIndex = cart.findIndex(item => item.key === itemKey || (item.id === 103 && item.burger1 && item.burger1.id === burger1.id && item.burger2 && item.burger2.id === burger2.id && item.drink1 && item.drink1.id === drink1.id && item.drink2 && item.drink2.id === drink2.id));
+    if (existingIndex >= 0) {
+        cart[existingIndex].quantity += quantity;
+        cart[existingIndex].total = pricing.discounted * cart[existingIndex].quantity;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            image: product.image,
+            category: product.category,
+            price: pricing.discounted,
+            originalPrice: pricing.original != null ? pricing.original : product.price,
+            quantity: quantity,
+            key: itemKey,
+            total: pricing.discounted * quantity,
+            isCombo: true,
+            burger1: { id: burger1.id, name: burger1.name },
+            burger2: { id: burger2.id, name: burger2.name },
+            drink1: { id: drink1.id, name: drink1.name },
+            drink2: { id: drink2.id, name: drink2.name }
+        });
+    }
+    if (typeof saveCart === 'function') saveCart();
+    if (typeof updateCartUI === 'function') updateCartUI();
+    if (typeof showCartNotification === 'function') showCartNotification('Zoro For Two added to cart!');
 }
 
 // Change quantity
