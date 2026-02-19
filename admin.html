@@ -1624,6 +1624,7 @@
                         name: p.name,
                         category: p.category,
                         price: p.price,
+                        discountedPrice: p.discountedPrice != null ? p.discountedPrice : undefined,
                         image: p.image,
                         description: p.description,
                         isCombo: p.isCombo || false
@@ -1667,8 +1668,10 @@
                                                 name: p.name,
                                                 category: p.category,
                                                 price: p.price,
+                                                discountedPrice: p.discountedPrice != null ? p.discountedPrice : undefined,
                                                 image: p.image,
-                                                description: p.description
+                                                description: p.description,
+                                                isCombo: p.isCombo || false
                                             }));
                                             console.log('✓ Loaded products from file parsing:', allProducts.length);
                                         }
