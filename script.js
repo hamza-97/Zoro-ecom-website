@@ -257,16 +257,31 @@ function setupEventListeners() {
     
     // Only enable category filtering if not on home page
     const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
-    
-    if (!isHomePage) {
-        categoryTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                categoryTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                filterProducts(tab.dataset.category);
+    const categoryTabs = document.querySelectorAll('.category-tab');
+    const menuContainer = document.getElementById('menuContainer');
+    const productsGridEl = document.getElementById('productsGrid');
+
+    if (!isHomePage && categoryTabs.length) {
+        // Menu page (menu.html): filter via displayMenu and #menuContainer
+        if (menuContainer && typeof displayMenu === 'function') {
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    categoryTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    displayMenu(tab.dataset.category);
+                });
             });
-        });
-    } else {
+        } else if (productsGridEl) {
+            // Other page with category tabs and products grid
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    categoryTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    filterProducts(tab.dataset.category);
+                });
+            });
+        }
+    } else if (isHomePage) {
         // On home page, use category slider
         initializeCategorySlider();
     }
