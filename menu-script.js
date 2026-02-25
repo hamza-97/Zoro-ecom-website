@@ -930,11 +930,31 @@ function createProductCard(product) {
     };
     
     addToCartBtn.addEventListener('click', handleButtonClick);
+
+    // Tap vs scroll: only fire add-to-cart on touch if user didn't scroll (avoids accidental taps on Android)
+    const TAP_MOVE_THRESHOLD_PX = 10;
+    let touchStartY = 0;
+    let touchStartX = 0;
+    let didMove = false;
+    addToCartBtn.addEventListener('touchstart', (e) => {
+        didMove = false;
+        if (e.changedTouches && e.changedTouches[0]) {
+            touchStartX = e.changedTouches[0].clientX;
+            touchStartY = e.changedTouches[0].clientY;
+        }
+    }, { passive: true });
+    addToCartBtn.addEventListener('touchmove', (e) => {
+        if (!e.touches || !e.touches[0]) return;
+        const dx = Math.abs(e.touches[0].clientX - touchStartX);
+        const dy = Math.abs(e.touches[0].clientY - touchStartY);
+        if (dx > TAP_MOVE_THRESHOLD_PX || dy > TAP_MOVE_THRESHOLD_PX) didMove = true;
+    }, { passive: true });
     addToCartBtn.addEventListener('touchend', (e) => {
+        if (didMove) return;
         e.preventDefault();
         handleButtonClick(e);
-    });
-    
+    }, { passive: false });
+
     // Removed card click handlers - only button is clickable now
     
     return card;
