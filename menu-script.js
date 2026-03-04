@@ -4,12 +4,12 @@ const products = [
     // RAMADAN DEALS (shown first)
     {
         id: 101,
-        name: 'Solo Iftaar',
+        name: 'Zoro For Four',
         category: 'ramadan-deals',
-        price: 1385,
-        discountedPrice: 895,
+        price: 6250,
+        discountedPrice: 3895,
         image: 'ZoroImages/ZoroMeals/Ramadan/SoloIftaar.png',
-        description: 'Perfect Iftaar deal for one – 1 Classic Chicken, plain fries & drink',
+        description: 'Iftaar for four - 2 Single Patty Beef Burgers, 2 Single Patty Chicken Burgers, 6pc Krunchers, 1 Loaded Fries and 4 Drinks',
         isCombo: true
     },
     {
@@ -900,7 +900,7 @@ function createProductCard(product) {
         const productId = parseInt(addToCartBtn.dataset.productId);
         const productToAdd = products.find(p => p.id === productId);
         if (productToAdd) {
-            // Solo Iftaar (id 101): open drink selection modal
+            // Zoro For Four (id 101): open drink selection modal
             if (productToAdd.id === 101) {
                 showProductModal(productToAdd);
                 return;

@@ -461,7 +461,7 @@ function createProductCard(product) {
         const allProducts = typeof products !== 'undefined' ? products : (typeof window.products !== 'undefined' ? window.products : []);
         const productToAdd = allProducts.find(p => p.id === productId);
         if (productToAdd) {
-            // Solo Iftaar (id 101): open drink selection modal
+            // Zoro For Four (id 101): open drink selection modal
             if (productToAdd.id === 101) {
                 showProductModal(productToAdd);
                 return;
@@ -679,7 +679,7 @@ function updateCartUI() {
                 <div class="cart-detail-value">${item.wingType === 'bone-in' ? 'Bone-in' : 'Boneless'}</div>
             ` : '';
             
-            // Drink selection (e.g. Solo Iftaar)
+            // Drink selection (e.g. Zoro For Four)
             const drinkDetail = hasSelectedDrink ? `
                 <div class="cart-detail-label">Drink:</div>
                 <div class="cart-detail-value">${item.selectedDrink.name}</div>
@@ -821,7 +821,7 @@ window.toggleCart = toggleCart;
 
 // Show Product Modal
 function showProductModal(product) {
-    // Solo Iftaar: show drink selection modal instead of adding directly
+    // Zoro For Four: show drink selection modal instead of adding directly
     if (product.id === 101) {
         showSoloIftaarDrinkModal(product);
         return;
@@ -1247,30 +1247,63 @@ function showProductModal(product) {
     document.body.style.overflow = 'hidden';
 }
 
-// Solo Iftaar: modal to select drink, then add to cart
+// Zoro For Four: modal to select 2 beef burgers, 2 chicken burgers, loaded fries and 4 drinks
 function showSoloIftaarDrinkModal(product) {
-    console.log('showSoloIftaarDrinkModal called for:', product);
+    console.log('showSoloIftaarDrinkModal (Zoro For Four) called for:', product);
     const allProducts = typeof products !== 'undefined' ? products : (window.products || []);
-    console.log('Available products:', allProducts.length);
+
+    // Burger name lists for this deal
+    const CHICKEN_BURGERS = ['Pepper Chicken', 'Roost', 'Tangy Crunch'];
+    const BEEF_BURGERS = ['Classic American', 'Big Ben', 'Onion Melt', 'Frankie'];
+
+    const chickenBurgers = allProducts.filter(p => CHICKEN_BURGERS.includes(p.name));
+    const beefBurgers = allProducts.filter(p => BEEF_BURGERS.includes(p.name));
     const drinks = allProducts.filter(p => p.category === 'soft-drinks');
-    console.log('Available drinks:', drinks.length);
-    const pricing = typeof getDiscountedPrice === 'function' ? getDiscountedPrice(product) : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price };
+
+    const LOADED_FRIES = ['French Truffle', 'Chicken Parma', 'Funky Cheese', 'Philly Cheese'];
+
+    const pricing = typeof getDiscountedPrice === 'function'
+        ? getDiscountedPrice(product)
+        : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price };
     const discountedPrice = pricing.discounted;
 
-    const drinksHTML = drinks.map(d => `
-        <div class="drink-option" data-drink-id="${d.id}" data-drink-name="${d.name.replace(/"/g, '&quot;')}">
-            <div class="drink-option-name">${d.name}</div>
+    const burgerOption = (b, groupId) => `
+        <div class="zoro-burger-option" data-burger-id="${b.id}" data-burger-name="${b.name.replace(/"/g, '&quot;')}" data-group="${groupId}">
+            <div class="wing-flavor-name">${b.name}</div>
         </div>
-    `).join('');
+    `;
+    const drinkOption = (d, groupId) => `
+        <div class="zoro-drink-option" data-drink-id="${d.id}" data-drink-name="${d.name.replace(/"/g, '&quot;')}" data-group="${groupId}">
+            <div class="wing-flavor-name">${d.name}</div>
+        </div>
+    `;
+    const loadedFriesOption = (name) => `
+        <div class="zoro-loaded-option" data-loaded-name="${name.replace(/"/g, '&quot;')}">
+            <div class="wing-flavor-name">${name}</div>
+        </div>
+    `;
+
+    const beef1Options = beefBurgers.map(b => burgerOption(b, 'beef1')).join('');
+    const beef2Options = beefBurgers.map(b => burgerOption(b, 'beef2')).join('');
+    const chicken1Options = chickenBurgers.map(b => burgerOption(b, 'chicken1')).join('');
+    const chicken2Options = chickenBurgers.map(b => burgerOption(b, 'chicken2')).join('');
+
+    const loadedFriesOptions = LOADED_FRIES.map(name => loadedFriesOption(name)).join('');
+
+    const drink1Options = drinks.map(d => drinkOption(d, 'drink1')).join('');
+    const drink2Options = drinks.map(d => drinkOption(d, 'drink2')).join('');
+    const drink3Options = drinks.map(d => drinkOption(d, 'drink3')).join('');
+    const drink4Options = drinks.map(d => drinkOption(d, 'drink4')).join('');
 
     const modalBody = document.getElementById('modalBody');
     if (!modalBody) {
         console.error('modalBody not found!');
         return;
     }
+
     modalBody.innerHTML = `
         <div class="modal-image-container">
-            <img src="${product.image}" alt="${product.name}" class="modal-image" onerror="this.src='https://via.placeholder.com/600x300?text=Solo+Iftaar'">
+            <img src="${product.image}" alt="${product.name}" class="modal-image" onerror="this.src='https://via.placeholder.com/600x300?text=Zoro+For+Four'">
         </div>
         <div class="modal-options">
             <div class="modal-options-header">
@@ -1279,59 +1312,198 @@ function showSoloIftaarDrinkModal(product) {
                 <p class="modal-product-description">${product.description}</p>
                 <p class="modal-price">Rs ${discountedPrice.toLocaleString()}</p>
             </div>
+
             <div class="modal-section">
                 <div class="modal-section-header">
-                    <div class="modal-section-title">Choose your drink</div>
+                    <div class="modal-section-title">Beef Burger 1 – Choose your single patty burger</div>
                     <div class="modal-section-required">Required</div>
                 </div>
-                <div class="drink-options-grid">
-                    ${drinksHTML}
+                <div class="wing-flavor-options-grid zoro-burger-grid">
+                    ${beef1Options}
                 </div>
             </div>
+
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Beef Burger 2 – Choose your single patty burger</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid zoro-burger-grid">
+                    ${beef2Options}
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Chicken Burger 1 – Choose your single patty burger</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid zoro-burger-grid">
+                    ${chicken1Options}
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Chicken Burger 2 – Choose your single patty burger</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid zoro-burger-grid">
+                    ${chicken2Options}
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Loaded Fries – Choose your flavour</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid">
+                    ${loadedFriesOptions}
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Drink 1</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid">
+                    ${drink1Options}
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Drink 2</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid">
+                    ${drink2Options}
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Drink 3</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid">
+                    ${drink3Options}
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Drink 4</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="wing-flavor-options-grid">
+                    ${drink4Options}
+                </div>
+            </div>
+
             <div class="quantity-controls">
                 <div class="quantity-selector">
-                    <button class="quantity-btn" id="decreaseQty" type="button">−</button>
-                    <span class="quantity-value" id="quantityValue">1</span>
-                    <button class="quantity-btn" id="increaseQty" type="button">+</button>
+                    <button class="quantity-btn" id="zoro4DecreaseQty" type="button">−</button>
+                    <span class="quantity-value" id="zoro4QuantityValue">1</span>
+                    <button class="quantity-btn" id="zoro4IncreaseQty" type="button">+</button>
                 </div>
-                <button class="add-to-cart-modal-btn" id="addSoloIftaarToCartBtn" type="button" disabled>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2L7 6m0 0L5 10M7 6h10M7 6l-2 8h12l-2-8M5 10h14M9 20a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm8 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+                <button class="add-to-cart-modal-btn" id="addZoroForFourToCartBtn" type="button" disabled>
                     Add to Cart
                 </button>
             </div>
         </div>
     `;
 
-    let selectedDrinkId = null;
-    let selectedDrinkName = null;
+    let beefBurger1 = null;
+    let beefBurger2 = null;
+    let chickenBurger1 = null;
+    let chickenBurger2 = null;
+    let loadedFries = null;
+    let drink1 = null;
+    let drink2 = null;
+    let drink3 = null;
+    let drink4 = null;
     let quantity = 1;
 
-    modalBody.querySelectorAll('.drink-option').forEach(el => {
+    const updateAddButton = () => {
+        const btn = modalBody.querySelector('#addZoroForFourToCartBtn');
+        if (!btn) return;
+        const allSelected = beefBurger1 && beefBurger2 && chickenBurger1 && chickenBurger2 &&
+            loadedFries && drink1 && drink2 && drink3 && drink4;
+        btn.disabled = !allSelected;
+    };
+
+    modalBody.querySelectorAll('.zoro-burger-option').forEach(el => {
         el.addEventListener('click', function() {
-            modalBody.querySelectorAll('.drink-option').forEach(o => o.classList.remove('selected'));
+            const group = this.dataset.group;
+            const burgerId = parseInt(this.dataset.burgerId);
+            const burgerName = this.dataset.burgerName;
+
+            modalBody.querySelectorAll(`.zoro-burger-option[data-group="${group}"]`).forEach(o => o.classList.remove('selected'));
             this.classList.add('selected');
-            selectedDrinkId = parseInt(this.dataset.drinkId);
-            selectedDrinkName = this.dataset.drinkName;
-            modalBody.querySelector('#addSoloIftaarToCartBtn').disabled = false;
+
+            const value = { id: burgerId, name: burgerName };
+            if (group === 'beef1') beefBurger1 = value;
+            else if (group === 'beef2') beefBurger2 = value;
+            else if (group === 'chicken1') chickenBurger1 = value;
+            else if (group === 'chicken2') chickenBurger2 = value;
+
+            updateAddButton();
         });
     });
 
-    modalBody.querySelector('#decreaseQty').addEventListener('click', () => {
-        quantity = Math.max(1, quantity - 1);
-        modalBody.querySelector('#quantityValue').textContent = quantity;
-    });
-    modalBody.querySelector('#increaseQty').addEventListener('click', () => {
-        quantity += 1;
-        modalBody.querySelector('#quantityValue').textContent = quantity;
+    modalBody.querySelectorAll('.zoro-loaded-option').forEach(el => {
+        el.addEventListener('click', function() {
+            modalBody.querySelectorAll('.zoro-loaded-option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            loadedFries = { name: this.dataset.loadedName || '' };
+            updateAddButton();
+        });
     });
 
-    modalBody.querySelector('#addSoloIftaarToCartBtn').addEventListener('click', () => {
-        if (selectedDrinkId == null) return;
-        addSoloIftaarToCartWithDrink(product, { id: selectedDrinkId, name: selectedDrinkName }, quantity);
+    modalBody.querySelectorAll('.zoro-drink-option').forEach(el => {
+        el.addEventListener('click', function() {
+            const group = this.dataset.group;
+            const drinkId = parseInt(this.dataset.drinkId);
+            const drinkName = this.dataset.drinkName;
+
+            modalBody.querySelectorAll(`.zoro-drink-option[data-group="${group}"]`).forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+
+            const value = { id: drinkId, name: drinkName };
+            if (group === 'drink1') drink1 = value;
+            else if (group === 'drink2') drink2 = value;
+            else if (group === 'drink3') drink3 = value;
+            else if (group === 'drink4') drink4 = value;
+
+            updateAddButton();
+        });
+    });
+
+    modalBody.querySelector('#zoro4DecreaseQty').addEventListener('click', () => {
+        quantity = Math.max(1, quantity - 1);
+        modalBody.querySelector('#zoro4QuantityValue').textContent = quantity;
+    });
+    modalBody.querySelector('#zoro4IncreaseQty').addEventListener('click', () => {
+        quantity += 1;
+        modalBody.querySelector('#zoro4QuantityValue').textContent = quantity;
+    });
+
+    modalBody.querySelector('#addZoroForFourToCartBtn').addEventListener('click', () => {
+        if (!(beefBurger1 && beefBurger2 && chickenBurger1 && chickenBurger2 &&
+            loadedFries && drink1 && drink2 && drink3 && drink4)) {
+            return;
+        }
+        addZoroForFourToCartWithSelections(
+            product,
+            { beefBurger1, beefBurger2, chickenBurger1, chickenBurger2, loadedFries, drink1, drink2, drink3, drink4 },
+            quantity
+        );
         closeProductModal();
     });
 
-    // Set up close button handler
     const closeModal = document.getElementById('closeModal');
     if (closeModal) {
         closeModal.onclick = () => closeProductModal();
@@ -1346,10 +1518,34 @@ function showSoloIftaarDrinkModal(product) {
     }
 }
 
-function addSoloIftaarToCartWithDrink(product, selectedDrink, quantity) {
-    const pricing = typeof getDiscountedPrice === 'function' ? getDiscountedPrice(product) : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price };
-    const itemKey = `101-combo-${selectedDrink.id}`;
-    const existingIndex = cart.findIndex(item => item.key === itemKey || (item.id === 101 && item.selectedDrink && item.selectedDrink.id === selectedDrink.id));
+function addZoroForFourToCartWithSelections(product, selections, quantity) {
+    const pricing = typeof getDiscountedPrice === 'function'
+        ? getDiscountedPrice(product)
+        : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price };
+
+    const {
+        beefBurger1, beefBurger2,
+        chickenBurger1, chickenBurger2,
+        loadedFries,
+        drink1, drink2, drink3, drink4
+    } = selections;
+
+    const itemKey = `101-combo-${beefBurger1.id}-${beefBurger2.id}-${chickenBurger1.id}-${chickenBurger2.id}-${loadedFries.name}-${drink1.id}-${drink2.id}-${drink3.id}-${drink4.id}`;
+
+    const existingIndex = cart.findIndex(item =>
+        item.key === itemKey ||
+        (item.id === 101 &&
+            item.beefBurger1 && item.beefBurger1.id === beefBurger1.id &&
+            item.beefBurger2 && item.beefBurger2.id === beefBurger2.id &&
+            item.chickenBurger1 && item.chickenBurger1.id === chickenBurger1.id &&
+            item.chickenBurger2 && item.chickenBurger2.id === chickenBurger2.id &&
+            item.loadedFries && item.loadedFries === loadedFries.name &&
+            item.drink1 && item.drink1.id === drink1.id &&
+            item.drink2 && item.drink2.id === drink2.id &&
+            item.drink3 && item.drink3.id === drink3.id &&
+            item.drink4 && item.drink4.id === drink4.id)
+    );
+
     if (existingIndex >= 0) {
         cart[existingIndex].quantity += quantity;
         cart[existingIndex].total = pricing.discounted * cart[existingIndex].quantity;
@@ -1365,12 +1561,20 @@ function addSoloIftaarToCartWithDrink(product, selectedDrink, quantity) {
             key: itemKey,
             total: pricing.discounted * quantity,
             isCombo: true,
-            selectedDrink: { id: selectedDrink.id, name: selectedDrink.name }
+            beefBurger1: { id: beefBurger1.id, name: beefBurger1.name },
+            beefBurger2: { id: beefBurger2.id, name: beefBurger2.name },
+            chickenBurger1: { id: chickenBurger1.id, name: chickenBurger1.name },
+            chickenBurger2: { id: chickenBurger2.id, name: chickenBurger2.name },
+            loadedFries: loadedFries.name,
+            drink1: { id: drink1.id, name: drink1.name },
+            drink2: { id: drink2.id, name: drink2.name },
+            drink3: { id: drink3.id, name: drink3.name },
+            drink4: { id: drink4.id, name: drink4.name }
         });
     }
     if (typeof saveCart === 'function') saveCart();
     if (typeof updateCartUI === 'function') updateCartUI();
-    if (typeof showCartNotification === 'function') showCartNotification('Solo Iftaar added to cart!');
+    if (typeof showCartNotification === 'function') showCartNotification('Zoro For Four added to cart!');
 }
 
 // Wing Frenzy flavor options

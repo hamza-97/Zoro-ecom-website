@@ -3317,20 +3317,116 @@ Debug info:
             const WING_FRENZY_FLAVORS = ['Carolina Reaper', 'Korean BBQ', 'Buffalo', 'Thai'];
             const WING_FRENZY_LOADED_FRIES = ['French Truffle', 'Chicken Parma', 'Funky Cheese', 'Philly Cheese'];
             const ZORO_FOR_TWO_BURGER_NAMES = ['Classic American', 'Big Ben', 'Onion Melt', 'Frankie', 'Pepper Chicken', 'Roost', 'Tangy Crunch'];
+            const ZORO_FOR_FOUR_BEEF_BURGER_NAMES = ['Classic American', 'Big Ben', 'Onion Melt', 'Frankie'];
+            const ZORO_FOR_FOUR_CHICKEN_BURGER_NAMES = ['Pepper Chicken', 'Roost', 'Tangy Crunch'];
 
-            // Deal-specific options HTML for 101 Solo Iftaar, 102 Wing Frenzy, 103 Zoro For Two (same as customer)
+            // Deal-specific options HTML for 101 Zoro For Four, 102 Wing Frenzy, 103 Zoro For Two (same as customer)
             let dealOptionsHTML = '';
             if (product && product.id === 101) {
+                const beefBurgers = allProducts.filter(p => ZORO_FOR_FOUR_BEEF_BURGER_NAMES.includes(p.name));
+                const chickenBurgers = allProducts.filter(p => ZORO_FOR_FOUR_CHICKEN_BURGER_NAMES.includes(p.name));
                 const drinks = allProducts.filter(p => p.category === 'soft-drinks');
-                const selectedDrinkId = item && item.selectedDrink ? item.selectedDrink.id : null;
+
+                const selBurger = (field, id) => (item && item[field] && item[field].id === id) ? ' selected' : '';
+                const selDrink = (field, id) => (item && item[field] && item[field].id === id) ? ' selected' : '';
+                const selLoaded = (name) => (item && item.loadedFries === name) ? ' selected' : '';
+
+                const burgerOpt = (b, groupId, field) => `<div class="zoro-burger-option addon-option${selBurger(field, b.id)}" data-burger-id="${b.id}" data-burger-name="${(b.name || '').replace(/"/g, '&quot;')}" data-group="${groupId}" onclick="toggleAdminZoroOption(this, '.zoro-burger-option', '${groupId}')"><div class="addon-name">${b.name}</div></div>`;
+                const drinkOpt = (d, groupId, field) => `<div class="zoro-drink-option addon-option${selDrink(field, d.id)}" data-drink-id="${d.id}" data-drink-name="${(d.name || '').replace(/"/g, '&quot;')}" data-group="${groupId}" onclick="toggleAdminZoroOption(this, '.zoro-drink-option', '${groupId}')"><div class="addon-name">${d.name}</div></div>`;
+                const loadedOpt = (name) => `<div class="zoro-loaded-option addon-option${selLoaded(name)}" data-loaded-name="${(name || '').replace(/"/g, '&quot;')}" data-group="loadedFries" onclick="toggleAdminZoroOption(this, '.zoro-loaded-option', 'loadedFries')"><div class="addon-name">${name}</div></div>`;
+
+                const beef1Opts = beefBurgers.map(b => burgerOpt(b, 'beef1', 'beefBurger1')).join('');
+                const beef2Opts = beefBurgers.map(b => burgerOpt(b, 'beef2', 'beefBurger2')).join('');
+                const chicken1Opts = chickenBurgers.map(b => burgerOpt(b, 'chicken1', 'chickenBurger1')).join('');
+                const chicken2Opts = chickenBurgers.map(b => burgerOpt(b, 'chicken2', 'chickenBurger2')).join('');
+
+                const loadedOpts = WING_FRENZY_LOADED_FRIES.map(f => loadedOpt(f)).join('');
+
+                const drink1Opts = drinks.map(d => drinkOpt(d, 'drink1', 'drink1')).join('');
+                const drink2Opts = drinks.map(d => drinkOpt(d, 'drink2', 'drink2')).join('');
+                const drink3Opts = drinks.map(d => drinkOpt(d, 'drink3', 'drink3')).join('');
+                const drink4Opts = drinks.map(d => drinkOpt(d, 'drink4', 'drink4')).join('');
+
                 dealOptionsHTML = `
                     <div style="margin-bottom: 1.5rem;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <label style="font-weight: 600; margin: 0;">Choose your drink</label>
+                            <label style="font-weight: 600; margin: 0;">Beef Burger 1 – Choose your single patty burger</label>
                             <span style="font-size: 0.85rem; color: #666;">Required</span>
                         </div>
                         <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
-                            ${drinks.map(d => `<div class="drink-option addon-option ${selectedDrinkId === d.id ? 'selected' : ''}" data-drink-id="${d.id}" data-drink-name="${(d.name || '').replace(/"/g, '&quot;')}" onclick="toggleAdminDealOption(this, '.drink-option')"><div class="addon-name">${d.name}</div></div>`).join('')}
+                            ${beef1Opts}
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label style="font-weight: 600; margin: 0;">Beef Burger 2 – Choose your single patty burger</label>
+                            <span style="font-size: 0.85rem; color: #666;">Required</span>
+                        </div>
+                        <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
+                            ${beef2Opts}
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label style="font-weight: 600; margin: 0;">Chicken Burger 1 – Choose your single patty burger</label>
+                            <span style="font-size: 0.85rem; color: #666;">Required</span>
+                        </div>
+                        <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
+                            ${chicken1Opts}
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label style="font-weight: 600; margin: 0;">Chicken Burger 2 – Choose your single patty burger</label>
+                            <span style="font-size: 0.85rem; color: #666;">Required</span>
+                        </div>
+                        <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
+                            ${chicken2Opts}
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label style="font-weight: 600; margin: 0;">Loaded Fries – Choose your flavour</label>
+                            <span style="font-size: 0.85rem; color: #666;">Required</span>
+                        </div>
+                        <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
+                            ${loadedOpts}
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label style="font-weight: 600; margin: 0;">Drink 1</label>
+                            <span style="font-size: 0.85rem; color: #666;">Required</span>
+                        </div>
+                        <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
+                            ${drink1Opts}
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label style="font-weight: 600; margin: 0;">Drink 2</label>
+                            <span style="font-size: 0.85rem; color: #666;">Required</span>
+                        </div>
+                        <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
+                            ${drink2Opts}
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label style="font-weight: 600; margin: 0;">Drink 3</label>
+                            <span style="font-size: 0.85rem; color: #666;">Required</span>
+                        </div>
+                        <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
+                            ${drink3Opts}
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label style="font-weight: 600; margin: 0;">Drink 4</label>
+                            <span style="font-size: 0.85rem; color: #666;">Required</span>
+                        </div>
+                        <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem;">
+                            ${drink4Opts}
                         </div>
                     </div>`;
             } else if (product && product.id === 102) {
@@ -3880,14 +3976,33 @@ Debug info:
             const quantity = window.currentItemQuantity || 1;
             let newItem = null;
 
-            // Ramadan deals 101, 102, 103: same options as customer (drink / wing flavors / burger+drinks)
+            // Ramadan deals 101, 102, 103: same options as customer (Zoro For Four burgers/drinks, Wing Frenzy flavours, Zoro For Two burger+drinks)
             if (productId === 101) {
-                const drinkEl = document.querySelector('.drink-option.selected');
-                if (!drinkEl) {
-                    alert('Please choose your drink');
+                const bBeef1 = document.querySelector('.zoro-burger-option[data-group="beef1"].selected');
+                const bBeef2 = document.querySelector('.zoro-burger-option[data-group="beef2"].selected');
+                const bChicken1 = document.querySelector('.zoro-burger-option[data-group="chicken1"].selected');
+                const bChicken2 = document.querySelector('.zoro-burger-option[data-group="chicken2"].selected');
+                const lf = document.querySelector('.zoro-loaded-option[data-group="loadedFries"].selected');
+                const d1 = document.querySelector('.zoro-drink-option[data-group="drink1"].selected');
+                const d2 = document.querySelector('.zoro-drink-option[data-group="drink2"].selected');
+                const d3 = document.querySelector('.zoro-drink-option[data-group="drink3"].selected');
+                const d4 = document.querySelector('.zoro-drink-option[data-group="drink4"].selected');
+
+                if (!bBeef1 || !bBeef2 || !bChicken1 || !bChicken2 || !lf || !d1 || !d2 || !d3 || !d4) {
+                    alert('Please select all burgers, loaded fries, and 4 drinks');
                     return;
                 }
-                const selectedDrink = { id: parseInt(drinkEl.dataset.drinkId), name: drinkEl.dataset.drinkName || '' };
+
+                const beefBurger1 = { id: parseInt(bBeef1.dataset.burgerId), name: bBeef1.dataset.burgerName || '' };
+                const beefBurger2 = { id: parseInt(bBeef2.dataset.burgerId), name: bBeef2.dataset.burgerName || '' };
+                const chickenBurger1 = { id: parseInt(bChicken1.dataset.burgerId), name: bChicken1.dataset.burgerName || '' };
+                const chickenBurger2 = { id: parseInt(bChicken2.dataset.burgerId), name: bChicken2.dataset.burgerName || '' };
+                const loadedFries = lf.dataset.loadedName || '';
+                const drink1 = { id: parseInt(d1.dataset.drinkId), name: d1.dataset.drinkName || '' };
+                const drink2 = { id: parseInt(d2.dataset.drinkId), name: d2.dataset.drinkName || '' };
+                const drink3 = { id: parseInt(d3.dataset.drinkId), name: d3.dataset.drinkName || '' };
+                const drink4 = { id: parseInt(d4.dataset.drinkId), name: d4.dataset.drinkName || '' };
+
                 const pricing = typeof getDiscountedPrice === 'function' ? getDiscountedPrice(product) : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price, original: product.price };
                 const total = pricing.discounted * quantity;
                 newItem = {
@@ -3901,7 +4016,15 @@ Debug info:
                     quantity: quantity,
                     total: total,
                     isCombo: true,
-                    selectedDrink: selectedDrink
+                    beefBurger1: beefBurger1,
+                    beefBurger2: beefBurger2,
+                    chickenBurger1: chickenBurger1,
+                    chickenBurger2: chickenBurger2,
+                    loadedFries: loadedFries,
+                    drink1: drink1,
+                    drink2: drink2,
+                    drink3: drink3,
+                    drink4: drink4
                 };
             } else if (productId === 102) {
                 const w1 = document.querySelector('.wing-flavor-option[data-group="wing1"].selected');

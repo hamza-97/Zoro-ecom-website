@@ -1716,7 +1716,7 @@ html {
     background: #fff5f5;
 }
 
-/* Drink selection (e.g. Solo Iftaar modal) */
+/* Drink selection (e.g. Zoro For Four modal) */
 .drink-options-grid {
     display: flex;
     flex-direction: column;
@@ -1784,7 +1784,8 @@ html {
 
 /* Zoro For Two: burger and drink options (reuse wing-flavor look) */
 .zoro-burger-option,
-.zoro-drink-option {
+.zoro-drink-option,
+.zoro-loaded-option {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1796,12 +1797,14 @@ html {
 }
 
 .zoro-burger-option:hover,
-.zoro-drink-option:hover {
+.zoro-drink-option:hover,
+.zoro-loaded-option:hover {
     border-color: var(--primary-color);
 }
 
 .zoro-burger-option.selected,
-.zoro-drink-option.selected {
+.zoro-drink-option.selected,
+.zoro-loaded-option.selected {
     border-color: var(--primary-color);
     background: #fff5f5;
 }
