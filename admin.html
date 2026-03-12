@@ -2774,6 +2774,7 @@
                                     </div>
                                 </div>
                             ` : '';
+
                     const addonsInfo = item.addons && item.addons.length > 0
                         ? `
                                     <div style="margin-top: 0.75rem;">
@@ -2789,6 +2790,51 @@
                                     </div>
                                 `
                         : '';
+
+                    // Deal-specific details (Zoro For Four, Wing Frenzy, Zoro For Two, drink-only)
+                    const details = [];
+
+                    if (item.id === 101) {
+                        if (item.beefBurger1) details.push(`Beef Burger 1: ${item.beefBurger1.name}`);
+                        if (item.beefBurger2) details.push(`Beef Burger 2: ${item.beefBurger2.name}`);
+                        if (item.chickenBurger1) details.push(`Chicken Burger 1: ${item.chickenBurger1.name}`);
+                        if (item.chickenBurger2) details.push(`Chicken Burger 2: ${item.chickenBurger2.name}`);
+                        if (item.loadedFries) details.push(`Loaded Fries: ${item.loadedFries}`);
+                        if (item.drink1) details.push(`Drink 1: ${item.drink1.name}`);
+                        if (item.drink2) details.push(`Drink 2: ${item.drink2.name}`);
+                        if (item.drink3) details.push(`Drink 3: ${item.drink3.name}`);
+                        if (item.drink4) details.push(`Drink 4: ${item.drink4.name}`);
+                    }
+
+                    if (item.id === 102) {
+                        if (item.wing1Flavor) details.push(`Wing 1: ${item.wing1Flavor}`);
+                        if (item.wing2Flavor) details.push(`Wing 2: ${item.wing2Flavor}`);
+                        if (item.loadedFries) details.push(`Loaded Fries: ${item.loadedFries}`);
+                    }
+
+                    if (item.id === 103) {
+                        if (item.burger1) details.push(`Burger 1: ${item.burger1.name}`);
+                        if (item.burger2) details.push(`Burger 2: ${item.burger2.name}`);
+                        if (!item.burger1 && item.selectedBurger) details.push(`Burger: ${item.selectedBurger.name}`);
+                        if (item.drink1) details.push(`Drink 1: ${item.drink1.name}`);
+                        if (item.drink2) details.push(`Drink 2: ${item.drink2.name}`);
+                    }
+
+                    if (item.selectedDrink && item.selectedDrink.name && item.id !== 101 && item.id !== 103) {
+                        details.push(`Drink: ${item.selectedDrink.name}`);
+                    }
+
+                    const detailsInfo = details.length > 0
+                        ? `
+                                    <div style="margin-top: 0.75rem;">
+                                        <div style="font-size: 0.85rem; color: #666; font-weight: 600; margin-bottom: 0.35rem;">Details:</div>
+                                        <div style="font-size: 0.8rem; color: #444; display: flex; flex-direction: column; gap: 0.15rem;">
+                                            ${details.map(line => `<span>${line}</span>`).join('')}
+                                        </div>
+                                    </div>
+                                `
+                        : '';
+
                     const addonsPrice = item.addons && item.addons.length > 0
                         ? item.addons.reduce((sum, addon) => sum + (addon.price || 0), 0)
                         : 0;
@@ -2802,6 +2848,7 @@
                                             </div>
                                             ${sizeInfo}
                                             ${addonsInfo}
+                                            ${detailsInfo}
                                         </div>
                                         <div style="font-weight: 700; color: var(--primary-color); font-size: 1.1rem; margin-left: 1rem; white-space: nowrap;">
                                             Rs ${itemTotal.toLocaleString()}
