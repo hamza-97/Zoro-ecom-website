@@ -1258,7 +1258,7 @@ function showSoloIftaarDrinkModal(product) {
 
     const chickenBurgers = allProducts.filter(p => CHICKEN_BURGERS.includes(p.name));
     const beefBurgers = allProducts.filter(p => BEEF_BURGERS.includes(p.name));
-    const drinks = allProducts.filter(p => p.category === 'soft-drinks');
+    const drinks = allProducts.filter(p => p.category === 'soft-drinks' && p.name !== 'Dasani Water');
 
     const LOADED_FRIES = ['French Truffle', 'Chicken Parma', 'Funky Cheese', 'Philly Cheese'];
 
@@ -1740,7 +1740,7 @@ const ZORO_FOR_TWO_BURGER_NAMES = [
 function showZoroForTwoModal(product) {
     const allProducts = typeof products !== 'undefined' ? products : (window.products || []);
     const burgers = allProducts.filter(p => ZORO_FOR_TWO_BURGER_NAMES.includes(p.name));
-    const drinks = allProducts.filter(p => p.category === 'soft-drinks');
+    const drinks = allProducts.filter(p => p.category === 'soft-drinks' && p.name !== 'Dasani Water');
 
     const pricing = typeof getDiscountedPrice === 'function' ? getDiscountedPrice(product) : { discounted: product.discountedPrice != null ? product.discountedPrice : product.price };
     const discountedPrice = pricing.discounted;

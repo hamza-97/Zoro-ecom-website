@@ -3411,7 +3411,7 @@ Debug info:
             if (product && product.id === 101) {
                 const beefBurgers = allProducts.filter(p => ZORO_FOR_FOUR_BEEF_BURGER_NAMES.includes(p.name));
                 const chickenBurgers = allProducts.filter(p => ZORO_FOR_FOUR_CHICKEN_BURGER_NAMES.includes(p.name));
-                const drinks = allProducts.filter(p => p.category === 'soft-drinks');
+                const drinks = allProducts.filter(p => p.category === 'soft-drinks' && p.name !== 'Dasani Water');
 
                 const selBurger = (field, id) => (item && item[field] && item[field].id === id) ? ' selected' : '';
                 const selDrink = (field, id) => (item && item[field] && item[field].id === id) ? ' selected' : '';
@@ -3536,7 +3536,7 @@ Debug info:
                     </div>`;
             } else if (product && product.id === 103) {
                 const burgers = allProducts.filter(p => ZORO_FOR_TWO_BURGER_NAMES.includes(p.name));
-                const drinks = allProducts.filter(p => p.category === 'soft-drinks');
+                const drinks = allProducts.filter(p => p.category === 'soft-drinks' && p.name !== 'Dasani Water');
                 const selB = (g, id) => (item && item[g] && item[g].id === id) ? ' selected' : '';
                 const selD = (g, id) => (item && item[g] && item[g].id === id) ? ' selected' : '';
                 const burgerOpt = (b, g) => `<div class="zoro-burger-option addon-option${selB(g, b.id)}" data-burger-id="${b.id}" data-burger-name="${(b.name || '').replace(/"/g, '&quot;')}" data-group="${g}" onclick="toggleAdminZoroOption(this, '.zoro-burger-option', '${g}')"><div class="addon-name">${b.name}</div></div>`;
