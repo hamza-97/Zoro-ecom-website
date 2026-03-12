@@ -665,7 +665,13 @@ function updateCartUI() {
             const hasWingFrenzyFlavors = item.wing1Flavor && item.wing2Flavor;
             const hasLoadedFries = item.loadedFries;
             const hasZoroForTwoSelections = (item.burger1 && item.burger2) || (item.selectedBurger && (item.drink1 || item.drink2));
-            const hasDetails = hasSize || hasWingType || hasAddons || hasSelectedDrink || hasWingFrenzyFlavors || hasLoadedFries || hasZoroForTwoSelections;
+            const hasZoroForFourSelections = item.id === 101 && (
+                item.beefBurger1 || item.beefBurger2 ||
+                item.chickenBurger1 || item.chickenBurger2 ||
+                item.drink1 || item.drink2 || item.drink3 || item.drink4 ||
+                item.loadedFries
+            );
+            const hasDetails = hasSize || hasWingType || hasAddons || hasSelectedDrink || hasWingFrenzyFlavors || hasLoadedFries || hasZoroForTwoSelections || hasZoroForFourSelections;
             
             // Size detail - show per item (always 1x since each item has one size)
             const sizeDetail = hasSize ? `
@@ -706,6 +712,19 @@ function updateCartUI() {
                 ${item.selectedBurger && !item.burger1 ? `<div class="cart-detail-label">Burger:</div><div class="cart-detail-value">${item.selectedBurger.name}</div>` : ''}
                 ${item.drink1 ? `<div class="cart-detail-label">Drink 1:</div><div class="cart-detail-value">${item.drink1.name}</div>` : ''}
                 ${item.drink2 ? `<div class="cart-detail-label">Drink 2:</div><div class="cart-detail-value">${item.drink2.name}</div>` : ''}
+            ` : '';
+            
+            // Zoro For Four: 2 beef burgers, 2 chicken burgers, loaded fries, 4 drinks
+            const zoroForFourDetail = hasZoroForFourSelections ? `
+                ${item.beefBurger1 ? `<div class="cart-detail-label">Beef Burger 1:</div><div class="cart-detail-value">${item.beefBurger1.name}</div>` : ''}
+                ${item.beefBurger2 ? `<div class="cart-detail-label">Beef Burger 2:</div><div class="cart-detail-value">${item.beefBurger2.name}</div>` : ''}
+                ${item.chickenBurger1 ? `<div class="cart-detail-label">Chicken Burger 1:</div><div class="cart-detail-value">${item.chickenBurger1.name}</div>` : ''}
+                ${item.chickenBurger2 ? `<div class="cart-detail-label">Chicken Burger 2:</div><div class="cart-detail-value">${item.chickenBurger2.name}</div>` : ''}
+                ${item.loadedFries ? `<div class="cart-detail-label">Loaded Fries:</div><div class="cart-detail-value">${item.loadedFries}</div>` : ''}
+                ${item.drink1 ? `<div class="cart-detail-label">Drink 1:</div><div class="cart-detail-value">${item.drink1.name}</div>` : ''}
+                ${item.drink2 ? `<div class="cart-detail-label">Drink 2:</div><div class="cart-detail-value">${item.drink2.name}</div>` : ''}
+                ${item.drink3 ? `<div class="cart-detail-label">Drink 3:</div><div class="cart-detail-value">${item.drink3.name}</div>` : ''}
+                ${item.drink4 ? `<div class="cart-detail-label">Drink 4:</div><div class="cart-detail-value">${item.drink4.name}</div>` : ''}
             ` : '';
             
             // Addons detail - show per item (always 1x for each addon per item)
@@ -749,6 +768,7 @@ function updateCartUI() {
                         ${drinkDetail}
                         ${wingFrenzyDetail}
                         ${zoroForTwoDetail}
+                        ${zoroForFourDetail}
                         ${addonsDetail}
                     </div>
                     ` : ''}
