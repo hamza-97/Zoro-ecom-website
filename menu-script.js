@@ -475,8 +475,8 @@ const categoryNames = {
     'desserts': 'Desserts',
     'premium-shakes': 'Premium Shakes',
     'soft-drinks': 'Soft Drinks',
-    'beef-smasher-meals': 'Beef Smasher Meals',
-    'signature-chicken-meals': 'Signature Chicken Meals'
+    'beef-smasher-meals': 'Beef Smasher Combos',
+    'signature-chicken-meals': 'Chicken Signature Combos'
 };
 
 // Category images mapping
@@ -792,7 +792,7 @@ function createProductCard(product) {
                 showProductModal(productToAdd);
                 return;
             }
-            const isCustomMealCombo = productToAdd.category === 'beef-smasher-meals' || productToAdd.category === 'signature-chicken-meals';
+            const isCustomMealCombo = !!productToAdd.isCombo && ![101, 102, 103].includes(productToAdd.id);
             // Other combos: add directly to cart without showing modal
             if (productToAdd.isCombo && !isCustomMealCombo) {
                 addComboToCart(productToAdd);
@@ -1106,7 +1106,7 @@ window.toggleCart = toggleCart;
 
 // Show Product Modal
 function showProductModal(product) {
-    const isCustomMealCombo = product.category === 'beef-smasher-meals' || product.category === 'signature-chicken-meals';
+    const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
     const isBeefMealCombo = product.category === 'beef-smasher-meals';
     // If it's a combo, add directly to cart without showing modal
     if (product.isCombo && !isCustomMealCombo) {

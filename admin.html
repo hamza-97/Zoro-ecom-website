@@ -3381,7 +3381,7 @@ Debug info:
             if (item) {
                 // Try to find product by ID first (more reliable), then by name
                 if (item.id) {
-                    product = allProducts.find(p => p.id === item.id);
+                    product = allProducts.find(p => String(p.id) === String(item.id));
                 }
                 if (!product && item.name) {
                     // For wing items, the name might include size/type like "Buffalo (6 Pieces, Bone-in)"
@@ -3404,6 +3404,14 @@ Debug info:
                         p.category === item.category &&
                         (p.name === baseName || p.name === item.name || item.name.startsWith(p.name))
                     );
+                }
+            }
+
+            // Final fallback: use currently selected product from dropdown, if available
+            if (!product) {
+                const productSelect = document.getElementById('productSelect');
+                if (productSelect && productSelect.value) {
+                    product = allProducts.find(p => String(p.id) === String(productSelect.value)) || null;
                 }
             }
 
@@ -3614,7 +3622,7 @@ Debug info:
             let sizes = [];
             if (product) {
                 const isCombo = product.isCombo || false;
-                const isCustomMealCombo = product.category === 'beef-smasher-meals' || product.category === 'signature-chicken-meals';
+                const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
                 const isRamadanDealWithOptions = product.id === 101 || product.id === 102 || product.id === 103;
 
                 if ((!isCombo || isCustomMealCombo) && !isRamadanDealWithOptions) {
@@ -3845,7 +3853,7 @@ Debug info:
             if (product) {
                 const isCombo = product.isCombo || false;
                 const category = product.category || '';
-                const isCustomMealCombo = category === 'beef-smasher-meals' || category === 'signature-chicken-meals';
+                const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
                 const isBeef = category === 'beef-smashers' || category === 'beef-speciality';
                 const isChicken = category === 'chicken-burgers';
                 const isRamadanDealWithOptions = product.id === 101 || product.id === 102 || product.id === 103;
@@ -3872,7 +3880,7 @@ Debug info:
                 }
             }
 
-            const isCustomMealCombo = product && (product.category === 'beef-smasher-meals' || product.category === 'signature-chicken-meals');
+            const isCustomMealCombo = !!(product && product.isCombo && ![101, 102, 103].includes(product.id));
             const selectedAddons = item
                 ? ((item.addons && item.addons.length > 0)
                     ? item.addons
@@ -4083,7 +4091,8 @@ Debug info:
                 // Create a temporary item object with the selected product to preserve selection
                 // Set default size based on product type
                 const isWingsProduct = product.category === 'wings';
-                const defaultSize = isWingsProduct ? '6 Pieces' : 'Single';
+                const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
+                const defaultSize = isWingsProduct ? '6 Pieces' : (isCustomMealCombo ? 'Single Patty' : 'Single');
 
                 const tempItem = {
                     id: product.id, // Include ID for better product matching
@@ -4133,7 +4142,7 @@ Debug info:
             const productSelect = document.getElementById('productSelect');
             const productId = productSelect ? parseInt(productSelect.value) : NaN;
             const selectedProduct = orderableProducts.find(p => p.id === productId);
-            const isCustomMealCombo = selectedProduct && (selectedProduct.category === 'beef-smasher-meals' || selectedProduct.category === 'signature-chicken-meals');
+            const isCustomMealCombo = !!(selectedProduct && selectedProduct.isCombo && ![101, 102, 103].includes(selectedProduct.id));
             if (isCustomMealCombo) {
                 document.querySelectorAll('.addon-option[data-addon]').forEach(opt => opt.classList.remove('selected'));
                 element.classList.add('selected');
@@ -4282,7 +4291,7 @@ Debug info:
                 };
             } else {
                 const isCombo = product.isCombo || false;
-                const isCustomMealCombo = product.category === 'beef-smasher-meals' || product.category === 'signature-chicken-meals';
+                const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
                 let sizeName = 'Regular';
                 let sizePrice = product.price;
                 let originalPrice = product.price;

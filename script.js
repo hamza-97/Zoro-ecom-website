@@ -477,7 +477,7 @@ function createProductCard(product) {
                 showProductModal(productToAdd);
                 return;
             }
-            const isCustomMealCombo = productToAdd.category === 'beef-smasher-meals' || productToAdd.category === 'signature-chicken-meals';
+            const isCustomMealCombo = !!productToAdd.isCombo && ![101, 102, 103].includes(productToAdd.id);
             // Other combos: add directly to cart without showing modal
             if (productToAdd.isCombo && !isCustomMealCombo && typeof addComboToCart === 'function') {
                 addComboToCart(productToAdd);
@@ -865,7 +865,7 @@ function showProductModal(product) {
         showZoroForTwoModal(product);
         return;
     }
-    const isCustomMealCombo = product.category === 'beef-smasher-meals' || product.category === 'signature-chicken-meals';
+    const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
     const isBeefMealCombo = product.category === 'beef-smasher-meals';
 
     // Other combos: add directly to cart
@@ -2013,7 +2013,7 @@ function addToCartFromModal(productId) {
     if (!product) return;
     
     const isWings = product.category === 'wings';
-    const isCustomMealCombo = product.category === 'beef-smasher-meals' || product.category === 'signature-chicken-meals';
+    const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
     
     // Get selected size (for wings, this is the piece count)
     const selectedSize = document.querySelector('.size-option:not(.wing-type-option):not(.drink-option).selected');
