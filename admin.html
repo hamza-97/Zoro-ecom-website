@@ -3614,9 +3614,10 @@ Debug info:
             let sizes = [];
             if (product) {
                 const isCombo = product.isCombo || false;
+                const isCustomMealCombo = product.category === 'beef-smasher-meals' || product.category === 'signature-chicken-meals';
                 const isRamadanDealWithOptions = product.id === 101 || product.id === 102 || product.id === 103;
 
-                if (!isCombo && !isRamadanDealWithOptions) {
+                if ((!isCombo || isCustomMealCombo) && !isRamadanDealWithOptions) {
                     // basePricing and APPLY_DISCOUNTS are already defined at function level
                     // Update basePricing if product exists
                     if (product && typeof getDiscountedPrice === 'function') {
@@ -3628,13 +3629,23 @@ Debug info:
                     // isWings is already defined at function level, no need to redefine
                     const isChickenCrunchers = product.id === 26;
                     const isShakes = product.category === 'premium-shakes';
-                    const isBurger = !isWings && !isChickenCrunchers && !isShakes && product.category && (
+                    const isBurger = !isWings && !isChickenCrunchers && !isShakes && !isCustomMealCombo && product.category && (
                         product.category.includes('beef') ||
                         product.category.includes('chicken') ||
                         product.category.includes('burger')
                     );
 
-                    if (isShakes) {
+                    if (isCustomMealCombo) {
+                        const isBeefMealCombo = product.category === 'beef-smasher-meals';
+                        sizes = isBeefMealCombo ? [
+                            { name: 'Single Patty', originalPrice: 1585, price: 1195 },
+                            { name: 'Double Patty', originalPrice: 1985, price: 1595 },
+                            { name: 'Triple Patty', originalPrice: 2385, price: 1995 }
+                        ] : [
+                            { name: 'Single Patty', originalPrice: 1585, price: 1195 },
+                            { name: 'Double Patty', originalPrice: 1985, price: 1595 }
+                        ];
+                    } else if (isShakes) {
                         // Premium Shakes: Regular and Large sizes
                         // Pricing rules:
                         // - If regular is 695, large is 995
@@ -3834,11 +3845,17 @@ Debug info:
             if (product) {
                 const isCombo = product.isCombo || false;
                 const category = product.category || '';
+                const isCustomMealCombo = category === 'beef-smasher-meals' || category === 'signature-chicken-meals';
                 const isBeef = category === 'beef-smashers' || category === 'beef-speciality';
                 const isChicken = category === 'chicken-burgers';
                 const isRamadanDealWithOptions = product.id === 101 || product.id === 102 || product.id === 103;
 
-                if (!isCombo && !isWings && !isRamadanDealWithOptions && (isBeef || isChicken)) {
+                if (isCustomMealCombo) {
+                    addons = [
+                        { name: 'Plain Fries', price: 0 },
+                        { name: 'Spicy Fries', price: 4 }
+                    ];
+                } else if (!isCombo && !isWings && !isRamadanDealWithOptions && (isBeef || isChicken)) {
                     addons = [
                         { name: 'Pickles', price: 195 },
                         { name: 'Onions', price: 195 },
@@ -3855,13 +3872,29 @@ Debug info:
                 }
             }
 
-            const selectedAddons = item ? (item.addons || []) : [];
+            const isCustomMealCombo = product && (product.category === 'beef-smasher-meals' || product.category === 'signature-chicken-meals');
+            const selectedAddons = item
+                ? ((item.addons && item.addons.length > 0)
+                    ? item.addons
+                    : (isCustomMealCombo ? [{ name: 'Plain Fries', price: 0 }] : []))
+                : (isCustomMealCombo ? [{ name: 'Plain Fries', price: 0 }] : []);
             const addonsHTML = addons.map(addon => {
                 const isSelected = selectedAddons.some(a => a.name === addon.name);
                 return `
                     <div class="addon-option ${isSelected ? 'selected' : ''}" data-addon="${addon.name}" data-price="${addon.price}" onclick="toggleAddon(this)">
                         <div class="addon-name">${addon.name}</div>
-                        <div class="addon-price">Rs ${addon.price}</div>
+                        <div class="addon-price">${isCustomMealCombo ? (Number(addon.price) > 0 ? `+Rs ${addon.price}` : '') : `Rs ${addon.price}`}</div>
+                    </div>
+                `;
+            }).join('');
+
+            const mealDrinks = isCustomMealCombo ? ['Coke', 'Sprite', 'Fanta', 'Coke Zero', 'Sprite Zero'] : [];
+            const selectedMealDrink = item ? (item.drink || (item.selectedDrink && item.selectedDrink.name) || '') : '';
+            const drinksHTML = mealDrinks.map(drinkName => {
+                const isSelected = selectedMealDrink ? selectedMealDrink === drinkName : drinkName === 'Coke';
+                return `
+                    <div class="addon-option admin-meal-drink-option ${isSelected ? 'selected' : ''}" data-drink="${drinkName}" onclick="toggleAdminMealDrink(this)">
+                        <div class="addon-name">${drinkName}</div>
                     </div>
                 `;
             }).join('');
@@ -3881,7 +3914,7 @@ Debug info:
                 ${sizes.length > 0 ? `
                 <div style="margin-bottom: 1.5rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <label style="font-weight: 600; margin: 0;">Pick Size</label>
+                        <label style="font-weight: 600; margin: 0;">${isCustomMealCombo ? 'Pick Patty Option' : 'Pick Size'}</label>
                         <span style="font-size: 0.85rem; color: #666;">Required</span>
                     </div>
                     <div class="size-options" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
@@ -3905,15 +3938,27 @@ Debug info:
                 ${!isWings && addons.length > 0 ? `
                 <div style="margin-bottom: 1.5rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <label style="font-weight: 600; margin: 0;">Add Ons</label>
-                        <span style="font-size: 0.85rem; color: #666;">Optional</span>
+                        <label style="font-weight: 600; margin: 0;">${isCustomMealCombo ? 'Fries Option' : 'Add Ons'}</label>
+                        <span style="font-size: 0.85rem; color: #666;">${isCustomMealCombo ? 'Required' : 'Optional'}</span>
                     </div>
                     <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.75rem;">
                         ${addonsHTML}
                     </div>
                 </div>
                 ` : ''}
-                
+
+                ${isCustomMealCombo ? `
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="font-weight: 600; margin: 0;">Choose Drink</label>
+                        <span style="font-size: 0.85rem; color: #666;">Required</span>
+                    </div>
+                    <div class="addons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.75rem;">
+                        ${drinksHTML}
+                    </div>
+                </div>
+                ` : ''}
+
                 <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                         <label style="font-weight: 600; margin: 0;">Quantity:</label>
@@ -4085,7 +4130,21 @@ Debug info:
         }
 
         function toggleAddon(element) {
+            const productSelect = document.getElementById('productSelect');
+            const productId = productSelect ? parseInt(productSelect.value) : NaN;
+            const selectedProduct = orderableProducts.find(p => p.id === productId);
+            const isCustomMealCombo = selectedProduct && (selectedProduct.category === 'beef-smasher-meals' || selectedProduct.category === 'signature-chicken-meals');
+            if (isCustomMealCombo) {
+                document.querySelectorAll('.addon-option[data-addon]').forEach(opt => opt.classList.remove('selected'));
+                element.classList.add('selected');
+                return;
+            }
             element.classList.toggle('selected');
+        }
+
+        function toggleAdminMealDrink(element) {
+            document.querySelectorAll('.admin-meal-drink-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
         }
 
         function changeQuantity(delta) {
@@ -4223,14 +4282,16 @@ Debug info:
                 };
             } else {
                 const isCombo = product.isCombo || false;
+                const isCustomMealCombo = product.category === 'beef-smasher-meals' || product.category === 'signature-chicken-meals';
                 let sizeName = 'Regular';
                 let sizePrice = product.price;
                 let originalPrice = product.price;
                 let selectedAddons = [];
+                let selectedDrink = null;
                 let wingType = null;
                 let displayName = product.name;
 
-                if (isCombo) {
+                if (isCombo && !isCustomMealCombo) {
                     let basePricing = { original: product.price, discounted: product.price, discountRate: 0 };
                     const APPLY_DISCOUNTS = typeof window !== 'undefined' && window.APPLY_DISCOUNTS !== undefined ? window.APPLY_DISCOUNTS : true;
                     if (typeof getDiscountedPrice === 'function') basePricing = getDiscountedPrice(product);
@@ -4256,6 +4317,14 @@ Debug info:
                         }
                     }
                     selectedAddons = Array.from(document.querySelectorAll('.addon-option.selected')).filter(opt => opt.dataset.addon).map(opt => ({ name: opt.dataset.addon, price: parseInt(opt.dataset.price) }));
+                    if (isCustomMealCombo) {
+                        const selectedDrinkOption = document.querySelector('.admin-meal-drink-option.selected');
+                        if (!selectedDrinkOption) {
+                            alert('Please select a drink');
+                            return;
+                        }
+                        selectedDrink = selectedDrinkOption.dataset.drink;
+                    }
                 }
 
                 const addonsPrice = selectedAddons.reduce((sum, a) => sum + a.price, 0);
@@ -4269,12 +4338,16 @@ Debug info:
                     image: product.image || '',
                     description: product.description || '',
                     quantity: quantity,
-                    size: !isCombo ? sizeName : undefined,
+                    size: (!isCombo || isCustomMealCombo) ? sizeName : undefined,
                     wingType: wingType || undefined,
                     addons: selectedAddons.length > 0 ? selectedAddons : undefined,
                     total: itemTotal,
                     isCombo: isCombo
                 };
+                if (isCustomMealCombo) {
+                    newItem.drink = selectedDrink;
+                    newItem.selectedDrink = selectedDrink ? { name: selectedDrink } : undefined;
+                }
             }
 
             // Check if we're in create order mode or edit order mode

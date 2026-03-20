@@ -453,10 +453,11 @@ function createProductCard(product) {
     // Add click event to the button
     const addToCartBtn = card.querySelector('.add-to-cart-btn');
     
-    // Handle both click and touch events for mobile compatibility
-    const handleButtonClick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+    const openProductFromCard = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         const productId = parseInt(addToCartBtn.dataset.productId);
         const allProducts = typeof products !== 'undefined' ? products : (typeof window.products !== 'undefined' ? window.products : []);
         const productToAdd = allProducts.find(p => p.id === productId);
@@ -476,8 +477,9 @@ function createProductCard(product) {
                 showProductModal(productToAdd);
                 return;
             }
+            const isCustomMealCombo = productToAdd.category === 'beef-smasher-meals' || productToAdd.category === 'signature-chicken-meals';
             // Other combos: add directly to cart without showing modal
-            if (productToAdd.isCombo && typeof addComboToCart === 'function') {
+            if (productToAdd.isCombo && !isCustomMealCombo && typeof addComboToCart === 'function') {
                 addComboToCart(productToAdd);
             } 
             // If it's a dessert, add directly to cart without showing modal (no size/addon options)
@@ -489,6 +491,9 @@ function createProductCard(product) {
             }
         }
     };
+    
+    // Handle both click and touch events for mobile compatibility
+    const handleButtonClick = (e) => openProductFromCard(e);
     
     addToCartBtn.addEventListener('click', handleButtonClick);
 
@@ -513,10 +518,14 @@ function createProductCard(product) {
     addToCartBtn.addEventListener('touchend', (e) => {
         if (didMove) return;
         e.preventDefault();
-        handleButtonClick(e);
+        openProductFromCard(e);
     }, { passive: false });
-
-    // Removed card click handlers - only button is clickable now
+    
+    // On homepage cards, open product popup when clicking card content too.
+    card.addEventListener('click', (e) => {
+        if (e.target.closest('.add-to-cart-btn')) return;
+        openProductFromCard(e);
+    });
     
     return card;
 }
@@ -856,8 +865,11 @@ function showProductModal(product) {
         showZoroForTwoModal(product);
         return;
     }
+    const isCustomMealCombo = product.category === 'beef-smasher-meals' || product.category === 'signature-chicken-meals';
+    const isBeefMealCombo = product.category === 'beef-smasher-meals';
+
     // Other combos: add directly to cart
-    if (product.isCombo && typeof addComboToCart === 'function') {
+    if (product.isCombo && !isCustomMealCombo && typeof addComboToCart === 'function') {
         addComboToCart(product);
         return;
     }
@@ -895,10 +907,19 @@ function showProductModal(product) {
     const isWings = product.category === 'wings';
     const isChickenCrunchers = product.id === 26; // Chicken Crunchers has id 26
     const isShakes = product.category === 'premium-shakes';
-    const isBurger = !isWings && !isChickenCrunchers && !isShakes && product.category && (product.category.includes('beef') || product.category.includes('chicken'));
+    const isBurger = !isWings && !isChickenCrunchers && !isShakes && !isCustomMealCombo && product.category && (product.category.includes('beef') || product.category.includes('chicken'));
     let sizes;
     
-    if (isShakes) {
+    if (isCustomMealCombo) {
+        sizes = isBeefMealCombo ? [
+            { name: 'Single Patty', originalPrice: 1585, price: 1195 },
+            { name: 'Double Patty', originalPrice: 1985, price: 1595 },
+            { name: 'Triple Patty', originalPrice: 2385, price: 1995 }
+        ] : [
+            { name: 'Single Patty', originalPrice: 1585, price: 1195 },
+            { name: 'Double Patty', originalPrice: 1985, price: 1595 }
+        ];
+    } else if (isShakes) {
         // Premium Shakes: Regular and Large sizes
         // Pricing rules:
         // - If regular is 695, large is 995
@@ -1076,7 +1097,10 @@ function showProductModal(product) {
     // Add-ons for beef and chicken items (not for wings)
     const isBeef = product.category && (product.category === 'beef-smashers' || product.category === 'beef-speciality');
     const isChicken = product.category && product.category === 'chicken-burgers';
-    const addons = (isBeef || isChicken) && !isWings ? [
+    const addons = isCustomMealCombo ? [
+        { name: 'Plain Fries', price: 0 },
+        { name: 'Spicy Fries', price: 4 }
+    ] : (isBeef || isChicken) && !isWings ? [
         { name: 'Pickles', price: 195 },
         { name: 'Onions', price: 195 },
         { name: 'Pickled Red Onions', price: 195 },
@@ -1091,10 +1115,24 @@ function showProductModal(product) {
     ] : [];
     
     // Build add-ons HTML
+    const drinks = isCustomMealCombo ? [
+        { name: 'Coke' },
+        { name: 'Sprite' },
+        { name: 'Fanta' },
+        { name: 'Coke Zero' },
+        { name: 'Sprite Zero' }
+    ] : [];
+
     const addonsHTML = addons.map(addon => `
-        <div class="addon-option" data-addon="${addon.name}" data-price="${addon.price}">
+        <div class="addon-option ${isCustomMealCombo && addon.name === 'Plain Fries' ? 'selected' : ''}" data-addon="${addon.name}" data-price="${addon.price}">
             <div class="addon-name">${addon.name}</div>
-            <div class="addon-price">Rs ${addon.price}</div>
+            <div class="addon-price">${isCustomMealCombo ? (Number(addon.price) > 0 ? `+Rs ${addon.price}` : '') : `Rs ${addon.price}`}</div>
+        </div>
+    `).join('');
+
+    const drinksHTML = drinks.map((drink, index) => `
+        <div class="size-option drink-option ${index === 0 ? 'selected' : ''}" data-drink="${drink.name}">
+            <span class="size-option-name">${drink.name}</span>
         </div>
     `).join('');
     
@@ -1115,7 +1153,7 @@ function showProductModal(product) {
             ${sizes.length > 0 ? `
             <div class="modal-section">
                 <div class="modal-section-header">
-                    <div class="modal-section-title">Pick Size</div>
+                    <div class="modal-section-title">${isCustomMealCombo ? 'Pick Patty Option' : 'Pick Size'}</div>
                     <div class="modal-section-required">Required</div>
                 </div>
                 <div class="size-options">
@@ -1139,11 +1177,23 @@ function showProductModal(product) {
             ${!isWings && addons && addons.length > 0 ? `
             <div class="modal-section">
                 <div class="modal-section-header">
-                    <div class="modal-section-title">Add Ons</div>
-                    <div class="modal-section-required">Optional</div>
+                    <div class="modal-section-title">${isCustomMealCombo ? 'Fries Option' : 'Add Ons'}</div>
+                    <div class="modal-section-required">${isCustomMealCombo ? 'Required' : 'Optional'}</div>
                 </div>
                 <div class="addons-grid">
                     ${addonsHTML}
+                </div>
+            </div>
+            ` : ''}
+
+            ${isCustomMealCombo && drinks.length > 0 ? `
+            <div class="modal-section">
+                <div class="modal-section-header">
+                    <div class="modal-section-title">Choose Drink</div>
+                    <div class="modal-section-required">Required</div>
+                </div>
+                <div class="size-options">
+                    ${drinksHTML}
                 </div>
             </div>
             ` : ''}
@@ -1167,7 +1217,7 @@ function showProductModal(product) {
     // Update wing price function - define it before event listeners if it's a wing product
     if (isWings) {
         window.updateWingPrice = function() {
-            const selectedSize = document.querySelector('.size-option:not(.wing-type-option).selected');
+            const selectedSize = document.querySelector('.size-option:not(.wing-type-option):not(.drink-option).selected');
             const wingTypeOptions = document.querySelectorAll('.wing-type-option');
             
             if (selectedSize && wingTypeOptions.length > 0) {
@@ -1214,10 +1264,10 @@ function showProductModal(product) {
     }
     
     // Add event listeners for size selection
-    document.querySelectorAll('.size-option:not(.wing-type-option)').forEach(option => {
+    document.querySelectorAll('.size-option:not(.wing-type-option):not(.drink-option)').forEach(option => {
         option.addEventListener('click', function() {
             // Only deselect other size options (not wing type options)
-            document.querySelectorAll('.size-option:not(.wing-type-option)').forEach(opt => opt.classList.remove('selected'));
+            document.querySelectorAll('.size-option:not(.wing-type-option):not(.drink-option)').forEach(opt => opt.classList.remove('selected'));
             this.classList.add('selected');
             
             // Update wing price if this is a wing product
@@ -1235,7 +1285,7 @@ function showProductModal(product) {
                 this.classList.add('selected');
                 
                 // Update the selected size's price data attributes based on selected type
-                const selectedSize = document.querySelector('.size-option:not(.wing-type-option).selected');
+                const selectedSize = document.querySelector('.size-option:not(.wing-type-option):not(.drink-option).selected');
                 if (selectedSize && window.updateWingPrice) {
                     window.updateWingPrice();
                 }
@@ -1246,7 +1296,19 @@ function showProductModal(product) {
     // Add event listeners for add-ons
     document.querySelectorAll('.addon-option').forEach(option => {
         option.addEventListener('click', function() {
+            if (isCustomMealCombo) {
+                document.querySelectorAll('.addon-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                return;
+            }
             this.classList.toggle('selected');
+        });
+    });
+
+    document.querySelectorAll('.drink-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.drink-option').forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
         });
     });
     
@@ -1951,9 +2013,10 @@ function addToCartFromModal(productId) {
     if (!product) return;
     
     const isWings = product.category === 'wings';
+    const isCustomMealCombo = product.category === 'beef-smasher-meals' || product.category === 'signature-chicken-meals';
     
     // Get selected size (for wings, this is the piece count)
-    const selectedSize = document.querySelector('.size-option:not(.wing-type-option).selected');
+    const selectedSize = document.querySelector('.size-option:not(.wing-type-option):not(.drink-option).selected');
     if (!selectedSize) {
         alert('Please select a size');
         return;
@@ -1992,6 +2055,20 @@ function addToCartFromModal(productId) {
         name: addon.dataset.addon,
         price: parseInt(addon.dataset.price)
     }));
+
+    let selectedDrink = null;
+    if (isCustomMealCombo) {
+        if (selectedAddons.length === 0) {
+            alert('Please select fries');
+            return;
+        }
+        const selectedDrinkOption = document.querySelector('.drink-option.selected');
+        if (!selectedDrinkOption) {
+            alert('Please select a drink');
+            return;
+        }
+        selectedDrink = selectedDrinkOption.dataset.drink;
+    }
     
     // Calculate total price
     const addonsTotal = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
@@ -2015,6 +2092,11 @@ function addToCartFromModal(productId) {
     if (isWings && wingType) {
         cartItem.wingType = wingType;
     }
+    if (isCustomMealCombo && selectedDrink) {
+        cartItem.drink = selectedDrink;
+        cartItem.selectedDrink = { name: selectedDrink };
+        cartItem.isCombo = true;
+    }
     
     // Add to cart
     addToCartWithItem(cartItem);
@@ -2028,8 +2110,12 @@ function addToCartWithItem(item) {
     // Create a unique key for this item configuration
     // For wings, include wingType in the key
     const isWings = item.wingType !== undefined;
+    const hasCustomMealDrink = !!(item.drink || (item.selectedDrink && item.selectedDrink.name));
+    const mealDrinkName = item.drink || (item.selectedDrink && item.selectedDrink.name) || '';
     const itemKey = isWings 
         ? `${item.id}-${item.size}-${item.wingType}`
+        : hasCustomMealDrink
+            ? `${item.id}-${item.size}-${mealDrinkName}-${(item.addons || []).map(a => a.name).join(',')}`
         : `${item.id}-${item.size}-${(item.addons || []).map(a => a.name).join(',')}`;
     item.key = itemKey;
     
