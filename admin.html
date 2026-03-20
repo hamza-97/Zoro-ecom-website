@@ -3371,6 +3371,11 @@ Debug info:
             // Don't reset isCreatingOrder here - it should persist until create order modal is closed
         }
 
+        function getAdminOrderableProducts() {
+            const DISCONTINUED_PRODUCT_IDS = [101, 102, 103];
+            return allProducts.filter(p => !DISCONTINUED_PRODUCT_IDS.includes(p.id));
+        }
+
         function renderAddItemModal(item) {
             const modalBody = document.getElementById('addItemModalBody');
             if (!modalBody) return;
@@ -3438,8 +3443,7 @@ Debug info:
                 return;
             }
 
-            const DISCONTINUED_PRODUCT_IDS = [101, 102, 103];
-            const orderableProducts = allProducts.filter(p => !DISCONTINUED_PRODUCT_IDS.includes(p.id));
+            const orderableProducts = getAdminOrderableProducts();
 
             const productsHTML = orderableProducts.map(p => {
                 const isSelected = product && product.id === p.id;
@@ -3787,12 +3791,9 @@ Debug info:
                     }
                 }
             } else {
-                // Default sizes for when no product selected
-                sizes = [
-                    { name: 'Single', originalPrice: 0, price: 0 },
-                    { name: 'Double', originalPrice: 0, price: 0 },
-                    { name: 'Triple', originalPrice: 0, price: 0 }
-                ];
+                // Don't show placeholder size options before a product is selected.
+                // This avoids confusing "Rs 0" prices in the admin flow.
+                sizes = [];
             }
 
             // Wing type options (Bone-in or Boneless) - only for wings
@@ -3805,8 +3806,8 @@ Debug info:
                 ];
             }
 
-            // For wings, default to "6 Pieces" if no size is set, otherwise use item size or first available size
-            let defaultSize = 'Single';
+            // For wings, default to "6 Pieces" if no size is set, otherwise use first available size
+            let defaultSize = '';
             if (isWings) {
                 defaultSize = '6 Pieces';
             } else if (sizes.length > 0) {
@@ -4085,21 +4086,16 @@ Debug info:
 
         function onProductSelectChange() {
             const productId = parseInt(document.getElementById('productSelect').value);
+            const orderableProducts = getAdminOrderableProducts();
             const product = orderableProducts.find(p => p.id === productId);
 
             if (product) {
                 // Create a temporary item object with the selected product to preserve selection
-                // Set default size based on product type
-                const isWingsProduct = product.category === 'wings';
-                const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
-                const defaultSize = isWingsProduct ? '6 Pieces' : (isCustomMealCombo ? 'Single Patty' : 'Single');
-
                 const tempItem = {
                     id: product.id, // Include ID for better product matching
                     name: product.name,
                     category: product.category,
                     price: product.price,
-                    size: defaultSize, // Default size (6 Pieces for wings, Single for others)
                     quantity: window.currentItemQuantity || 1,
                     addons: []
                 };
@@ -4117,13 +4113,16 @@ Debug info:
                         if (selectedOption) {
                             selectedOption.scrollIntoView({ block: 'nearest' });
                         }
-                        // Trigger size selection for the first size
-                        const firstSize = document.querySelector('.size-option');
+                        // Ensure the first actual size option is selected for consistent pricing.
+                        const firstSize = document.querySelector('.size-option:not(.wing-type-option)');
                         if (firstSize) {
                             firstSize.click();
                         }
                     }
                 }, 50);
+            } else {
+                // If product is cleared, re-render clean modal state with no stale options.
+                renderAddItemModal(null);
             }
         }
 
@@ -4141,6 +4140,7 @@ Debug info:
         function toggleAddon(element) {
             const productSelect = document.getElementById('productSelect');
             const productId = productSelect ? parseInt(productSelect.value) : NaN;
+            const orderableProducts = getAdminOrderableProducts();
             const selectedProduct = orderableProducts.find(p => p.id === productId);
             const isCustomMealCombo = !!(selectedProduct && selectedProduct.isCombo && ![101, 102, 103].includes(selectedProduct.id));
             if (isCustomMealCombo) {
@@ -4171,7 +4171,7 @@ Debug info:
                 return;
             }
 
-            const product = orderableProducts.find(p => p.id === productId);
+            const product = getAdminOrderableProducts().find(p => p.id === productId);
             if (!product) {
                 alert('Product not found');
                 return;

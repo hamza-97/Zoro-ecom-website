@@ -411,6 +411,7 @@ function displayProducts(productsToShow) {
 function createProductCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card';
+    const isClassicChickenOutOfStock = product.id === 11;
     
     // Calculate discounted price (use function from menu-script.js if available)
     let pricing;
@@ -443,8 +444,12 @@ function createProductCard(product) {
                     ${showDiscount ? `<span class="product-price-original">Rs ${pricing.original.toLocaleString()}</span>` : ''}
                     <span class="product-price-discounted">Rs ${pricing.discounted.toLocaleString()}</span>
                 </div>
-                <button class="add-to-cart-btn" data-product-id="${product.id}">
-                    ADD TO CART
+                <button
+                    class="add-to-cart-btn"
+                    data-product-id="${product.id}"
+                    ${isClassicChickenOutOfStock ? 'disabled aria-disabled="true" title="Out of Stock"' : ''}
+                >
+                    ${isClassicChickenOutOfStock ? 'OUT OF STOCK' : 'ADD TO CART'}
                 </button>
             </div>
         </div>
@@ -452,6 +457,13 @@ function createProductCard(product) {
     
     // Add click event to the button
     const addToCartBtn = card.querySelector('.add-to-cart-btn');
+    if (isClassicChickenOutOfStock) {
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+        return card;
+    }
     
     const openProductFromCard = (e) => {
         if (e) {
