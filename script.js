@@ -864,7 +864,6 @@ function showProductModal(product) {
     
     // Determine category name
     const categoryMap = {
-        'ramadan-deals': 'Ramadan Deals',
         'beef-smashers': 'Beef Smashers',
         'beef-speciality': 'Beef Speciality',
         'chicken-burgers': 'Chicken Burgers',

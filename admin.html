@@ -3430,7 +3430,10 @@ Debug info:
                 return;
             }
 
-            const productsHTML = allProducts.map(p => {
+            const DISCONTINUED_PRODUCT_IDS = [101, 102, 103];
+            const orderableProducts = allProducts.filter(p => !DISCONTINUED_PRODUCT_IDS.includes(p.id));
+
+            const productsHTML = orderableProducts.map(p => {
                 const isSelected = product && product.id === p.id;
                 // Show discounted price for combos
                 let displayPrice = p.price;
@@ -4029,7 +4032,7 @@ Debug info:
 
         function onProductSelectChange() {
             const productId = parseInt(document.getElementById('productSelect').value);
-            const product = allProducts.find(p => p.id === productId);
+            const product = orderableProducts.find(p => p.id === productId);
 
             if (product) {
                 // Create a temporary item object with the selected product to preserve selection
@@ -4100,7 +4103,7 @@ Debug info:
                 return;
             }
 
-            const product = allProducts.find(p => p.id === productId);
+            const product = orderableProducts.find(p => p.id === productId);
             if (!product) {
                 alert('Product not found');
                 return;

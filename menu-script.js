@@ -1,38 +1,6 @@
 // Products Data organized according to official menu structure from zoroburger.com/menu
 // Make products globally accessible
 const products = [
-    // RAMADAN DEALS (shown first)
-    {
-        id: 101,
-        name: 'Zoro For Four',
-        category: 'ramadan-deals',
-        price: 6250,
-        discountedPrice: 3895,
-        image: 'ZoroImages/ZoroMeals/Ramadan/SoloIftaar.png',
-        description: 'Iftaar for four - 2 Single Patty Beef Burgers, 2 Single Patty Chicken Burgers, 6pc Krunchers, 1 Loaded Fries and 4 Drinks',
-        isCombo: true
-    },
-    {
-        id: 102,
-        name: 'Wing Frenzy',
-        category: 'ramadan-deals',
-        price: 3285,
-        discountedPrice: 2395,
-        image: 'ZoroImages/ZoroMeals/Ramadan/WingFrenzy.png',
-        description: 'Wings deal – 6 Boneless Wings, 6 Bone-in Wings and 1 Loaded Fries',
-        isCombo: true
-    },
-    {
-        id: 103,
-        name: 'Zoro For Two',
-        category: 'ramadan-deals',
-        price: 3170,
-        discountedPrice: 2395,
-        image: 'ZoroImages/ZoroMeals/Ramadan/ZoroForTwo.png',
-        description: 'Iftaar for two - any 2 Single Patty Burgers, 2 Plain Fries and 2 Drinks',
-        isCombo: true
-    },
-
     // BEEF SMASHERS
     {
         id: 1,
@@ -585,7 +553,6 @@ if (typeof window !== 'undefined') {
 
 // Category display names
 const categoryNames = {
-    'ramadan-deals': 'Ramadan Deals',
     'beef-smashers': 'Beef Smashers',
     'beef-speciality': 'Beef Speciality',
     'chicken-burgers': 'Chicken Burgers',
@@ -615,7 +582,6 @@ const categoryImages = {
 
 // Category order (official menu order)
 const categoryOrder = [
-    'ramadan-deals',
     'beef-smasher-meals',
     'beef-specialty-meals',
     'chicken-specialty-meals',
@@ -639,7 +605,6 @@ const APPLY_DISCOUNTS = true;
 // Only combo meals have custom discount rates
 // All other items (beef-smashers, beef-speciality, chicken-burgers, wings, loaded-fries, appetizers, desserts, premium-shakes, soft-drinks) get 20% off (default)
 const discountRates = {
-    'ramadan-deals': 0,              // Ramadan deal price is final (no extra discount)
     'beef-smasher-meals': 0.1980,    // 19.8% off (1490 → 1195)
     'beef-specialty-meals': 0.1855,  // 18.55% off (1590 → 1295)
     'chicken-specialty-meals': 0.1855, // 18.55% off (1590 → 1295)
@@ -683,6 +648,11 @@ function getDiscountedPrice(product) {
 
 // Cart management
 let cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
+const DISCONTINUED_PRODUCT_IDS = [101, 102, 103];
+
+// Ensure discontinued products can never remain in cart.
+cart = cart.filter(item => !DISCONTINUED_PRODUCT_IDS.includes(item.id));
+localStorage.setItem('zoroCart', JSON.stringify(cart));
 
 // DOM Elements
 const menuContainer = document.getElementById('menuContainer');
