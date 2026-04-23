@@ -1303,6 +1303,7 @@
                             <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
                             <option value="Johar Town, Lahore">Johar Town, Lahore</option>
                             <option value="Islamabad">Islamabad</option>
+                            <option value="DHA Phase 5, Lahore">DHA Phase 5, Lahore</option>
                         </select>
                     </div>
                 </div>
@@ -1416,6 +1417,7 @@
                             <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
                             <option value="Johar Town, Lahore">Johar Town, Lahore</option>
                             <option value="Islamabad">Islamabad</option>
+                            <option value="DHA Phase 5, Lahore">DHA Phase 5, Lahore</option>
                         </select>
                     </div>
                 </div>
@@ -1542,6 +1544,7 @@
                         <option value="gulberg">Gulberg User</option>
                         <option value="jt">JT User</option>
                         <option value="islamabad">Islamabad User</option>
+                        <option value="dha">DHA User</option>
                         <option value="marketing">Marketing</option>
                         <option value="super_admin">Super Admin</option>
                     </select>
@@ -1755,6 +1758,7 @@
                     'gulberg': 'Gulberg Admin',
                     'jt': 'JT Admin',
                     'islamabad': 'Islamabad Admin',
+                    'dha': 'DHA Admin',
                     'marketing': 'Marketing',
                     'super_admin': 'Super Admin'
                 };
@@ -1785,8 +1789,8 @@
             menuItems.forEach(item => {
                 const section = item.dataset.section;
 
-                // Gulberg, JT, and Islamabad users only see Orders tab
-                if (currentUser.user_type === 'gulberg' || currentUser.user_type === 'jt' || currentUser.user_type === 'islamabad') {
+                // Gulberg, JT, Islamabad, and DHA users only see Orders tab
+                if (currentUser.user_type === 'gulberg' || currentUser.user_type === 'jt' || currentUser.user_type === 'islamabad' || currentUser.user_type === 'dha') {
                     if (section !== 'orders') {
                         item.style.display = 'none';
                     } else {
@@ -2392,6 +2396,9 @@
                                 } else if (userType === 'islamabad') {
                                     // Islamabad users only get Islamabad orders
                                     shouldNotify = orderBranch.includes('islamabad');
+                                } else if (userType === 'dha') {
+                                    // DHA users only get DHA orders
+                                    shouldNotify = orderBranch.includes('dha');
                                 }
 
                                 if (shouldNotify) {
@@ -3118,6 +3125,8 @@
                     branchSelect.value = 'Johar Town, Lahore';
                 } else if (userType === 'islamabad') {
                     branchSelect.value = 'Islamabad';
+                } else if (userType === 'dha') {
+                    branchSelect.value = 'DHA Phase 5, Lahore';
                 }
             }
 
@@ -4643,6 +4652,7 @@ Debug info:
                         'gulberg': 'Gulberg',
                         'jt': 'JT',
                         'islamabad': 'Islamabad',
+                        'dha': 'DHA',
                         'marketing': 'Marketing',
                         'super_admin': 'Super Admin'
                     };
@@ -4650,7 +4660,7 @@ Debug info:
                     return `
                         <tr style="display: table-row;">
                             <td><strong>${user.username || 'N/A'}</strong></td>
-                            <td><span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: ${user.user_type === 'super_admin' ? '#cfe2ff' : user.user_type === 'gulberg' ? '#d1e7dd' : user.user_type === 'islamabad' ? '#e7d5ff' : '#fff3cd'}; color: ${user.user_type === 'super_admin' ? '#084298' : user.user_type === 'gulberg' ? '#0f5132' : user.user_type === 'islamabad' ? '#6f42c1' : '#856404'};">${userTypeLabel[user.user_type] || user.user_type || 'N/A'}</span></td>
+                            <td><span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: ${user.user_type === 'super_admin' ? '#cfe2ff' : user.user_type === 'gulberg' ? '#d1e7dd' : user.user_type === 'islamabad' ? '#e7d5ff' : user.user_type === 'dha' ? '#ffd6e0' : '#fff3cd'}; color: ${user.user_type === 'super_admin' ? '#084298' : user.user_type === 'gulberg' ? '#0f5132' : user.user_type === 'islamabad' ? '#6f42c1' : user.user_type === 'dha' ? '#a0002e' : '#856404'};">${userTypeLabel[user.user_type] || user.user_type || 'N/A'}</span></td>
                             <td><small>${createdAt}</small></td>
                             <td><small>${updatedAt}</small></td>
                             <td>

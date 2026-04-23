@@ -68,6 +68,8 @@ async function notifyAllRiders(orderData) {
             riderLocation = 'jt';
         } else if (orderData.branch && orderData.branch.toLowerCase().includes('islamabad')) {
             riderLocation = 'islamabad';
+        } else if (orderData.branch && orderData.branch.toLowerCase().includes('dha')) {
+            riderLocation = 'dha';
         } else if (orderData.branch && orderData.branch.toLowerCase().includes('gulberg')) {
             riderLocation = 'gulberg';
         }
@@ -301,7 +303,8 @@ async function initializeBranches() {
             await Branch.insertMany([
                 { name: 'Gulberg II, Lahore', open_hour: 12, close_hour: 1.75 },
                 { name: 'Johar Town, Lahore', open_hour: 12, close_hour: 3.75 },
-                { name: 'Islamabad', open_hour: 12, close_hour: 1.75 }
+                { name: 'Islamabad', open_hour: 12, close_hour: 1.75 },
+                { name: 'DHA Phase 5, Lahore', open_hour: 12, close_hour: 1.75 }
             ]);
             console.log('✅ Default branches initialized');
         }
@@ -324,7 +327,8 @@ async function getBusinessHours(branchName) {
     const defaults = {
         'Gulberg II, Lahore': { open: 12, close: 1.75 },
         'Johar Town, Lahore': { open: 12, close: 3.75 },
-        'Islamabad': { open: 12, close: 1.75 }
+        'Islamabad': { open: 12, close: 1.75 },
+        'DHA Phase 5, Lahore': { open: 12, close: 1.75 }
     };
     return defaults[branchName] || { open: 12, close: 1.75 };
 }
@@ -572,6 +576,8 @@ app.get('/api/orders', authenticateAdmin, async (req, res) => {
             query.branch = { $regex: /(jt|johar)/i }; // Case-insensitive match for "JT" or "Johar" anywhere in string
         } else if (req.user.user_type === 'islamabad') {
             query.branch = { $regex: /islamabad/i }; // Case-insensitive match for "Islamabad"
+        } else if (req.user.user_type === 'dha') {
+            query.branch = { $regex: /dha/i }; // Case-insensitive match for "DHA"
         }
         // super_admin sees all orders (no branch filter)
         
@@ -760,6 +766,8 @@ app.get('/api/stats', authenticateAdmin, async (req, res) => {
             branchFilter.branch = { $regex: /^(jt|johar|johar town)/i }; // Case-insensitive match for "JT" or "Johar"
         } else if (req.user.user_type === 'islamabad') {
             branchFilter.branch = { $regex: /islamabad/i }; // Case-insensitive match for "Islamabad"
+        } else if (req.user.user_type === 'dha') {
+            branchFilter.branch = { $regex: /dha/i }; // Case-insensitive match for "DHA"
         }
         // super_admin sees all stats (no branch filter)
 
@@ -1094,8 +1102,8 @@ app.post('/api/admin/users', authenticateAdmin, async (req, res) => {
             return res.status(400).json({ error: 'Username and password required' });
         }
 
-        if (!user_type || !['gulberg', 'jt', 'islamabad', 'super_admin'].includes(user_type)) {
-            return res.status(400).json({ error: 'Valid user_type required (gulberg, jt, islamabad, or super_admin)' });
+        if (!user_type || !['gulberg', 'jt', 'islamabad', 'dha', 'super_admin'].includes(user_type)) {
+            return res.status(400).json({ error: 'Valid user_type required (gulberg, jt, islamabad, dha, or super_admin)' });
         }
 
         // Check if username already exists
@@ -1138,7 +1146,7 @@ app.patch('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
         if (username) updateData.username = username;
         if (password) updateData.password = password;
         if (user_type) {
-            if (!['gulberg', 'jt', 'islamabad', 'super_admin'].includes(user_type)) {
+            if (!['gulberg', 'jt', 'islamabad', 'dha', 'super_admin'].includes(user_type)) {
                 return res.status(400).json({ error: 'Invalid user_type' });
             }
             updateData.user_type = user_type;
