@@ -69,7 +69,7 @@ const orderSchema = new mongoose.Schema({
     status: {
         type: String,
         default: 'ordered',
-        enum: ['ordered', 'confirmed', 'awaiting_rider', 'in_kitchen', 'rider_on_way', 'delivered', 'pending', 'preparing', 'ready', 'completed', 'cancelled']
+        enum: ['placed', 'ordered', 'confirmed', 'awaiting_rider', 'in_kitchen', 'rider_on_way', 'ready', 'picked_up', 'delivered', 'pending', 'preparing', 'completed', 'cancelled']
     },
     rider_id: {
         type: mongoose.Schema.Types.ObjectId,

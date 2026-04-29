@@ -234,40 +234,84 @@
 
         .order-type-option {
             flex: 1;
-            padding: 1rem;
+            padding: 1rem 1.25rem;
             border: 2px solid var(--border-color);
-            border-radius: 5px;
+            border-radius: 10px;
             background: white;
             cursor: pointer;
-            text-align: center;
-            font-weight: 600;
-            transition: all 0.3s;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+            justify-content: flex-start;
+            gap: 0.75rem;
+            min-height: 56px;
         }
 
         .order-type-option:hover {
             border-color: var(--primary-color);
-            background: #fff5f5;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
         }
 
         .order-type-option.selected {
             background: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
+            box-shadow: 0 8px 18px rgba(211, 47, 47, 0.3);
         }
 
         .order-type-option input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid #bbb;
+            background: white;
             margin: 0;
             cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .order-type-option input[type="radio"]::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: var(--primary-color);
+            transition: transform 0.2s ease;
+        }
+
+        .order-type-option input[type="radio"]:checked {
+            border-color: var(--primary-color);
+        }
+
+        .order-type-option input[type="radio"]:checked::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .order-type-option.selected input[type="radio"] {
+            border-color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .order-type-option.selected input[type="radio"]::after {
+            background: #fff;
         }
 
         .order-type-option label {
             margin: 0;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
+            text-align: left;
         }
 
         .form-group textarea {
@@ -520,11 +564,27 @@
                 <input type="hidden" id="orderType" name="order_type" value="delivery">
 
                 <div class="form-group">
+                    <label>Order Type *</label>
+                    <div class="order-type-selector">
+                        <div class="order-type-option selected" data-order-type-option="delivery">
+                            <input type="radio" id="orderTypeDelivery" name="order_type_selector" value="delivery" checked>
+                            <label for="orderTypeDelivery">Delivery</label>
+                        </div>
+                        <div class="order-type-option" data-order-type-option="pickup">
+                            <input type="radio" id="orderTypePickup" name="order_type_selector" value="pickup">
+                            <label for="orderTypePickup">Pickup</label>
+                        </div>
+                    </div>
+                    <small style="display: block; margin-top: 0.5rem; color: #666;">Pickup orders only require your name and phone number.</small>
+                </div>
+
+                <div class="form-group">
                     <label>Branch *</label>
                     <select id="branch" name="branch" required>
                         <option value="">Select a branch</option>
                         <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
                         <option value="Johar Town, Lahore">Johar Town, Lahore</option>
+                        <option value="Islamabad">Islamabad</option>
                         <option value="DHA Phase 5, Lahore">DHA Phase 5, Lahore</option>
                     </select>
                     <div id="branchStatus"
@@ -561,7 +621,7 @@
                     <button type="button" class="location-btn" id="useCurrentLocationBtn">
                         📍 Use My Current Location
                     </button>
-                    <textarea id="customerAddress" name="customer_address" required
+                    <textarea id="customerAddress" name="customer_address"
                         placeholder="Address will be filled automatically when you select a location on the map"
                         style="margin-top: 1rem;"></textarea>
                     <input type="hidden" id="selectedLatitude" name="latitude">
@@ -622,7 +682,7 @@
                 </div>
                 <div class="summary-total-row">
                     <span class="summary-total-label">Delivery Fee</span>
-                    <span class="summary-item-price">Rs 200</span>
+                    <span class="summary-item-price" id="deliveryFeeText">Rs 200</span>
                 </div>
                 <div class="summary-total-row"
                     style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e0e0e0;">
@@ -697,6 +757,7 @@
 
         // Get cart from localStorage
         const cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
+        let currentOrderType = localStorage.getItem('orderType') === 'pickup' ? 'pickup' : 'delivery';
 
         // Business hours - loaded from API
         let BUSINESS_HOURS = {};
@@ -1141,8 +1202,7 @@
                 `;
             }).join('');
 
-            // Always delivery, so delivery fee is always 200
-            const deliveryFee = 200;
+            const deliveryFee = currentOrderType === 'delivery' ? 200 : 0;
             const branch = document.getElementById('branch')?.value || '';
             const taxRate = getTaxRate(branch);
             const tax = Math.round(subtotal * taxRate);
@@ -1150,7 +1210,44 @@
 
             subtotalEl.textContent = `Rs ${subtotal.toLocaleString()}`;
             document.getElementById('taxAmount').textContent = `Rs ${tax.toLocaleString()}`;
+            const deliveryFeeText = document.getElementById('deliveryFeeText');
+            if (deliveryFeeText) {
+                deliveryFeeText.textContent = `Rs ${deliveryFee.toLocaleString()}`;
+            }
             totalEl.textContent = `Rs ${total.toLocaleString()}`;
+        }
+
+        function setOrderType(orderType) {
+            currentOrderType = orderType === 'pickup' ? 'pickup' : 'delivery';
+            const orderTypeInput = document.getElementById('orderType');
+            if (orderTypeInput) orderTypeInput.value = currentOrderType;
+            localStorage.setItem('orderType', currentOrderType);
+
+            document.querySelectorAll('[data-order-type-option]').forEach((option) => {
+                option.classList.toggle('selected', option.dataset.orderTypeOption === currentOrderType);
+            });
+
+            const selectedRadio = document.querySelector(`input[name="order_type_selector"][value="${currentOrderType}"]`);
+            if (selectedRadio) selectedRadio.checked = true;
+
+            const addressGroup = document.getElementById('addressGroup');
+            const addressInput = document.getElementById('customerAddress');
+            const addressLabel = document.getElementById('addressLabel');
+            if (addressGroup && addressInput && addressLabel) {
+                const isDelivery = currentOrderType === 'delivery';
+                addressGroup.style.display = isDelivery ? 'block' : 'none';
+                addressInput.required = isDelivery;
+                addressLabel.textContent = isDelivery ? 'Delivery Address *' : 'Address';
+            }
+
+            if (currentOrderType === 'pickup') {
+                document.getElementById('selectedLatitude').value = '';
+                document.getElementById('selectedLongitude').value = '';
+            } else if (typeof L !== 'undefined') {
+                setTimeout(() => initMap(), 300);
+            }
+
+            displayOrderItems();
         }
 
         // Toggle summary section
@@ -1171,24 +1268,22 @@
             }
         }
 
-        // Always show address field and map for delivery
+        // Initialize order type behavior
         document.addEventListener('DOMContentLoaded', () => {
-            const addressGroup = document.getElementById('addressGroup');
-            const addressInput = document.getElementById('customerAddress');
-            const addressLabel = document.getElementById('addressLabel');
+            const orderTypeOptions = document.querySelectorAll('[data-order-type-option]');
+            orderTypeOptions.forEach((option) => {
+                option.addEventListener('click', () => {
+                    setOrderType(option.dataset.orderTypeOption);
+                });
+            });
 
-            if (addressGroup) {
-                addressGroup.style.display = 'block';
-                addressInput.required = true;
-                addressLabel.textContent = 'Delivery Address *';
-            }
+            document.querySelectorAll('input[name="order_type_selector"]').forEach((radio) => {
+                radio.addEventListener('change', (event) => {
+                    setOrderType(event.target.value);
+                });
+            });
 
-            // Initialize map
-            if (typeof L !== 'undefined') {
-                setTimeout(() => {
-                    initMap();
-                }, 500);
-            }
+            setOrderType(currentOrderType);
 
             // Update delivery radius circle when branch changes
             const branchSelect = document.getElementById('branch');
@@ -1243,7 +1338,7 @@
                 // Use item.total if available (includes addons), otherwise calculate
                 return sum + (item.total || (item.price * (item.quantity || 1)));
             }, 0);
-            const deliveryFee = 200;
+            const deliveryFee = currentOrderType === 'delivery' ? 200 : 0;
             const branch = document.getElementById('branch').value;
             const taxRate = getTaxRate(branch);
             const tax = Math.round(subtotal * taxRate);
@@ -1254,7 +1349,7 @@
 
             // Validate delivery location for Islamabad branch ONLY if coordinates are provided
             // If no coordinates provided, allow order to proceed (user can provide address manually)
-            if (branch === 'Islamabad' && latitude && longitude) {
+            if (currentOrderType === 'delivery' && branch === 'Islamabad' && latitude && longitude) {
                 const lat = parseFloat(latitude);
                 const lng = parseFloat(longitude);
 
@@ -1273,9 +1368,9 @@
                 customer_name: document.getElementById('customerName').value,
                 customer_email: document.getElementById('customerEmail').value,
                 customer_phone: document.getElementById('customerPhone').value,
-                customer_address: document.getElementById('customerAddress').value || '',
+                customer_address: currentOrderType === 'delivery' ? (document.getElementById('customerAddress').value || '') : '',
                 branch: document.getElementById('branch').value,
-                order_type: 'delivery',
+                order_type: currentOrderType,
                 payment_method: document.getElementById('paymentMethod').value,
                 notes: document.getElementById('notes').value,
                 items: cart,
@@ -1284,7 +1379,7 @@
                 tax: tax,
                 total: subtotal + deliveryFee + tax,
                 source: 'website',
-                delivery_location: (latitude && longitude) ? {
+                delivery_location: (currentOrderType === 'delivery' && latitude && longitude) ? {
                     latitude: parseFloat(latitude),
                     longitude: parseFloat(longitude),
                     timestamp: new Date().toISOString()

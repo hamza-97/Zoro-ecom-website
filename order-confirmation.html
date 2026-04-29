@@ -294,8 +294,9 @@
     <div class="confirmation-container">
         <div class="confirmation-card">
             <div class="success-icon">✓</div>
-            <h2>Order Placed Successfully!</h2>
+            <h2>Order Placed Successfully! <span id="pickupTimeDisplay" style="font-size: 0.85em; color: var(--primary-color);"></span></h2>
             <p style="color: #666; margin: 1rem 0;">Thank you for your order. We'll start preparing it right away.</p>
+            <p id="readyTimeMessage" style="color: var(--primary-color); font-weight: 700; font-size: 1.1rem; margin: 0.5rem 0 1.5rem 0;"></p>
             
             <div class="order-number" id="orderNumber"></div>
             
@@ -322,12 +323,19 @@
 
     <script>
         const API_URL = 'https://zoroburger.com/api';
+        const DEFAULT_PREPARATION_TIME_MINUTES = 20;
         
         // Order status configuration
         const statusConfig = {
+            'placed': {
+                label: 'Order Placed',
+                description: `Your order will be ready in ${DEFAULT_PREPARATION_TIME_MINUTES} minutes`,
+                icon: '📝',
+                order: 1
+            },
             'ordered': {
                 label: 'Order Placed',
-                description: 'Your order has been received',
+                description: `Your order will be ready in ${DEFAULT_PREPARATION_TIME_MINUTES} minutes`,
                 icon: '📝',
                 order: 1
             },
@@ -360,6 +368,18 @@
                 description: 'Your order has been delivered',
                 icon: '✓',
                 order: 6
+            },
+            'ready': {
+                label: 'Ready',
+                description: 'Your order is ready for pickup',
+                icon: '✅',
+                order: 4
+            },
+            'picked_up': {
+                label: 'Picked Up',
+                description: 'Your order has been picked up',
+                icon: '🎉',
+                order: 5
             },
             'completed': {
                 label: 'Completed',
@@ -409,9 +429,9 @@
             currentStatusDisplay.textContent = currentStatusInfo.label;
             
             // Define status flow based on order type
-            const statusFlow = order.order_type === 'delivery' 
-                ? ['ordered', 'confirmed', 'awaiting_rider', 'in_kitchen', 'rider_on_way', 'delivered', 'completed']
-                : ['ordered', 'confirmed', 'in_kitchen', 'completed'];
+            const statusFlow = order.order_type === 'delivery'
+                ? ['ordered', 'confirmed', 'awaiting_rider', 'in_kitchen', 'rider_on_way', 'delivered']
+                : ['placed', 'confirmed', 'in_kitchen', 'ready', 'picked_up'];
             
             // Build timeline HTML
             let timelineHTML = '';
@@ -470,10 +490,33 @@
             }
         }
 
+        // Function to calculate and display pickup time
+        function displayPickupTime(order) {
+            const pickupTimeDisplay = document.getElementById('pickupTimeDisplay');
+            const readyTimeMessage = document.getElementById('readyTimeMessage');
+            
+            if (order && order.order_type === 'pickup') {
+                const now = new Date();
+                const pickupTime = new Date(now.getTime() + DEFAULT_PREPARATION_TIME_MINUTES * 60000);
+                
+                const hours = pickupTime.getHours();
+                const minutes = pickupTime.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                const displayHours = hours % 12 || 12;
+                const displayMinutes = minutes.toString().padStart(2, '0');
+                
+                pickupTimeDisplay.textContent = `(Pickup at ${displayHours}:${displayMinutes} ${ampm})`;
+                readyTimeMessage.textContent = `Your order will be ready in ${DEFAULT_PREPARATION_TIME_MINUTES} minutes`;
+            }
+        }
+
         // Function to update order details
         function updateOrderDetails(order) {
             const orderDetails = document.getElementById('orderDetails');
             const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+            
+            // Display pickup time for pickup orders
+            displayPickupTime(order);
             
             orderDetails.innerHTML = `
                 <h3 style="margin-bottom: 1rem;">Order Details</h3>

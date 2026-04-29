@@ -1309,7 +1309,7 @@ function showProductModal(product) {
     // Add-ons for beef and chicken items (not for wings)
     const isBeef = product.category && (product.category === 'beef-smashers' || product.category === 'beef-speciality');
     const isChicken = product.category && product.category === 'chicken-burgers';
-    const addons = isCustomMealCombo ? [
+    const baseAddons = isCustomMealCombo ? [
         { name: 'Plain Fries', price: 0 },
         { name: 'Spicy Fries', price: 4 }
     ] : (isBeef || isChicken) && !isWings ? [
@@ -1325,6 +1325,18 @@ function showProductModal(product) {
         { name: 'Nachos', price: 195 },
         { name: 'Jalapenos', price: 195 }
     ] : [];
+
+    const addonDiscountRate = APPLY_DISCOUNTS ? (basePricing.discountRate || 0.20) : 0;
+    const addons = baseAddons.map((addon) => {
+        const discountedPrice = APPLY_DISCOUNTS
+            ? Math.round(addon.price * (1 - addonDiscountRate))
+            : addon.price;
+        return {
+            ...addon,
+            originalPrice: addon.price,
+            price: discountedPrice
+        };
+    });
     
     // Build wing types HTML with prices (prices will update dynamically based on size selection)
     const wingTypesHTML = wingTypes.map((type, index) => {
@@ -1349,12 +1361,20 @@ function showProductModal(product) {
     ] : [];
 
     // Build add-ons HTML
-    const addonsHTML = addons.map(addon => `
-        <div class="addon-option ${(isCustomMealCombo && addon.name === 'Plain Fries') ? 'selected' : ''}" data-addon="${addon.name}" data-price="${addon.price}">
+    const addonsHTML = addons.map(addon => {
+        const showAddonDiscount = APPLY_DISCOUNTS && addon.originalPrice > addon.price;
+        return `
+        <div class="addon-option ${(isCustomMealCombo && addon.name === 'Plain Fries') ? 'selected' : ''}" data-addon="${addon.name}" data-price="${addon.price}" data-original-price="${addon.originalPrice}">
             <div class="addon-name">${addon.name}</div>
-            <div class="addon-price">${isCustomMealCombo ? (Number(addon.price) > 0 ? `+Rs ${addon.price}` : '') : `Rs ${addon.price}`}</div>
+            <div class="addon-price">
+                ${Number(addon.price) > 0 ? (showAddonDiscount
+                    ? `<span style="text-decoration: line-through; color: #999; margin-right: 0.35rem;">Rs ${addon.originalPrice}</span><span style="color: var(--primary-color); font-weight: 700;">Rs ${addon.price}</span>`
+                    : `Rs ${addon.price}`
+                ) : ''}
+            </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 
     const drinksHTML = drinks.map((drink, index) => `
         <div class="size-option drink-option ${index === 0 ? 'selected' : ''}" data-drink="${drink.name}">

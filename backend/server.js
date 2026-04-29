@@ -412,6 +412,10 @@ app.post('/api/orders', async (req, res) => {
         if (!customer_name || !customer_phone || !branch || !order_type || !items || !total) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
+
+        if (order_type === 'delivery' && !customer_address) {
+            return res.status(400).json({ error: 'Delivery address is required for delivery orders' });
+        }
         
         // Validate business hours
         const isOpen = await isWithinBusinessHours(branch);
@@ -440,7 +444,7 @@ app.post('/api/orders', async (req, res) => {
             total,
             payment_method: payment_method || 'cash',
             notes: notes || '',
-            status: 'ordered',
+            status: order_type === 'pickup' ? 'placed' : 'ordered',
             payment_status: 'pending',
             source: source || 'website'
         };
@@ -671,10 +675,10 @@ app.patch('/api/orders/:id', authenticateAdmin, async (req, res) => {
         
         // If this is an edit request (not just status update), check if order can be edited
         if (isEditRequest) {
-            // Orders can only be edited if status is 'ordered' or 'pending'
-            if (order.status !== 'ordered' && order.status !== 'pending') {
+            // Orders can only be edited if status is 'placed', 'ordered' or 'pending'
+            if (order.status !== 'placed' && order.status !== 'ordered' && order.status !== 'pending') {
                 return res.status(400).json({ 
-                    error: 'Order cannot be edited because it has already been confirmed or is in progress. Only orders with status "ordered" or "pending" can be edited.' 
+                    error: 'Order cannot be edited because it has already been confirmed or is in progress. Only orders with status "placed", "ordered" or "pending" can be edited.' 
                 });
             }
             
@@ -720,6 +724,13 @@ app.patch('/api/orders/:id', authenticateAdmin, async (req, res) => {
             if (currentOrder && currentOrder.order_type === 'delivery') {
                 updateData.status = 'awaiting_rider';
             }
+        }
+
+        // Prevent assigning rider statuses to pickup orders
+        if (order.order_type === 'pickup' && status && ['awaiting_rider', 'rider_on_way', 'delivered'].includes(status)) {
+            return res.status(400).json({
+                error: 'Pickup orders cannot be moved to rider-related delivery statuses.'
+            });
         }
 
         if (Object.keys(updateData).length === 0) {

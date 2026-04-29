@@ -408,6 +408,11 @@
             color: #856404;
         }
 
+        .status-placed {
+            background: #fff3cd;
+            color: #856404;
+        }
+
         .status-pending {
             background: #e2e3e5;
             color: #383d41;
@@ -434,6 +439,16 @@
         }
 
         .status-delivered {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-ready {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-picked_up {
             background: #d1e7dd;
             color: #0f5132;
         }
@@ -1006,10 +1021,13 @@
                         </div>
                         <div class="filter-tabs">
                             <button class="filter-tab active" data-status="all">All</button>
+                            <button class="filter-tab" data-status="placed">Placed</button>
                             <button class="filter-tab" data-status="ordered">Ordered</button>
                             <button class="filter-tab" data-status="confirmed">Confirmed</button>
                             <button class="filter-tab" data-status="awaiting_rider">Awaiting Rider</button>
                             <button class="filter-tab" data-status="in_kitchen">In Kitchen</button>
+                            <button class="filter-tab" data-status="ready">Ready</button>
+                            <button class="filter-tab" data-status="picked_up">Picked Up</button>
                             <button class="filter-tab" data-status="rider_on_way">Rider on Way</button>
                             <button class="filter-tab" data-status="delivered">Delivered</button>
                             <button class="filter-tab" data-status="cancelled">Cancelled</button>
@@ -1128,10 +1146,13 @@
                 <div class="form-group">
                     <label>Order Status</label>
                     <select id="updateStatus" required>
+                        <option value="placed">Placed</option>
                         <option value="ordered">Ordered</option>
                         <option value="confirmed">Confirmed</option>
                         <option value="awaiting_rider">Awaiting Rider</option>
                         <option value="in_kitchen">In Kitchen</option>
+                        <option value="ready">Ready</option>
+                        <option value="picked_up">Picked Up</option>
                         <option value="rider_on_way">Rider on Way</option>
                         <option value="delivered">Delivered</option>
                         <option value="cancelled">Cancelled</option>
@@ -2042,6 +2063,7 @@
         // Format status for display
         function formatStatus(status) {
             const statusMap = {
+                'placed': 'Placed',
                 'ordered': 'Ordered',
                 'pending': 'Pending',
                 'confirmed': 'Confirmed',
@@ -2051,6 +2073,7 @@
                 'delivered': 'Delivered',
                 'preparing': 'Preparing',
                 'ready': 'Ready',
+                'picked_up': 'Picked Up',
                 'completed': 'Completed',
                 'cancelled': 'Cancelled'
             };
@@ -2720,7 +2743,7 @@
                 document.getElementById('orderDetails').innerHTML = `
                     <div style="margin-bottom: 1.5rem;">
                         <h3 style="margin-bottom: 1rem;">Order #${order.order_number}</h3>
-                        <p><strong>Status:</strong> <span class="status-badge status-${order.status}">${order.status}</span></p>
+                        <p><strong>Status:</strong> <span class="status-badge status-${order.status}">${formatStatus(order.status)}</span></p>
                         <p><strong>Payment Status:</strong> ${order.payment_status}</p>
                     </div>
                     
@@ -2922,7 +2945,7 @@
                 const order = await response.json();
 
                 // Check if order can be edited (not confirmed, in progress, delivered, or cancelled)
-                if (order.status === 'confirmed' || order.status === 'awaiting_rider' || order.status === 'in_kitchen' || order.status === 'rider_on_way' || order.status === 'delivered' || order.status === 'cancelled') {
+                if (order.status === 'confirmed' || order.status === 'awaiting_rider' || order.status === 'in_kitchen' || order.status === 'ready' || order.status === 'picked_up' || order.status === 'rider_on_way' || order.status === 'delivered' || order.status === 'cancelled') {
                     alert('This order cannot be edited because it has already been confirmed, is in progress, delivered, or cancelled.');
                     return;
                 }
