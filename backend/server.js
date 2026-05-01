@@ -46,6 +46,16 @@ if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
 
 console.log('✅ VAPID keys loaded successfully');
 
+// TEMPORARY: pause new orders & public listing for Islamabad and Karachi Johar. Set to false to re-enable.
+const BRANCH_ORDERING_DISABLED_ISB_KHI = true;
+
+function isBranchOrderingTemporarilyDisabled(branch) {
+    if (!BRANCH_ORDERING_DISABLED_ISB_KHI || !branch) return false;
+    const s = String(branch).toLowerCase();
+    if (s.includes('islamabad')) return true;
+    return /karachi\s*johar/i.test(String(branch));
+}
+
 // Karachi Johar orders (website branch value: "Karachi Johar")
 function isKarachiJoharBranchName(branch) {
     return !!(branch && /karachi\s+johar/i.test(String(branch)));
@@ -441,6 +451,12 @@ app.post('/api/orders', async (req, res) => {
 
         if (!customer_name || !customer_phone || !branch || !order_type || !items || !total) {
             return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        if (isBranchOrderingTemporarilyDisabled(branch)) {
+            return res.status(503).json({
+                error: 'Islamabad and Karachi Johar are temporarily unavailable for new orders. Please choose a Lahore branch.'
+            });
         }
 
         if (order_type === 'delivery' && !customer_address) {
@@ -1273,7 +1289,8 @@ app.delete('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
 app.get('/api/branches', async (req, res) => {
     try {
         const branches = await Branch.find({ is_active: true }).select('name open_hour close_hour');
-        const branchesData = branches.map(branch => ({
+        const visible = branches.filter((b) => !isBranchOrderingTemporarilyDisabled(b.name));
+        const branchesData = visible.map(branch => ({
             name: branch.name,
             open_hour: branch.open_hour,
             close_hour: branch.close_hour
