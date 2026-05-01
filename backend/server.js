@@ -46,6 +46,29 @@ if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
 
 console.log('✅ VAPID keys loaded successfully');
 
+// Karachi Johar orders (website branch value: "Karachi Johar")
+function isKarachiJoharBranchName(branch) {
+    return !!(branch && /karachi\s+johar/i.test(String(branch)));
+}
+
+// Lahore JT / Johar Town — excludes "Karachi Johar"
+function isJoharTownLahoreBranchName(branch) {
+    if (!branch) return false;
+    const b = String(branch).toLowerCase();
+    if (b.includes('karachi')) return false;
+    return b.includes('johar') || /\bjt\b/.test(b);
+}
+
+// Mongo filter: JT branch users see Johar Town Lahore only (not Karachi Johar)
+function branchFilterJoharTownLahoreOnly() {
+    return {
+        $and: [
+            { branch: { $regex: /johar/i } },
+            { branch: { $not: /karachi/i } }
+        ]
+    };
+}
+
 // Get tax rate based on branch (15% for Islamabad, 16% for others)
 function getTaxRate(branch) {
     if (!branch) return 0.16; // Default to 16% if branch not specified
@@ -64,7 +87,12 @@ async function notifyAllRiders(orderData) {
     try {
         // Determine location based on branch
         let riderLocation = 'gulberg'; // default
-        if (orderData.branch && orderData.branch.toLowerCase().includes('johar')) {
+        const branchLower = (orderData.branch || '').toLowerCase();
+        if (isKarachiJoharBranchName(orderData.branch)) {
+            console.log('Skipping rider push notifications for Karachi Johar (pickup-focused branch)');
+            return;
+        }
+        if (branchLower.includes('johar')) {
             riderLocation = 'jt';
         } else if (orderData.branch && orderData.branch.toLowerCase().includes('islamabad')) {
             riderLocation = 'islamabad';
@@ -304,7 +332,8 @@ async function initializeBranches() {
                 { name: 'Gulberg II, Lahore', open_hour: 12, close_hour: 1.75 },
                 { name: 'Johar Town, Lahore', open_hour: 12, close_hour: 3.75 },
                 { name: 'Islamabad', open_hour: 12, close_hour: 1.75 },
-                { name: 'DHA Phase 5, Lahore', open_hour: 12, close_hour: 1.75 }
+                { name: 'DHA Phase 5, Lahore', open_hour: 12, close_hour: 1.75 },
+                { name: 'Karachi Johar', open_hour: 12, close_hour: 1.75 }
             ]);
             console.log('✅ Default branches initialized');
         }
@@ -328,7 +357,8 @@ async function getBusinessHours(branchName) {
         'Gulberg II, Lahore': { open: 12, close: 1.75 },
         'Johar Town, Lahore': { open: 12, close: 3.75 },
         'Islamabad': { open: 12, close: 1.75 },
-        'DHA Phase 5, Lahore': { open: 12, close: 1.75 }
+        'DHA Phase 5, Lahore': { open: 12, close: 1.75 },
+        'Karachi Johar': { open: 12, close: 1.75 }
     };
     return defaults[branchName] || { open: 12, close: 1.75 };
 }
@@ -577,13 +607,15 @@ app.get('/api/orders', authenticateAdmin, async (req, res) => {
         if (req.user.user_type === 'gulberg') {
             query.branch = { $regex: /gulberg/i }; // Case-insensitive match for "Gulberg"
         } else if (req.user.user_type === 'jt') {
-            query.branch = { $regex: /(jt|johar)/i }; // Case-insensitive match for "JT" or "Johar" anywhere in string
+            Object.assign(query, branchFilterJoharTownLahoreOnly()); // Excludes "Karachi Johar"
         } else if (req.user.user_type === 'islamabad') {
             query.branch = { $regex: /islamabad/i }; // Case-insensitive match for "Islamabad"
         } else if (req.user.user_type === 'dha') {
             query.branch = { $regex: /dha/i }; // Case-insensitive match for "DHA"
+        } else if (req.user.user_type === 'KarachiJohar') {
+            query.branch = { $regex: /karachi\s+johar/i };
         }
-        // super_admin sees all orders (no branch filter)
+        // super_admin and marketing see all orders (no branch filter)
         
         // Add date filtering if provided
         if (startDate || endDate) {
@@ -774,13 +806,15 @@ app.get('/api/stats', authenticateAdmin, async (req, res) => {
         if (req.user.user_type === 'gulberg') {
             branchFilter.branch = { $regex: /gulberg/i }; // Case-insensitive match for "Gulberg"
         } else if (req.user.user_type === 'jt') {
-            branchFilter.branch = { $regex: /^(jt|johar|johar town)/i }; // Case-insensitive match for "JT" or "Johar"
+            Object.assign(branchFilter, branchFilterJoharTownLahoreOnly()); // Excludes "Karachi Johar"
         } else if (req.user.user_type === 'islamabad') {
             branchFilter.branch = { $regex: /islamabad/i }; // Case-insensitive match for "Islamabad"
         } else if (req.user.user_type === 'dha') {
             branchFilter.branch = { $regex: /dha/i }; // Case-insensitive match for "DHA"
+        } else if (req.user.user_type === 'KarachiJohar') {
+            branchFilter.branch = { $regex: /karachi\s+johar/i };
         }
-        // super_admin sees all stats (no branch filter)
+        // super_admin and marketing see all stats (no branch filter)
 
         // Total orders
         stats.total_orders = await Order.countDocuments(branchFilter);
@@ -1113,8 +1147,9 @@ app.post('/api/admin/users', authenticateAdmin, async (req, res) => {
             return res.status(400).json({ error: 'Username and password required' });
         }
 
-        if (!user_type || !['gulberg', 'jt', 'islamabad', 'dha', 'super_admin'].includes(user_type)) {
-            return res.status(400).json({ error: 'Valid user_type required (gulberg, jt, islamabad, dha, or super_admin)' });
+        const allowedUserTypes = ['gulberg', 'jt', 'islamabad', 'dha', 'KarachiJohar', 'marketing', 'super_admin'];
+        if (!user_type || !allowedUserTypes.includes(user_type)) {
+            return res.status(400).json({ error: `Valid user_type required (${allowedUserTypes.join(', ')})` });
         }
 
         // Check if username already exists
@@ -1157,7 +1192,8 @@ app.patch('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
         if (username) updateData.username = username;
         if (password) updateData.password = password;
         if (user_type) {
-            if (!['gulberg', 'jt', 'islamabad', 'dha', 'super_admin'].includes(user_type)) {
+            const allowedUserTypes = ['gulberg', 'jt', 'islamabad', 'dha', 'KarachiJohar', 'marketing', 'super_admin'];
+            if (!allowedUserTypes.includes(user_type)) {
                 return res.status(400).json({ error: 'Invalid user_type' });
             }
             updateData.user_type = user_type;
@@ -1384,7 +1420,7 @@ app.get('/api/riders/available-orders', async (req, res) => {
                 const branchLower = order.branch.toLowerCase();
                 
                 if (riderLocation === 'jt') {
-                    return branchLower.includes('johar');
+                    return isJoharTownLahoreBranchName(order.branch);
                 } else if (riderLocation === 'gulberg') {
                     return branchLower.includes('gulberg');
                 }
@@ -1429,10 +1465,10 @@ app.post('/api/riders/accept-order/:orderId', async (req, res) => {
         // Check if order location matches rider location
         if (rider.location && order.branch) {
             const branchLower = order.branch.toLowerCase();
-            const isJoharOrder = branchLower.includes('johar');
+            const isJoharTownOrder = isJoharTownLahoreBranchName(order.branch);
             const isGulbergOrder = branchLower.includes('gulberg');
             
-            if ((rider.location === 'jt' && !isJoharOrder) || 
+            if ((rider.location === 'jt' && !isJoharTownOrder) || 
                 (rider.location === 'gulberg' && !isGulbergOrder)) {
                 return res.status(403).json({ 
                     error: 'You can only accept orders from your assigned location' 

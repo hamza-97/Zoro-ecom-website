@@ -1325,6 +1325,7 @@
                             <option value="Johar Town, Lahore">Johar Town, Lahore</option>
                             <option value="Islamabad">Islamabad</option>
                             <option value="DHA Phase 5, Lahore">DHA Phase 5, Lahore</option>
+                            <option value="Karachi Johar">Karachi Johar</option>
                         </select>
                     </div>
                 </div>
@@ -1439,6 +1440,7 @@
                             <option value="Johar Town, Lahore">Johar Town, Lahore</option>
                             <option value="Islamabad">Islamabad</option>
                             <option value="DHA Phase 5, Lahore">DHA Phase 5, Lahore</option>
+                            <option value="Karachi Johar">Karachi Johar</option>
                         </select>
                     </div>
                 </div>
@@ -1566,6 +1568,7 @@
                         <option value="jt">JT User</option>
                         <option value="islamabad">Islamabad User</option>
                         <option value="dha">DHA User</option>
+                        <option value="KarachiJohar">Karachi Johar User</option>
                         <option value="marketing">Marketing</option>
                         <option value="super_admin">Super Admin</option>
                     </select>
@@ -1780,6 +1783,7 @@
                     'jt': 'JT Admin',
                     'islamabad': 'Islamabad Admin',
                     'dha': 'DHA Admin',
+                    'KarachiJohar': 'Karachi Johar Admin',
                     'marketing': 'Marketing',
                     'super_admin': 'Super Admin'
                 };
@@ -1810,8 +1814,8 @@
             menuItems.forEach(item => {
                 const section = item.dataset.section;
 
-                // Gulberg, JT, Islamabad, and DHA users only see Orders tab
-                if (currentUser.user_type === 'gulberg' || currentUser.user_type === 'jt' || currentUser.user_type === 'islamabad' || currentUser.user_type === 'dha') {
+                // Branch-scoped users only see Orders tab
+                if (currentUser.user_type === 'gulberg' || currentUser.user_type === 'jt' || currentUser.user_type === 'islamabad' || currentUser.user_type === 'dha' || currentUser.user_type === 'KarachiJohar') {
                     if (section !== 'orders') {
                         item.style.display = 'none';
                     } else {
@@ -2407,20 +2411,17 @@
 
                                 let shouldNotify = false;
 
-                                if (userType === 'super_admin') {
-                                    // Super admin gets all orders
+                                if (userType === 'super_admin' || userType === 'marketing') {
                                     shouldNotify = true;
                                 } else if (userType === 'gulberg') {
-                                    // Gulberg users only get Gulberg orders
                                     shouldNotify = orderBranch.includes('gulberg');
                                 } else if (userType === 'jt') {
-                                    // JT users only get JT/Johar orders
-                                    shouldNotify = orderBranch.includes('johar') || orderBranch.includes('jt');
+                                    shouldNotify = (orderBranch.includes('johar') || orderBranch.includes('jt')) && !orderBranch.includes('karachi');
+                                } else if (userType === 'KarachiJohar') {
+                                    shouldNotify = /karachi\s*johar/i.test(order.branch || '');
                                 } else if (userType === 'islamabad') {
-                                    // Islamabad users only get Islamabad orders
                                     shouldNotify = orderBranch.includes('islamabad');
                                 } else if (userType === 'dha') {
-                                    // DHA users only get DHA orders
                                     shouldNotify = orderBranch.includes('dha');
                                 }
 
@@ -3150,6 +3151,8 @@
                     branchSelect.value = 'Islamabad';
                 } else if (userType === 'dha') {
                     branchSelect.value = 'DHA Phase 5, Lahore';
+                } else if (userType === 'KarachiJohar') {
+                    branchSelect.value = 'Karachi Johar';
                 }
             }
 
@@ -4676,14 +4679,18 @@ Debug info:
                         'jt': 'JT',
                         'islamabad': 'Islamabad',
                         'dha': 'DHA',
+                        'KarachiJohar': 'Karachi Johar',
                         'marketing': 'Marketing',
                         'super_admin': 'Super Admin'
                     };
 
+                    const badgeBg = user.user_type === 'super_admin' ? '#cfe2ff' : user.user_type === 'gulberg' ? '#d1e7dd' : user.user_type === 'islamabad' ? '#e7d5ff' : user.user_type === 'dha' ? '#ffd6e0' : user.user_type === 'KarachiJohar' ? '#d0f4ea' : user.user_type === 'marketing' ? '#fce4ec' : '#fff3cd';
+                    const badgeColor = user.user_type === 'super_admin' ? '#084298' : user.user_type === 'gulberg' ? '#0f5132' : user.user_type === 'islamabad' ? '#6f42c1' : user.user_type === 'dha' ? '#a0002e' : user.user_type === 'KarachiJohar' ? '#0d6e58' : user.user_type === 'marketing' ? '#880e4f' : '#856404';
+
                     return `
                         <tr style="display: table-row;">
                             <td><strong>${user.username || 'N/A'}</strong></td>
-                            <td><span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: ${user.user_type === 'super_admin' ? '#cfe2ff' : user.user_type === 'gulberg' ? '#d1e7dd' : user.user_type === 'islamabad' ? '#e7d5ff' : user.user_type === 'dha' ? '#ffd6e0' : '#fff3cd'}; color: ${user.user_type === 'super_admin' ? '#084298' : user.user_type === 'gulberg' ? '#0f5132' : user.user_type === 'islamabad' ? '#6f42c1' : user.user_type === 'dha' ? '#a0002e' : '#856404'};">${userTypeLabel[user.user_type] || user.user_type || 'N/A'}</span></td>
+                            <td><span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: ${badgeBg}; color: ${badgeColor};">${userTypeLabel[user.user_type] || user.user_type || 'N/A'}</span></td>
                             <td><small>${createdAt}</small></td>
                             <td><small>${updatedAt}</small></td>
                             <td>
