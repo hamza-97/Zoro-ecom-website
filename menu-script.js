@@ -561,22 +561,6 @@ const DISCONTINUED_PRODUCT_IDS = [101, 102, 103];
 cart = cart.filter(item => !DISCONTINUED_PRODUCT_IDS.includes(item.id));
 localStorage.setItem('zoroCart', JSON.stringify(cart));
 
-// TEMPORARY: clear Islamabad / Karachi Johar selection (ordering paused). Remove when branches reopen.
-(function clearTemporarilyDisabledBranchSelection() {
-    try {
-        const code = localStorage.getItem('selectedBranch');
-        const name = (localStorage.getItem('selectedBranchName') || '').toLowerCase();
-        const disabledCodes = ['islamabad', 'karachi'];
-        const pickDisabled = (code && disabledCodes.includes(code))
-            || name.includes('islamabad')
-            || (name.includes('karachi') && name.includes('johar'));
-        if (pickDisabled) {
-            localStorage.removeItem('selectedBranch');
-            localStorage.removeItem('selectedBranchName');
-        }
-    } catch (_) {}
-})();
-
 // DOM Elements
 const menuContainer = document.getElementById('menuContainer');
 const cartSidebar = document.getElementById('cartSidebar');
