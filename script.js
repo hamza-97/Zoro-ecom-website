@@ -411,7 +411,7 @@ function displayProducts(productsToShow) {
 function createProductCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card';
-    const isClassicChickenOutOfStock = product.id === 11;
+    const isTruffleRoyalOutOfStock = product.id === 6;
     
     // Calculate discounted price (use function from menu-script.js if available)
     let pricing;
@@ -423,7 +423,7 @@ function createProductCard(product) {
         showDiscount = applyDiscounts && pricing.original !== pricing.discounted;
     } else {
         // Fallback if function not available yet
-        const discountRate = 0.20; // Default 20% off
+        const discountRate = product.id === 11 ? 0 : 0.20; // Classic Chicken has no discount
         pricing = {
             original: product.price,
             discounted: Math.round(product.price * (1 - discountRate)),
@@ -447,9 +447,9 @@ function createProductCard(product) {
                 <button
                     class="add-to-cart-btn"
                     data-product-id="${product.id}"
-                    ${isClassicChickenOutOfStock ? 'disabled aria-disabled="true" title="Out of Stock"' : ''}
+                    ${isTruffleRoyalOutOfStock ? 'disabled aria-disabled="true" title="Out of Stock"' : ''}
                 >
-                    ${isClassicChickenOutOfStock ? 'OUT OF STOCK' : 'ADD TO CART'}
+                    ${isTruffleRoyalOutOfStock ? 'OUT OF STOCK' : 'ADD TO CART'}
                 </button>
             </div>
         </div>
@@ -457,7 +457,7 @@ function createProductCard(product) {
     
     // Add click event to the button
     const addToCartBtn = card.querySelector('.add-to-cart-btn');
-    if (isClassicChickenOutOfStock) {
+    if (isTruffleRoyalOutOfStock) {
         card.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -579,7 +579,7 @@ function addDessertToCart(product) {
         pricing = getDiscountedPrice(product);
     } else {
         // Fallback if function not available yet
-        const discountRate = 0.20; // Default 20% off
+        const discountRate = product.id === 11 ? 0 : 0.20; // Classic Chicken has no discount
         pricing = {
             original: product.price,
             discounted: Math.round(product.price * (1 - discountRate)),
@@ -906,7 +906,7 @@ function showProductModal(product) {
         basePricing = getDiscountedPrice(product);
     } else {
         // Fallback if function not available
-        const discountRate = 0.20; // Default 20% off
+        const discountRate = product.id === 11 ? 0 : 0.20; // Classic Chicken has no discount
         basePricing = {
             original: product.price,
             discounted: Math.round(product.price * (1 - discountRate)),

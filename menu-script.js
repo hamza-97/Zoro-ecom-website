@@ -522,6 +522,16 @@ const discountRates = {
 // Calculate discounted price for a product
 function getDiscountedPrice(product) {
     const originalPrice = product.price;
+    const isClassicChicken = product.id === 11;
+
+    // Classic Chicken is always sold at full price (no discount).
+    if (isClassicChicken) {
+        return {
+            original: originalPrice,
+            discounted: originalPrice,
+            discountRate: 0
+        };
+    }
     
     // If product has explicit discounted price (e.g. Ramadan deals), use it
     if (product.discountedPrice != null) {
@@ -740,7 +750,7 @@ function createCategorySection(category, categoryProducts) {
 function createProductCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card';
-    const isClassicChickenOutOfStock = product.id === 11;
+    const isTruffleRoyalOutOfStock = product.id === 6;
     
     // Calculate discounted price
     const pricing = getDiscountedPrice(product);
@@ -764,9 +774,9 @@ function createProductCard(product) {
                 <button
                     class="add-to-cart-btn"
                     data-product-id="${product.id}"
-                    ${isClassicChickenOutOfStock ? 'disabled aria-disabled="true" title="Out of Stock"' : ''}
+                    ${isTruffleRoyalOutOfStock ? 'disabled aria-disabled="true" title="Out of Stock"' : ''}
                 >
-                    ${isClassicChickenOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+                    ${isTruffleRoyalOutOfStock ? 'Out of Stock' : 'Add to Cart'}
                 </button>
             </div>
         </div>
@@ -774,7 +784,7 @@ function createProductCard(product) {
     
     // Add click event to the button
     const addToCartBtn = card.querySelector('.add-to-cart-btn');
-    if (isClassicChickenOutOfStock) {
+    if (isTruffleRoyalOutOfStock) {
         return card;
     }
     
