@@ -983,7 +983,7 @@ function showProductModal(product) {
         // Classic Chicken (id 11): Single 695, Double 1195, No Triple
         // Pepper Chicken (id 12): Single 895, Double 1295, No Triple
         // Tangy Crunch (id 13): Single 895, Double 1295, No Triple
-        // Roost (id 14): Single 995, Double 1295, No Triple
+        // Roost (id 14): Single 895, Double 1295, No Triple
         // Other Chicken Burgers: Single 995, Double 1395, No Triple
         const isBeefSmashers = product.category === 'beef-smashers';
         const isBeefSpeciality = product.category === 'beef-speciality';
@@ -1029,8 +1029,8 @@ function showProductModal(product) {
                 doubleOriginal = 1295;
                 hasTriple = false;
             } else if (isRoost) {
-                // Roost: Single 995, Double 1295
-                singleOriginal = 995;
+                // Roost: Single 895, Double 1295
+                singleOriginal = 895;
                 doubleOriginal = 1295;
                 hasTriple = false;
             } else {
