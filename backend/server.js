@@ -46,9 +46,12 @@ if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
 
 console.log('✅ VAPID keys loaded successfully');
 
-// Karachi Jauhar orders (website branch value: "Karachi Jauhar")
+// Website may store "Karachi Johar" or "Karachi Jauhar" — treat both as the same branch
+const KARACHI_JOHAR_BRANCH_REGEX = /karachi\s+j(auh|oh)ar/i;
+
+// Karachi Johar / Jauhar orders
 function isKarachiJoharBranchName(branch) {
-    return !!(branch && /karachi\s+johar/i.test(String(branch)));
+    return !!(branch && KARACHI_JOHAR_BRANCH_REGEX.test(String(branch)));
 }
 
 // Karachi Badar orders (website branch value: "Karachi Badar")
@@ -626,7 +629,9 @@ app.get('/api/orders', authenticateAdmin, async (req, res) => {
         } else if (req.user.user_type === 'dha') {
             query.branch = { $regex: /dha/i }; // Case-insensitive match for "DHA"
         } else if (req.user.user_type === 'KarachiJohar') {
-            query.branch = { $regex: /karachi\s+johar/i };
+            query.branch = { $regex: KARACHI_JOHAR_BRANCH_REGEX };
+        } else if (req.user.user_type === 'KarachiBadar') {
+            query.branch = { $regex: /karachi\s+badar/i };
         }
         // super_admin and marketing see all orders (no branch filter)
         
@@ -825,7 +830,9 @@ app.get('/api/stats', authenticateAdmin, async (req, res) => {
         } else if (req.user.user_type === 'dha') {
             branchFilter.branch = { $regex: /dha/i }; // Case-insensitive match for "DHA"
         } else if (req.user.user_type === 'KarachiJohar') {
-            branchFilter.branch = { $regex: /karachi\s+johar/i };
+            branchFilter.branch = { $regex: KARACHI_JOHAR_BRANCH_REGEX };
+        } else if (req.user.user_type === 'KarachiBadar') {
+            branchFilter.branch = { $regex: /karachi\s+badar/i };
         }
         // super_admin and marketing see all stats (no branch filter)
 
@@ -1160,7 +1167,7 @@ app.post('/api/admin/users', authenticateAdmin, async (req, res) => {
             return res.status(400).json({ error: 'Username and password required' });
         }
 
-        const allowedUserTypes = ['gulberg', 'jt', 'islamabad', 'dha', 'KarachiJohar', 'marketing', 'super_admin'];
+        const allowedUserTypes = ['gulberg', 'jt', 'islamabad', 'dha', 'KarachiJohar', 'KarachiBadar', 'marketing', 'super_admin'];
         if (!user_type || !allowedUserTypes.includes(user_type)) {
             return res.status(400).json({ error: `Valid user_type required (${allowedUserTypes.join(', ')})` });
         }
@@ -1205,7 +1212,7 @@ app.patch('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
         if (username) updateData.username = username;
         if (password) updateData.password = password;
         if (user_type) {
-            const allowedUserTypes = ['gulberg', 'jt', 'islamabad', 'dha', 'KarachiJohar', 'marketing', 'super_admin'];
+            const allowedUserTypes = ['gulberg', 'jt', 'islamabad', 'dha', 'KarachiJohar', 'KarachiBadar', 'marketing', 'super_admin'];
             if (!allowedUserTypes.includes(user_type)) {
                 return res.status(400).json({ error: 'Invalid user_type' });
             }

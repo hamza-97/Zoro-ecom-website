@@ -560,7 +560,7 @@
         <div class="checkout-form">
             <h2 style="margin-bottom: 2rem; color: var(--dark-color);">Checkout</h2>
 
-            <form id="checkoutForm">
+            <form id="checkoutForm" novalidate>
                 <input type="hidden" id="orderType" name="order_type" value="delivery">
 
                 <div class="form-group">
@@ -1304,7 +1304,9 @@
             if (addressGroup && addressInput && addressLabel) {
                 const isDelivery = currentOrderType === 'delivery';
                 addressGroup.style.display = isDelivery ? 'block' : 'none';
-                addressInput.required = isDelivery;
+                // Do not use HTML5 required on address: empty textarea blocks submit with a vague browser tooltip
+                // before our handler runs; we validate delivery address in the submit handler instead.
+                addressInput.required = false;
                 addressLabel.textContent = isDelivery ? 'Delivery Address *' : 'Address';
             }
 
@@ -1401,6 +1403,34 @@
                 return;
             }
 
+            const branch = document.getElementById('branch').value;
+            if (!branch) {
+                alert('Please select a branch.');
+                return;
+            }
+
+            const customerName = (document.getElementById('customerName').value || '').trim();
+            const customerPhone = (document.getElementById('customerPhone').value || '').trim();
+            if (!customerName) {
+                alert('Please enter your full name.');
+                document.getElementById('customerName').focus();
+                return;
+            }
+            if (!customerPhone) {
+                alert('Please enter your phone number.');
+                document.getElementById('customerPhone').focus();
+                return;
+            }
+
+            if (currentOrderType === 'delivery') {
+                const addr = (document.getElementById('customerAddress').value || '').trim();
+                if (!addr) {
+                    alert('For delivery, please enter your full address in the box below, or set your pin on the map / use “Use my current location”.');
+                    document.getElementById('customerAddress').focus();
+                    return;
+                }
+            }
+
             const submitBtn = document.getElementById('submitBtn');
             const loading = document.getElementById('loading');
 
@@ -1412,7 +1442,6 @@
                 return sum + (item.total || (item.price * (item.quantity || 1)));
             }, 0);
             const deliveryFee = currentOrderType === 'delivery' ? 200 : 0;
-            const branch = document.getElementById('branch').value;
             const taxRate = getTaxRate(branch);
             const tax = Math.round(subtotal * taxRate);
 
@@ -1438,10 +1467,10 @@
             // If no coordinates provided, proceed with order (address may be provided manually)
 
             const formData = {
-                customer_name: document.getElementById('customerName').value,
+                customer_name: customerName,
                 customer_email: document.getElementById('customerEmail').value,
-                customer_phone: document.getElementById('customerPhone').value,
-                customer_address: currentOrderType === 'delivery' ? (document.getElementById('customerAddress').value || '') : '',
+                customer_phone: customerPhone,
+                customer_address: currentOrderType === 'delivery' ? (document.getElementById('customerAddress').value || '').trim() : '',
                 branch: document.getElementById('branch').value,
                 order_type: currentOrderType,
                 payment_method: document.getElementById('paymentMethod').value,

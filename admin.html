@@ -1571,6 +1571,7 @@
                         <option value="islamabad">Islamabad User</option>
                         <option value="dha">DHA User</option>
                         <option value="KarachiJohar">Karachi Jauhar User</option>
+                        <option value="KarachiBadar">Karachi Badar User</option>
                         <option value="marketing">Marketing</option>
                         <option value="super_admin">Super Admin</option>
                     </select>
@@ -1611,6 +1612,7 @@
         let hasUnacknowledgedOrders = false; // Track if there are unacknowledged new orders
         let audioContext = null; // Store audio context for reuse
         let currentUser = null; // Store current logged-in user
+        const KARACHI_JOHAR_BRANCH_REGEX = /karachi\s+j(auh|oh)ar/i;
         let allProducts = []; // Store products from menu-script.js
         let currentEditItems = []; // Store current items being edited
         let editingItemIndex = -1; // Index of item being edited (-1 for new item)
@@ -1786,6 +1788,7 @@
                     'islamabad': 'Islamabad Admin',
                     'dha': 'DHA Admin',
                     'KarachiJohar': 'Karachi Jauhar Admin',
+                    'KarachiBadar': 'Karachi Badar Admin',
                     'marketing': 'Marketing',
                     'super_admin': 'Super Admin'
                 };
@@ -1817,7 +1820,7 @@
                 const section = item.dataset.section;
 
                 // Branch-scoped users only see Orders tab
-                if (currentUser.user_type === 'gulberg' || currentUser.user_type === 'jt' || currentUser.user_type === 'islamabad' || currentUser.user_type === 'dha' || currentUser.user_type === 'KarachiJohar') {
+                if (currentUser.user_type === 'gulberg' || currentUser.user_type === 'jt' || currentUser.user_type === 'islamabad' || currentUser.user_type === 'dha' || currentUser.user_type === 'KarachiJohar' || currentUser.user_type === 'KarachiBadar') {
                     if (section !== 'orders') {
                         item.style.display = 'none';
                     } else {
@@ -2420,7 +2423,9 @@
                                 } else if (userType === 'jt') {
                                     shouldNotify = (orderBranch.includes('johar') || orderBranch.includes('jt')) && !orderBranch.includes('karachi');
                                 } else if (userType === 'KarachiJohar') {
-                                    shouldNotify = /karachi\s*johar/i.test(order.branch || '');
+                                    shouldNotify = KARACHI_JOHAR_BRANCH_REGEX.test(order.branch || '');
+                                } else if (userType === 'KarachiBadar') {
+                                    shouldNotify = /karachi\s+badar/i.test(order.branch || '');
                                 } else if (userType === 'islamabad') {
                                     shouldNotify = orderBranch.includes('islamabad');
                                 } else if (userType === 'dha') {
@@ -3155,6 +3160,8 @@
                     branchSelect.value = 'DHA Phase 5, Lahore';
                 } else if (userType === 'KarachiJohar') {
                     branchSelect.value = 'Karachi Jauhar';
+                } else if (userType === 'KarachiBadar') {
+                    branchSelect.value = 'Karachi Badar';
                 }
             }
 
@@ -4682,12 +4689,13 @@ Debug info:
                         'islamabad': 'Islamabad',
                         'dha': 'DHA',
                         'KarachiJohar': 'Karachi Jauhar',
+                        'KarachiBadar': 'Karachi Badar',
                         'marketing': 'Marketing',
                         'super_admin': 'Super Admin'
                     };
 
-                    const badgeBg = user.user_type === 'super_admin' ? '#cfe2ff' : user.user_type === 'gulberg' ? '#d1e7dd' : user.user_type === 'islamabad' ? '#e7d5ff' : user.user_type === 'dha' ? '#ffd6e0' : user.user_type === 'KarachiJohar' ? '#d0f4ea' : user.user_type === 'marketing' ? '#fce4ec' : '#fff3cd';
-                    const badgeColor = user.user_type === 'super_admin' ? '#084298' : user.user_type === 'gulberg' ? '#0f5132' : user.user_type === 'islamabad' ? '#6f42c1' : user.user_type === 'dha' ? '#a0002e' : user.user_type === 'KarachiJohar' ? '#0d6e58' : user.user_type === 'marketing' ? '#880e4f' : '#856404';
+                    const badgeBg = user.user_type === 'super_admin' ? '#cfe2ff' : user.user_type === 'gulberg' ? '#d1e7dd' : user.user_type === 'islamabad' ? '#e7d5ff' : user.user_type === 'dha' ? '#ffd6e0' : user.user_type === 'KarachiJohar' ? '#d0f4ea' : user.user_type === 'KarachiBadar' ? '#e0f7fa' : user.user_type === 'marketing' ? '#fce4ec' : '#fff3cd';
+                    const badgeColor = user.user_type === 'super_admin' ? '#084298' : user.user_type === 'gulberg' ? '#0f5132' : user.user_type === 'islamabad' ? '#6f42c1' : user.user_type === 'dha' ? '#a0002e' : user.user_type === 'KarachiJohar' ? '#0d6e58' : user.user_type === 'KarachiBadar' ? '#006064' : user.user_type === 'marketing' ? '#880e4f' : '#856404';
 
                     return `
                         <tr style="display: table-row;">
