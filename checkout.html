@@ -584,9 +584,10 @@
                         <option value="">Select a branch</option>
                         <option value="Gulberg II, Lahore">Gulberg II, Lahore</option>
                         <option value="Johar Town, Lahore">Johar Town, Lahore</option>
-                        <option value="Islamabad" data-pickup-only="true">Islamabad (Pickup Only)</option>
+                        <option value="Islamabad">Islamabad</option>
                         <option value="DHA Phase 5, Lahore">DHA Phase 5, Lahore</option>
-                        <option value="Karachi Johar" data-pickup-only="true">Karachi Johar (Pickup Only)</option>
+                        <option value="Karachi Johar">Karachi Johar</option>
+                        <option value="Karachi Badar" data-delivery-only="true">Karachi Badar (Delivery Only)</option>
                     </select>
                     <div id="branchStatus"
                         style="margin-top: 0.5rem; padding: 0.75rem; border-radius: 5px; display: none; font-size: 0.9rem; font-weight: 600;">
@@ -708,7 +709,7 @@
                 if (savedBranchName) {
                     const branchOptions = Array.from(branchSelect.options).map(opt => opt.value);
                     if (branchOptions.includes(savedBranchName)) {
-                        if (!(currentOrderType === 'delivery' && isPickupOnlyBranch(savedBranchName))) {
+                        if (!(currentOrderType === 'delivery' && isPickupOnlyBranch(savedBranchName)) && !(currentOrderType === 'pickup' && isDeliveryOnlyBranch(savedBranchName))) {
                             branchSelect.value = savedBranchName;
                         }
                     } else {
@@ -719,11 +720,12 @@
                             'jt': 'Johar Town, Lahore',
                             'dha': 'DHA Phase 5, Lahore',
                             'islamabad': 'Islamabad',
-                            'karachi': 'Karachi Johar'
+                            'karachi': 'Karachi Johar',
+                            'karachi_badar': 'Karachi Badar'
                         };
                         const resolved = savedBranch && branchMap[savedBranch];
                         if (resolved && branchOptions.includes(resolved)) {
-                            if (!(currentOrderType === 'delivery' && isPickupOnlyBranch(resolved))) {
+                            if (!(currentOrderType === 'delivery' && isPickupOnlyBranch(resolved)) && !(currentOrderType === 'pickup' && isDeliveryOnlyBranch(resolved))) {
                                 branchSelect.value = resolved;
                             }
                         }
@@ -809,14 +811,23 @@
             return branchLower.includes('islamabad') ? 0.15 : 0.16;
         }
 
-        // Check if branch is pickup-only
-        function isPickupOnlyBranch(branch) {
+        function branchOptionHasAttr(branch, attr) {
             if (!branch) return false;
-            const branchLower = branch.toLowerCase();
-            return branchLower.includes('islamabad') || branchLower.includes('karachi');
+            const branchSelect = document.getElementById('branch');
+            if (!branchSelect) return false;
+            const opt = Array.from(branchSelect.options).find((o) => o.value === branch);
+            return !!(opt && opt.getAttribute(attr) === 'true');
         }
 
-        // Hide pickup-only branches when order type is delivery; clear invalid selection
+        function isPickupOnlyBranch(branch) {
+            return branchOptionHasAttr(branch, 'data-pickup-only');
+        }
+
+        function isDeliveryOnlyBranch(branch) {
+            return branchOptionHasAttr(branch, 'data-delivery-only');
+        }
+
+        // Hide pickup-only branches for delivery, and delivery-only branches for pickup; clear invalid selection
         function syncBranchOptionsVisibility() {
             const branchSelect = document.getElementById('branch');
             if (!branchSelect) return;
@@ -824,9 +835,13 @@
             Array.from(branchSelect.options).forEach((opt) => {
                 if (!opt.value) return;
                 const pickupOnly = opt.getAttribute('data-pickup-only') === 'true';
-                opt.hidden = isDelivery && pickupOnly;
+                const deliveryOnly = opt.getAttribute('data-delivery-only') === 'true';
+                opt.hidden = (isDelivery && pickupOnly) || (!isDelivery && deliveryOnly);
             });
             if (isDelivery && isPickupOnlyBranch(branchSelect.value)) {
+                branchSelect.value = '';
+            }
+            if (!isDelivery && isDeliveryOnlyBranch(branchSelect.value)) {
                 branchSelect.value = '';
             }
         }
@@ -1559,7 +1574,7 @@
                     // Check if the saved branch name matches one of the options
                     const branchOptions = Array.from(branchSelect.options).map(opt => opt.value);
                     if (branchOptions.includes(savedBranchName)) {
-                        if (!(currentOrderType === 'delivery' && isPickupOnlyBranch(savedBranchName))) {
+                        if (!(currentOrderType === 'delivery' && isPickupOnlyBranch(savedBranchName)) && !(currentOrderType === 'pickup' && isDeliveryOnlyBranch(savedBranchName))) {
                             branchSelect.value = savedBranchName;
                             branchWasSet = true;
                         }
@@ -1571,11 +1586,12 @@
                             'jt': 'Johar Town, Lahore',
                             'dha': 'DHA Phase 5, Lahore',
                             'islamabad': 'Islamabad',
-                            'karachi': 'Karachi Johar'
+                            'karachi': 'Karachi Johar',
+                            'karachi_badar': 'Karachi Badar'
                         };
                         const resolved = savedBranch && branchMap[savedBranch];
                         if (resolved && branchOptions.includes(resolved)) {
-                            if (!(currentOrderType === 'delivery' && isPickupOnlyBranch(resolved))) {
+                            if (!(currentOrderType === 'delivery' && isPickupOnlyBranch(resolved)) && !(currentOrderType === 'pickup' && isDeliveryOnlyBranch(resolved))) {
                                 branchSelect.value = resolved;
                                 branchWasSet = true;
                             }

@@ -51,6 +51,11 @@ function isKarachiJoharBranchName(branch) {
     return !!(branch && /karachi\s+johar/i.test(String(branch)));
 }
 
+// Karachi Badar orders (website branch value: "Karachi Badar")
+function isKarachiBadarBranchName(branch) {
+    return !!(branch && /karachi\s+badar/i.test(String(branch)));
+}
+
 // Lahore JT / Johar Town — excludes "Karachi Johar"
 function isJoharTownLahoreBranchName(branch) {
     if (!branch) return false;
@@ -89,10 +94,10 @@ async function notifyAllRiders(orderData) {
         let riderLocation = 'gulberg'; // default
         const branchLower = (orderData.branch || '').toLowerCase();
         if (isKarachiJoharBranchName(orderData.branch)) {
-            console.log('Skipping rider push notifications for Karachi Johar (pickup-focused branch)');
-            return;
-        }
-        if (branchLower.includes('johar')) {
+            riderLocation = 'karachi';
+        } else if (isKarachiBadarBranchName(orderData.branch)) {
+            riderLocation = 'karachi_badar';
+        } else if (branchLower.includes('johar')) {
             riderLocation = 'jt';
         } else if (orderData.branch && orderData.branch.toLowerCase().includes('islamabad')) {
             riderLocation = 'islamabad';
@@ -333,9 +338,16 @@ async function initializeBranches() {
                 { name: 'Johar Town, Lahore', open_hour: 12, close_hour: 3.75 },
                 { name: 'Islamabad', open_hour: 12, close_hour: 1.75 },
                 { name: 'DHA Phase 5, Lahore', open_hour: 12, close_hour: 1.75 },
-                { name: 'Karachi Johar', open_hour: 12, close_hour: 1.75 }
+                { name: 'Karachi Johar', open_hour: 12, close_hour: 1.75 },
+                { name: 'Karachi Badar', open_hour: 12, close_hour: 1.75 }
             ]);
             console.log('✅ Default branches initialized');
+        } else {
+            const badar = await Branch.findOne({ name: 'Karachi Badar' });
+            if (!badar) {
+                await Branch.create({ name: 'Karachi Badar', open_hour: 12, close_hour: 1.75 });
+                console.log('✅ Karachi Badar branch added');
+            }
         }
     } catch (error) {
         console.error('Error initializing branches:', error);
@@ -358,7 +370,8 @@ async function getBusinessHours(branchName) {
         'Johar Town, Lahore': { open: 12, close: 3.75 },
         'Islamabad': { open: 12, close: 1.75 },
         'DHA Phase 5, Lahore': { open: 12, close: 1.75 },
-        'Karachi Johar': { open: 12, close: 1.75 }
+        'Karachi Johar': { open: 12, close: 1.75 },
+        'Karachi Badar': { open: 12, close: 1.75 }
     };
     return defaults[branchName] || { open: 12, close: 1.75 };
 }
