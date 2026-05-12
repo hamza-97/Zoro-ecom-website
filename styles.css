@@ -36,11 +36,14 @@ html {
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
     background: rgba(0, 0, 0, 0.62);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     z-index: 5000;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 
 .welcome-modal.active {
@@ -49,11 +52,15 @@ html {
 
 .welcome-modal-content {
     width: min(560px, 100%);
+    max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    margin: auto;
     background: white;
     border-radius: 18px;
     box-shadow: 0 20px 70px rgba(0,0,0,0.35);
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
     transform: translateY(8px);
     opacity: 0;
     animation: welcomeModalIn 220ms ease forwards;
@@ -92,6 +99,17 @@ html {
 .welcome-modal-body {
     padding: 28px 24px 22px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.welcome-modal-badge,
+.welcome-modal-title,
+.welcome-modal-subtitle {
+    flex-shrink: 0;
 }
 
 .welcome-modal-badge {
@@ -146,6 +164,13 @@ html {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    text-align: left;
 }
 
 .branch-option-btn {
@@ -193,6 +218,7 @@ html {
     font-weight: 600;
     border-radius: 10px;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .welcome-modal-continue:disabled {
