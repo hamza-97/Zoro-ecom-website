@@ -46,7 +46,7 @@ if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
 
 console.log('✅ VAPID keys loaded successfully');
 
-// Karachi Johar orders (website branch value: "Karachi Johar")
+// Karachi Jauhar orders (website branch value: "Karachi Jauhar")
 function isKarachiJoharBranchName(branch) {
     return !!(branch && /karachi\s+johar/i.test(String(branch)));
 }
@@ -56,7 +56,7 @@ function isKarachiBadarBranchName(branch) {
     return !!(branch && /karachi\s+badar/i.test(String(branch)));
 }
 
-// Lahore JT / Johar Town — excludes "Karachi Johar"
+// Lahore JT / Johar Town — excludes "Karachi Jauhar"
 function isJoharTownLahoreBranchName(branch) {
     if (!branch) return false;
     const b = String(branch).toLowerCase();
@@ -64,7 +64,7 @@ function isJoharTownLahoreBranchName(branch) {
     return b.includes('johar') || /\bjt\b/.test(b);
 }
 
-// Mongo filter: JT branch users see Johar Town Lahore only (not Karachi Johar)
+// Mongo filter: JT branch users see Johar Town Lahore only (not Karachi Jauhar)
 function branchFilterJoharTownLahoreOnly() {
     return {
         $and: [
@@ -338,7 +338,7 @@ async function initializeBranches() {
                 { name: 'Johar Town, Lahore', open_hour: 12, close_hour: 3.75 },
                 { name: 'Islamabad', open_hour: 12, close_hour: 1.75 },
                 { name: 'DHA Phase 5, Lahore', open_hour: 12, close_hour: 1.75 },
-                { name: 'Karachi Johar', open_hour: 12, close_hour: 1.75 },
+                { name: 'Karachi Jauhar', open_hour: 12, close_hour: 1.75 },
                 { name: 'Karachi Badar', open_hour: 12, close_hour: 1.75 }
             ]);
             console.log('✅ Default branches initialized');
@@ -370,7 +370,7 @@ async function getBusinessHours(branchName) {
         'Johar Town, Lahore': { open: 12, close: 3.75 },
         'Islamabad': { open: 12, close: 1.75 },
         'DHA Phase 5, Lahore': { open: 12, close: 1.75 },
-        'Karachi Johar': { open: 12, close: 1.75 },
+        'Karachi Jauhar': { open: 12, close: 1.75 },
         'Karachi Badar': { open: 12, close: 1.75 }
     };
     return defaults[branchName] || { open: 12, close: 1.75 };
@@ -620,7 +620,7 @@ app.get('/api/orders', authenticateAdmin, async (req, res) => {
         if (req.user.user_type === 'gulberg') {
             query.branch = { $regex: /gulberg/i }; // Case-insensitive match for "Gulberg"
         } else if (req.user.user_type === 'jt') {
-            Object.assign(query, branchFilterJoharTownLahoreOnly()); // Excludes "Karachi Johar"
+            Object.assign(query, branchFilterJoharTownLahoreOnly()); // Excludes "Karachi Jauhar"
         } else if (req.user.user_type === 'islamabad') {
             query.branch = { $regex: /islamabad/i }; // Case-insensitive match for "Islamabad"
         } else if (req.user.user_type === 'dha') {
@@ -819,7 +819,7 @@ app.get('/api/stats', authenticateAdmin, async (req, res) => {
         if (req.user.user_type === 'gulberg') {
             branchFilter.branch = { $regex: /gulberg/i }; // Case-insensitive match for "Gulberg"
         } else if (req.user.user_type === 'jt') {
-            Object.assign(branchFilter, branchFilterJoharTownLahoreOnly()); // Excludes "Karachi Johar"
+            Object.assign(branchFilter, branchFilterJoharTownLahoreOnly()); // Excludes "Karachi Jauhar"
         } else if (req.user.user_type === 'islamabad') {
             branchFilter.branch = { $regex: /islamabad/i }; // Case-insensitive match for "Islamabad"
         } else if (req.user.user_type === 'dha') {
