@@ -750,7 +750,10 @@ function createCategorySection(category, categoryProducts) {
 function createProductCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card';
-    const isTruffleRoyalOutOfStock = product.id === 6;
+    const branchCode = typeof selectedBranch !== 'undefined' ? selectedBranch : localStorage.getItem('selectedBranch');
+    const isOutOfStockHere = typeof ZoroBranchRestrictions !== 'undefined'
+        && ZoroBranchRestrictions.isIsbOrKarachiLocalBranchCode(branchCode)
+        && ZoroBranchRestrictions.isProductUnavailableAtIsbKarachi(product);
     
     // Calculate discounted price
     const pricing = getDiscountedPrice(product);
@@ -774,9 +777,9 @@ function createProductCard(product) {
                 <button
                     class="add-to-cart-btn"
                     data-product-id="${product.id}"
-                    ${isTruffleRoyalOutOfStock ? 'disabled aria-disabled="true" title="Out of Stock"' : ''}
+                    ${isOutOfStockHere ? 'disabled aria-disabled="true" title="Not available at this branch"' : ''}
                 >
-                    ${isTruffleRoyalOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+                    ${isOutOfStockHere ? 'Not available' : 'Add to Cart'}
                 </button>
             </div>
         </div>
@@ -784,7 +787,7 @@ function createProductCard(product) {
     
     // Add click event to the button
     const addToCartBtn = card.querySelector('.add-to-cart-btn');
-    if (isTruffleRoyalOutOfStock) {
+    if (isOutOfStockHere) {
         return card;
     }
     
@@ -1124,6 +1127,13 @@ window.toggleCart = toggleCart;
 
 // Show Product Modal
 function showProductModal(product) {
+    if (typeof ZoroBranchRestrictions !== 'undefined') {
+        const effectiveBranch = (typeof selectedBranch !== 'undefined' ? selectedBranch : null) || localStorage.getItem('selectedBranch');
+        if (ZoroBranchRestrictions.isIsbOrKarachiLocalBranchCode(effectiveBranch) && ZoroBranchRestrictions.isProductUnavailableAtIsbKarachi(product)) {
+            alert('Truffle Royal, Loaded Fries, and Premium Shakes are not available at Islamabad and Karachi branches. Please choose another branch from the home page, or select a Lahore branch at checkout.');
+            return;
+        }
+    }
     const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
     const isBeefMealCombo = product.category === 'beef-smasher-meals';
     // If it's a combo, add directly to cart without showing modal

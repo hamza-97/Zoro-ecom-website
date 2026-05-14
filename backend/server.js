@@ -59,6 +59,23 @@ function isKarachiBadarBranchName(branch) {
     return !!(branch && /karachi\s+badar/i.test(String(branch)));
 }
 
+function isIslamabadBranchName(branch) {
+    return !!(branch && /islamabad/i.test(String(branch)));
+}
+
+/** Orders for Islamabad or any Karachi branch (Jauhar / Badar) */
+function isIslamabadOrKarachiOrderBranch(branch) {
+    return isIslamabadBranchName(branch) || isKarachiJoharBranchName(branch) || isKarachiBadarBranchName(branch);
+}
+
+function orderItemBlockedAtIslamabadKarachi(item) {
+    if (!item || typeof item.id !== 'number') return false;
+    if (item.id === 6) return true;
+    if (item.category === 'loaded-fries' || [22, 23, 24, 25].includes(item.id)) return true;
+    if (item.category === 'premium-shakes' || [33, 34, 35, 36, 37, 38, 39, 40].includes(item.id)) return true;
+    return false;
+}
+
 // Lahore JT / Johar Town — excludes "Karachi Jauhar"
 function isJoharTownLahoreBranchName(branch) {
     if (!branch) return false;
@@ -339,17 +356,24 @@ async function initializeBranches() {
             await Branch.insertMany([
                 { name: 'Gulberg II, Lahore', open_hour: 12, close_hour: 1.75 },
                 { name: 'Johar Town, Lahore', open_hour: 12, close_hour: 3.75 },
-                { name: 'Islamabad', open_hour: 12, close_hour: 1.75 },
+                { name: 'Islamabad', open_hour: 12, close_hour: 2.75 },
                 { name: 'DHA Phase 5, Lahore', open_hour: 12, close_hour: 1.75 },
-                { name: 'Karachi Jauhar', open_hour: 12, close_hour: 1.75 },
-                { name: 'Karachi Badar', open_hour: 12, close_hour: 1.75 }
+                { name: 'Karachi Jauhar', open_hour: 12, close_hour: 2.75 },
+                { name: 'Karachi Badar', open_hour: 12, close_hour: 2.75 }
             ]);
             console.log('✅ Default branches initialized');
         } else {
             const badar = await Branch.findOne({ name: 'Karachi Badar' });
             if (!badar) {
-                await Branch.create({ name: 'Karachi Badar', open_hour: 12, close_hour: 1.75 });
+                await Branch.create({ name: 'Karachi Badar', open_hour: 12, close_hour: 2.75 });
                 console.log('✅ Karachi Badar branch added');
+            }
+            const hourUpdate = await Branch.updateMany(
+                { name: { $in: ['Islamabad', 'Karachi Jauhar', 'Karachi Badar'] }, close_hour: 1.75 },
+                { $set: { close_hour: 2.75 } }
+            );
+            if (hourUpdate.modifiedCount > 0) {
+                console.log(`✅ Islamabad/Karachi branch closing time set to 2:45am (${hourUpdate.modifiedCount} updated)`);
             }
         }
     } catch (error) {
@@ -371,10 +395,10 @@ async function getBusinessHours(branchName) {
     const defaults = {
         'Gulberg II, Lahore': { open: 12, close: 1.75 },
         'Johar Town, Lahore': { open: 12, close: 3.75 },
-        'Islamabad': { open: 12, close: 1.75 },
+        'Islamabad': { open: 12, close: 2.75 },
         'DHA Phase 5, Lahore': { open: 12, close: 1.75 },
-        'Karachi Jauhar': { open: 12, close: 1.75 },
-        'Karachi Badar': { open: 12, close: 1.75 }
+        'Karachi Jauhar': { open: 12, close: 2.75 },
+        'Karachi Badar': { open: 12, close: 2.75 }
     };
     return defaults[branchName] || { open: 12, close: 1.75 };
 }
@@ -470,6 +494,15 @@ app.post('/api/orders', async (req, res) => {
             return res.status(400).json({ 
                 error: `Sorry, we are currently closed. This branch closes at ${closingTime}. Please place your order during business hours (12pm-${closingTime}).` 
             });
+        }
+
+        if (isIslamabadOrKarachiOrderBranch(branch) && Array.isArray(items)) {
+            const blocked = items.find(orderItemBlockedAtIslamabadKarachi);
+            if (blocked) {
+                return res.status(400).json({
+                    error: 'Truffle Royal, Loaded Fries, and Premium Shakes are not available at Islamabad and Karachi branches. Please update your cart or choose another branch.'
+                });
+            }
         }
 
         const orderNumber = generateOrderNumber();

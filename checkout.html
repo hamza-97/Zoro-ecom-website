@@ -699,6 +699,7 @@
         </div>
     </div>
 
+    <script src="branch-product-restrictions.js"></script>
     <script>
         // Mobile menu toggle and auto-select branch from welcome modal
         document.addEventListener('DOMContentLoaded', () => {
@@ -791,7 +792,11 @@
                     // Fallback to defaults if API fails
                     BUSINESS_HOURS = {
                         'Gulberg II, Lahore': { open: 12, close: 1.75 },
-                        'Johar Town, Lahore': { open: 12, close: 3.75 }
+                        'Johar Town, Lahore': { open: 12, close: 3.75 },
+                        'DHA Phase 5, Lahore': { open: 12, close: 1.75 },
+                        'Islamabad': { open: 12, close: 2.75 },
+                        'Karachi Jauhar': { open: 12, close: 2.75 },
+                        'Karachi Badar': { open: 12, close: 2.75 }
                     };
                 }
             } catch (error) {
@@ -799,7 +804,11 @@
                 // Fallback to defaults
                 BUSINESS_HOURS = {
                     'Gulberg II, Lahore': { open: 12, close: 1.75 },
-                    'Johar Town, Lahore': { open: 12, close: 3.75 }
+                    'Johar Town, Lahore': { open: 12, close: 3.75 },
+                    'DHA Phase 5, Lahore': { open: 12, close: 1.75 },
+                    'Islamabad': { open: 12, close: 2.75 },
+                    'Karachi Jauhar': { open: 12, close: 2.75 },
+                    'Karachi Badar': { open: 12, close: 2.75 }
                 };
             }
         }
@@ -825,6 +834,32 @@
 
         function isDeliveryOnlyBranch(branch) {
             return branchOptionHasAttr(branch, 'data-delivery-only');
+        }
+
+        function notifyBranchRestrictedCartIfNeeded(branchSelect) {
+            const Z = typeof window !== 'undefined' ? window.ZoroBranchRestrictions : null;
+            if (!Z || !branchSelect) return;
+            const prev = branchSelect.dataset.zoroPrevBranch;
+            const next = branchSelect.value || '';
+            if (prev === next) return;
+
+            const switchedToRestricted = Z.isIsbOrKarachiCheckoutBranch(next);
+            const fromNonRestricted = prev === undefined || prev === '' || !Z.isIsbOrKarachiCheckoutBranch(prev);
+
+            branchSelect.dataset.zoroPrevBranch = next;
+
+            if (!switchedToRestricted || !fromNonRestricted) return;
+
+            const liveCart = JSON.parse(localStorage.getItem('zoroCart') || '[]');
+            const conflicts = Z.getCartConflictsForIsbKarachi(liveCart);
+            if (!conflicts.length) return;
+
+            const label = [...new Set(conflicts.map((c) => c.name))].join(', ');
+            alert(
+                'Islamabad and Karachi branches do not serve Truffle Royal, Loaded Fries, or Premium Shakes.\n\n' +
+                'Your cart includes items that are not available at this branch: ' + label + '.\n\n' +
+                'Please remove those items from your cart or choose a Lahore branch.'
+            );
         }
 
         // Hide pickup-only branches for delivery, and delivery-only branches for pickup; clear invalid selection
@@ -1387,6 +1422,8 @@
                     }
                     // Recalculate tax when branch changes
                     displayOrderItems();
+
+                    notifyBranchRestrictedCartIfNeeded(branchSelect);
                 });
             }
         });
@@ -1407,6 +1444,19 @@
             if (!branch) {
                 alert('Please select a branch.');
                 return;
+            }
+
+            const Z = typeof window !== 'undefined' ? window.ZoroBranchRestrictions : null;
+            if (Z && Z.isIsbOrKarachiCheckoutBranch(branch)) {
+                const conflicts = Z.getCartConflictsForIsbKarachi(cart);
+                if (conflicts.length) {
+                    const label = [...new Set(conflicts.map((c) => c.name))].join(', ');
+                    alert(
+                        'Islamabad and Karachi branches do not serve Truffle Royal, Loaded Fries, or Premium Shakes.\n\n' +
+                        'Please remove these items from your cart before placing the order: ' + label + '.'
+                    );
+                    return;
+                }
             }
 
             const customerName = (document.getElementById('customerName').value || '').trim();
@@ -1629,6 +1679,8 @@
                 }
 
                 syncBranchOptionsVisibility();
+
+                branchSelect.dataset.zoroPrevBranch = branchSelect.value || '';
 
                 branchSelect.addEventListener('change', updateBranchStatus);
 

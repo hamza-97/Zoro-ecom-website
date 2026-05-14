@@ -115,6 +115,10 @@ function setupWelcomeModal() {
                 // Also save the full branch name for checkout/order processing
                 localStorage.setItem('selectedBranchName', selectedBranchName);
             } catch (_) {}
+
+            if (typeof initializeCategorySlider === 'function') {
+                initializeCategorySlider();
+            }
             
             // Close modal
             close(shouldPersist());
@@ -145,6 +149,9 @@ function setupWelcomeModal() {
                     localStorage.setItem('selectedBranch', selectedBranch);
                     localStorage.setItem('selectedBranchName', selectedBranchName);
                 } catch (_) {}
+                if (typeof initializeCategorySlider === 'function') {
+                    initializeCategorySlider();
+                }
             }
             close(shouldPersist());
         });
@@ -158,6 +165,9 @@ function setupWelcomeModal() {
                     localStorage.setItem('selectedBranch', selectedBranch);
                     localStorage.setItem('selectedBranchName', selectedBranchName);
                 } catch (_) {}
+                if (typeof initializeCategorySlider === 'function') {
+                    initializeCategorySlider();
+                }
             }
             close(shouldPersist());
         }
@@ -171,6 +181,9 @@ function setupWelcomeModal() {
                     localStorage.setItem('selectedBranch', selectedBranch);
                     localStorage.setItem('selectedBranchName', selectedBranchName);
                 } catch (_) {}
+                if (typeof initializeCategorySlider === 'function') {
+                    initializeCategorySlider();
+                }
             }
             close(shouldPersist());
         }
@@ -411,7 +424,10 @@ function displayProducts(productsToShow) {
 function createProductCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card';
-    const isTruffleRoyalOutOfStock = product.id === 6;
+    const branchCode = localStorage.getItem('selectedBranch');
+    const isOutOfStockHere = typeof ZoroBranchRestrictions !== 'undefined'
+        && ZoroBranchRestrictions.isIsbOrKarachiLocalBranchCode(branchCode)
+        && ZoroBranchRestrictions.isProductUnavailableAtIsbKarachi(product);
     
     // Calculate discounted price (use function from menu-script.js if available)
     let pricing;
@@ -447,9 +463,9 @@ function createProductCard(product) {
                 <button
                     class="add-to-cart-btn"
                     data-product-id="${product.id}"
-                    ${isTruffleRoyalOutOfStock ? 'disabled aria-disabled="true" title="Out of Stock"' : ''}
+                    ${isOutOfStockHere ? 'disabled aria-disabled="true" title="Not available at this branch"' : ''}
                 >
-                    ${isTruffleRoyalOutOfStock ? 'OUT OF STOCK' : 'ADD TO CART'}
+                    ${isOutOfStockHere ? 'NOT AVAILABLE' : 'ADD TO CART'}
                 </button>
             </div>
         </div>
@@ -457,7 +473,7 @@ function createProductCard(product) {
     
     // Add click event to the button
     const addToCartBtn = card.querySelector('.add-to-cart-btn');
-    if (isTruffleRoyalOutOfStock) {
+    if (isOutOfStockHere) {
         card.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -862,6 +878,13 @@ window.toggleCart = toggleCart;
 
 // Show Product Modal
 function showProductModal(product) {
+    if (typeof ZoroBranchRestrictions !== 'undefined') {
+        const code = localStorage.getItem('selectedBranch');
+        if (ZoroBranchRestrictions.isIsbOrKarachiLocalBranchCode(code) && ZoroBranchRestrictions.isProductUnavailableAtIsbKarachi(product)) {
+            alert('Truffle Royal, Loaded Fries, and Premium Shakes are not available at Islamabad and Karachi branches. Please choose another branch from the home page, or select a Lahore branch at checkout.');
+            return;
+        }
+    }
     // Zoro For Four: show drink selection modal instead of adding directly
     if (product.id === 101) {
         showSoloIftaarDrinkModal(product);
