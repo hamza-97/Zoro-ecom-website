@@ -73,6 +73,7 @@ function orderItemBlockedAtIslamabadKarachi(item) {
     if (item.id === 6) return true;
     if (item.category === 'loaded-fries' || [22, 23, 24, 25].includes(item.id)) return true;
     if (item.category === 'premium-shakes' || [33, 34, 35, 36, 37, 38, 39, 40].includes(item.id)) return true;
+    if (item.category === 'desserts') return true;
     return false;
 }
 
@@ -94,11 +95,10 @@ function branchFilterJoharTownLahoreOnly() {
     };
 }
 
-// Get tax rate based on branch (15% for Islamabad, 16% for others)
+// Get tax rate based on branch (15% for Islamabad and Karachi branches, 16% for Lahore)
 function getTaxRate(branch) {
     if (!branch) return 0.16; // Default to 16% if branch not specified
-    const branchLower = branch.toLowerCase();
-    return branchLower.includes('islamabad') ? 0.15 : 0.16;
+    return isIslamabadOrKarachiOrderBranch(branch) ? 0.15 : 0.16;
 }
 
 webpush.setVapidDetails(
@@ -500,7 +500,7 @@ app.post('/api/orders', async (req, res) => {
             const blocked = items.find(orderItemBlockedAtIslamabadKarachi);
             if (blocked) {
                 return res.status(400).json({
-                    error: 'Truffle Royal, Loaded Fries, and Premium Shakes are not available at Islamabad and Karachi branches. Please update your cart or choose another branch.'
+                    error: 'Truffle Royal, Loaded Fries, Premium Shakes, and desserts are not available at Islamabad and Karachi branches. Please update your cart or choose another branch.'
                 });
             }
         }

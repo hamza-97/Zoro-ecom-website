@@ -995,7 +995,7 @@
                     </div>
                     <div class="summary-row">
                         <div class="summary-label">
-                            <span>Tax (16%):</span>
+                            <span id="orderDetailTaxLabel">Tax:</span>
                         </div>
                         <div class="summary-value" id="tax">PKR 0</div>
                     </div>
@@ -1090,11 +1090,12 @@
         let editingField = null;
         let allProducts = [];
 
-        // Get tax rate based on branch (15% for Islamabad, 16% for others)
+        // Get tax rate based on branch (15% for Islamabad and Karachi branches, 16% for Lahore)
         function getTaxRate(branch) {
             if (!branch) return 0.16; // Default to 16% if branch not specified
-            const branchLower = branch.toLowerCase();
-            return branchLower.includes('islamabad') ? 0.15 : 0.16;
+            const b = String(branch);
+            if (/islamabad/i.test(b) || /karachi\s+j(auh|oh)ar/i.test(b) || /karachi\s+badar/i.test(b)) return 0.15;
+            return 0.16;
         }
 
         // Get order ID from URL
@@ -1231,6 +1232,9 @@
             document.getElementById('subtotal').textContent = `PKR ${subtotal.toLocaleString()}`;
             document.getElementById('discount').textContent = `PKR ${discount.toLocaleString()}`;
             document.getElementById('deliveryFee').textContent = `PKR ${deliveryFee.toLocaleString()}`;
+            const taxPct = Math.round(getTaxRate(currentOrder.branch || '') * 100);
+            const taxLabelEl = document.getElementById('orderDetailTaxLabel');
+            if (taxLabelEl) taxLabelEl.textContent = `Tax (${taxPct}%):`;
             document.getElementById('tax').textContent = `PKR ${tax.toLocaleString()}`;
             document.getElementById('total').textContent = `PKR ${total.toLocaleString()}`;
 
@@ -1866,9 +1870,34 @@
             let product = null;
 
             if (index >= 0) {
-                // Editing existing item - use existing product
+                // Editing existing item — resolve from dropdown if present, else from line item (id / name; tolerate string ids and casing)
                 const existingItem = currentOrder.items[index];
-                product = allProducts.find(p => p.name === existingItem.name);
+                const sel = document.getElementById('productSelect');
+                const rawSel = sel && sel.value != null ? String(sel.value).trim() : '';
+                if (rawSel) {
+                    product = allProducts.find(p => {
+                        const pId = p._id ?? p.id;
+                        return pId != null && String(pId) === rawSel;
+                    });
+                    if (!product && Number.isFinite(Number(rawSel))) {
+                        const n = Number(rawSel);
+                        product = allProducts.find(p => p.id != null && Number(p.id) === n);
+                    }
+                }
+                if (!product) {
+                    const want = (existingItem.name || '').trim().toLowerCase();
+                    product = allProducts.find(p => (p.name || '').trim().toLowerCase() === want);
+                }
+                if (!product && existingItem.id != null) {
+                    product = allProducts.find(p => {
+                        const pId = p._id ?? p.id;
+                        return pId != null && String(pId) === String(existingItem.id);
+                    });
+                }
+                if (!product && existingItem.id != null && Number.isFinite(Number(existingItem.id))) {
+                    const n = Number(existingItem.id);
+                    product = allProducts.find(p => p.id != null && Number(p.id) === n);
+                }
                 if (!product) {
                     alert('Product not found');
                     return;
@@ -1879,7 +1908,14 @@
                     alert('Please select a product');
                     return;
                 }
-                product = allProducts.find(p => (p._id && p._id === productId) || (p.id && p.id === productId));
+                product = allProducts.find(p => {
+                    const pId = p._id ?? p.id;
+                    return pId != null && String(pId) === String(productId);
+                });
+                if (!product && Number.isFinite(Number(productId))) {
+                    const n = Number(productId);
+                    product = allProducts.find(p => p.id != null && Number(p.id) === n);
+                }
                 if (!product) {
                     alert('Product not found');
                     return;

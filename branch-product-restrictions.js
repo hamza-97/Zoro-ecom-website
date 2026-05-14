@@ -1,5 +1,5 @@
 /**
- * Islamabad + Karachi branches: Truffle Royal, all Loaded Fries, all Premium Shakes are unavailable.
+ * Islamabad + Karachi branches: Truffle Royal, all Loaded Fries, all Premium Shakes, and all desserts are unavailable.
  * Used by menu, home, and checkout.
  */
 (function (global) {
@@ -39,6 +39,7 @@
         if (product.id === 6) return true;
         if (product.category === 'loaded-fries' || LOADED_FRIES_IDS.includes(product.id)) return true;
         if (product.category === 'premium-shakes' || PREMIUM_SHAKE_IDS.includes(product.id)) return true;
+        if (product.category === 'desserts') return true;
         return false;
     }
 
@@ -47,6 +48,7 @@
         if (item.id === 6) return true;
         if (item.category === 'loaded-fries' || LOADED_FRIES_IDS.includes(item.id)) return true;
         if (item.category === 'premium-shakes' || PREMIUM_SHAKE_IDS.includes(item.id)) return true;
+        if (item.category === 'desserts') return true;
         return false;
     }
 

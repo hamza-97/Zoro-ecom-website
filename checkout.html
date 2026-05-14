@@ -813,11 +813,14 @@
             }
         }
 
-        // Get tax rate based on branch (15% for Islamabad, 16% for others)
+        // Get tax rate based on branch (15% for Islamabad and Karachi branches, 16% for Lahore)
         function getTaxRate(branch) {
             if (!branch) return 0.16; // Default to 16% if branch not specified
-            const branchLower = branch.toLowerCase();
-            return branchLower.includes('islamabad') ? 0.15 : 0.16;
+            const Z = typeof window !== 'undefined' ? window.ZoroBranchRestrictions : null;
+            if (Z && Z.isIsbOrKarachiCheckoutBranch(branch)) return 0.15;
+            const b = String(branch);
+            if (/islamabad/i.test(b) || /karachi\s+j(auh|oh)ar/i.test(b) || /karachi\s+badar/i.test(b)) return 0.15;
+            return 0.16;
         }
 
         function branchOptionHasAttr(branch, attr) {
@@ -856,7 +859,7 @@
 
             const label = [...new Set(conflicts.map((c) => c.name))].join(', ');
             alert(
-                'Islamabad and Karachi branches do not serve Truffle Royal, Loaded Fries, or Premium Shakes.\n\n' +
+                'Islamabad and Karachi branches do not serve Truffle Royal, Loaded Fries, Premium Shakes, or desserts.\n\n' +
                 'Your cart includes items that are not available at this branch: ' + label + '.\n\n' +
                 'Please remove those items from your cart or choose a Lahore branch.'
             );
@@ -1452,7 +1455,7 @@
                 if (conflicts.length) {
                     const label = [...new Set(conflicts.map((c) => c.name))].join(', ');
                     alert(
-                        'Islamabad and Karachi branches do not serve Truffle Royal, Loaded Fries, or Premium Shakes.\n\n' +
+                        'Islamabad and Karachi branches do not serve Truffle Royal, Loaded Fries, Premium Shakes, or desserts.\n\n' +
                         'Please remove these items from your cart before placing the order: ' + label + '.'
                     );
                     return;

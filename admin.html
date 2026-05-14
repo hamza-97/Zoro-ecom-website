@@ -1380,7 +1380,7 @@
                             style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
-                        <label>Tax (16%)</label>
+                        <label>Tax (Rs)</label>
                         <input type="number" id="createTax" value="0" step="0.01" readonly
                             style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
                     </div>
@@ -1498,7 +1498,7 @@
                             style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem;">
                     </div>
                     <div class="form-group">
-                        <label>Tax (16%)</label>
+                        <label>Tax (Rs)</label>
                         <input type="number" id="createTax" value="0" step="0.01" readonly
                             style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 5px; font-size: 1rem; background: #f5f5f5;">
                     </div>
@@ -3111,11 +3111,12 @@
             openAddItemModal(currentEditItems[index], index);
         }
 
-        // Get tax rate based on branch (15% for Islamabad, 16% for others)
+        // Get tax rate based on branch (15% for Islamabad and Karachi branches, 16% for Lahore)
         function getTaxRate(branch) {
             if (!branch) return 0.16; // Default to 16% if branch not specified
-            const branchLower = branch.toLowerCase();
-            return branchLower.includes('islamabad') ? 0.15 : 0.16;
+            const b = String(branch);
+            if (/islamabad/i.test(b) || /karachi\s+j(auh|oh)ar/i.test(b) || /karachi\s+badar/i.test(b)) return 0.15;
+            return 0.16;
         }
 
         function recalculateOrderTotals() {
@@ -3417,7 +3418,29 @@ Debug info:
 
         function getAdminOrderableProducts() {
             const DISCONTINUED_PRODUCT_IDS = [101, 102, 103];
-            return allProducts.filter(p => !DISCONTINUED_PRODUCT_IDS.includes(p.id));
+            return allProducts.filter(p => !DISCONTINUED_PRODUCT_IDS.includes(Number(p.id)));
+        }
+
+        /** Match select value to catalog row (handles string vs number id and Mongo _id). */
+        function findAdminOrderableProductBySelectValue(raw) {
+            if (raw === undefined || raw === null) return null;
+            const s = String(raw).trim();
+            if (!s) return null;
+
+            function findInList(list) {
+                if (!Array.isArray(list)) return null;
+                let found = list.find(p => p.id != null && String(p.id) === s);
+                if (found) return found;
+                const n = Number(s);
+                if (Number.isFinite(n)) {
+                    found = list.find(p => p.id != null && Number(p.id) === n);
+                    if (found) return found;
+                }
+                found = list.find(p => p._id != null && String(p._id) === s);
+                return found || null;
+            }
+
+            return findInList(getAdminOrderableProducts()) || findInList(allProducts);
         }
 
         function renderAddItemModal(item) {
@@ -3490,7 +3513,8 @@ Debug info:
             const orderableProducts = getAdminOrderableProducts();
 
             const productsHTML = orderableProducts.map(p => {
-                const isSelected = product && product.id === p.id;
+                const optVal = p.id != null ? p.id : p._id;
+                const isSelected = product && (product.id === p.id || String(product.id ?? product._id) === String(optVal));
                 // Show discounted price for combos
                 let displayPrice = p.price;
                 if (p.isCombo) {
@@ -3502,7 +3526,7 @@ Debug info:
                     }
                     displayPrice = APPLY_DISCOUNTS ? basePricing.discounted : p.price;
                 }
-                return `<option value="${p.id}" ${isSelected ? 'selected' : ''}>${p.name} - Rs ${displayPrice.toLocaleString()}</option>`;
+                return `<option value="${optVal != null ? String(optVal) : ''}" ${isSelected ? 'selected' : ''}>${p.name} - Rs ${displayPrice.toLocaleString()}</option>`;
             }).join('');
 
             // Ramadan deal option constants (same as customer flow in script.js)
@@ -3670,7 +3694,7 @@ Debug info:
             let sizes = [];
             if (product) {
                 const isCombo = product.isCombo || false;
-                const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
+                const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(Number(product.id));
                 const isRamadanDealWithOptions = product.id === 101 || product.id === 102 || product.id === 103;
 
                 if ((!isCombo || isCustomMealCombo) && !isRamadanDealWithOptions) {
@@ -3898,7 +3922,7 @@ Debug info:
             if (product) {
                 const isCombo = product.isCombo || false;
                 const category = product.category || '';
-                const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
+                const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(Number(product.id));
                 const isBeef = category === 'beef-smashers' || category === 'beef-speciality';
                 const isChicken = category === 'chicken-burgers';
                 const isRamadanDealWithOptions = product.id === 101 || product.id === 102 || product.id === 103;
@@ -3925,7 +3949,7 @@ Debug info:
                 }
             }
 
-            const isCustomMealCombo = !!(product && product.isCombo && ![101, 102, 103].includes(product.id));
+            const isCustomMealCombo = !!(product && product.isCombo && ![101, 102, 103].includes(Number(product.id)));
             const selectedAddons = item
                 ? ((item.addons && item.addons.length > 0)
                     ? item.addons
@@ -4129,9 +4153,8 @@ Debug info:
         }
 
         function onProductSelectChange() {
-            const productId = parseInt(document.getElementById('productSelect').value);
-            const orderableProducts = getAdminOrderableProducts();
-            const product = orderableProducts.find(p => p.id === productId);
+            const raw = document.getElementById('productSelect')?.value;
+            const product = findAdminOrderableProductBySelectValue(raw);
 
             if (product) {
                 // Create a temporary item object with the selected product to preserve selection
@@ -4151,7 +4174,8 @@ Debug info:
                 setTimeout(() => {
                     const select = document.getElementById('productSelect');
                     if (select) {
-                        select.value = productId;
+                        const v = product.id != null ? String(product.id) : (product._id != null ? String(product._id) : '');
+                        if (v) select.value = v;
                         // Scroll to selected option
                         const selectedOption = select.options[select.selectedIndex];
                         if (selectedOption) {
@@ -4183,10 +4207,8 @@ Debug info:
 
         function toggleAddon(element) {
             const productSelect = document.getElementById('productSelect');
-            const productId = productSelect ? parseInt(productSelect.value) : NaN;
-            const orderableProducts = getAdminOrderableProducts();
-            const selectedProduct = orderableProducts.find(p => p.id === productId);
-            const isCustomMealCombo = !!(selectedProduct && selectedProduct.isCombo && ![101, 102, 103].includes(selectedProduct.id));
+            const selectedProduct = productSelect ? findAdminOrderableProductBySelectValue(productSelect.value) : null;
+            const isCustomMealCombo = !!(selectedProduct && selectedProduct.isCombo && ![101, 102, 103].includes(Number(selectedProduct.id)));
             if (isCustomMealCombo) {
                 document.querySelectorAll('.addon-option[data-addon]').forEach(opt => opt.classList.remove('selected'));
                 element.classList.add('selected');
@@ -4208,19 +4230,20 @@ Debug info:
 
         function saveItemToOrder() {
             const productSelect = document.getElementById('productSelect');
-            const productId = parseInt(productSelect.value);
+            const rawVal = productSelect ? String(productSelect.value).trim() : '';
 
-            if (!productId) {
+            if (!rawVal) {
                 alert('Please select a product');
                 return;
             }
 
-            const product = getAdminOrderableProducts().find(p => p.id === productId);
+            const product = findAdminOrderableProductBySelectValue(rawVal);
             if (!product) {
                 alert('Product not found');
                 return;
             }
 
+            const productId = Number(product.id);
             const quantity = window.currentItemQuantity || 1;
             let newItem = null;
 
@@ -4335,7 +4358,7 @@ Debug info:
                 };
             } else {
                 const isCombo = product.isCombo || false;
-                const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(product.id);
+                const isCustomMealCombo = !!product.isCombo && ![101, 102, 103].includes(Number(product.id));
                 let sizeName = 'Regular';
                 let sizePrice = product.price;
                 let originalPrice = product.price;
