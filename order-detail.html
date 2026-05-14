@@ -1104,6 +1104,46 @@
             return params.get('id');
         }
 
+        /** Admin session (same key as admin.html login) — required for PATCH /api/orders/:id */
+        function getOrderDetailAuthHeaders() {
+            try {
+                const raw = localStorage.getItem('adminUser');
+                if (!raw) return null;
+                const u = JSON.parse(raw);
+                if (!u || !u.id || !u.user_type) return null;
+                return {
+                    'user-id': String(u.id),
+                    'user-type': String(u.user_type),
+                    'Content-Type': 'application/json'
+                };
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function patchOrder(body) {
+            const headers = getOrderDetailAuthHeaders();
+            if (!headers) {
+                alert('Sign in to the admin dashboard in this browser first, then open this order again. Saving changes requires an admin session.');
+                return false;
+            }
+            const res = await fetch(`${API_URL}/orders/${currentOrderId}`, {
+                method: 'PATCH',
+                headers,
+                body: JSON.stringify(body)
+            });
+            let errMsg = '';
+            try {
+                const data = await res.json();
+                if (data && data.error) errMsg = data.error;
+            } catch (_) { /* non-JSON body */ }
+            if (!res.ok) {
+                alert(errMsg || `Could not save changes (HTTP ${res.status}).`);
+                return false;
+            }
+            return true;
+        }
+
         // Load order details
         async function loadOrderDetails() {
             const orderId = getOrderIdFromURL();
@@ -1389,6 +1429,7 @@
             // Handle numeric fields
             if (fieldId === 'discount' || fieldId === 'deliveryFee') {
                 const numValue = parseFloat(newValue.replace(/[^0-9.]/g, '')) || 0;
+                const previousDisplay = field.textContent.trim();
                 field.textContent = `PKR ${numValue.toLocaleString()}`;
 
                 // Update order
@@ -1396,17 +1437,19 @@
                 updateData[dbField] = numValue;
 
                 try {
-                    await fetch(`${API_URL}/orders/${currentOrderId}`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(updateData)
-                    });
-                    await loadOrderDetails(); // Reload to get updated totals
+                    const ok = await patchOrder(updateData);
+                    if (ok) {
+                        await loadOrderDetails(); // Reload to get updated totals
+                    } else {
+                        field.textContent = previousDisplay;
+                    }
                 } catch (error) {
                     console.error('Error updating:', error);
                     alert('Failed to update');
+                    field.textContent = previousDisplay;
                 }
             } else {
+                const previousDisplay = field.textContent.trim();
                 field.textContent = newValue;
 
                 // Update order
@@ -1414,14 +1457,14 @@
                 updateData[dbField] = newValue;
 
                 try {
-                    await fetch(`${API_URL}/orders/${currentOrderId}`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(updateData)
-                    });
+                    const ok = await patchOrder(updateData);
+                    if (!ok) {
+                        field.textContent = previousDisplay;
+                    }
                 } catch (error) {
                     console.error('Error updating:', error);
                     alert('Failed to update');
+                    field.textContent = previousDisplay;
                 }
             }
 
@@ -1494,17 +1537,13 @@
             const total = subtotal - discount + deliveryFee + tax;
 
             try {
-                await fetch(`${API_URL}/orders/${currentOrderId}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        items: newItems,
-                        subtotal: subtotal,
-                        tax: tax,
-                        total: total
-                    })
+                const ok = await patchOrder({
+                    items: newItems,
+                    subtotal: subtotal,
+                    tax: tax,
+                    total: total
                 });
-                await loadOrderDetails();
+                if (ok) await loadOrderDetails();
             } catch (error) {
                 console.error('Error updating items:', error);
                 alert('Failed to update items');
@@ -1976,12 +2015,8 @@
         // Status update
         async function updateStatus(newStatus) {
             try {
-                await fetch(`${API_URL}/orders/${currentOrderId}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: newStatus })
-                });
-                await loadOrderDetails();
+                const ok = await patchOrder({ status: newStatus });
+                if (ok) await loadOrderDetails();
             } catch (error) {
                 console.error('Error updating status:', error);
                 alert('Failed to update status');
