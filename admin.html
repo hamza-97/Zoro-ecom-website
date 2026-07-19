@@ -960,6 +960,8 @@
                 <li data-section="users" onclick="closeMobileMenu()">Users</li>
                 <li data-section="branches" onclick="closeMobileMenu()" id="branchesTab" style="display: none;">Branch
                     Settings</li>
+                <li data-section="menu-availability" onclick="closeMobileMenu()" id="menuAvailabilityTab" style="display: none;">Menu
+                    Availability</li>
             </ul>
         </div>
 
@@ -1129,6 +1131,29 @@
                 </div>
                 <div id="branchesContainer" style="display: grid; gap: 1.5rem; margin-top: 1.5rem;">
                     <div style="text-align: center; padding: 2rem;">Loading branches...</div>
+                </div>
+            </div>
+
+            <div class="orders-section" id="menuAvailabilitySection" style="display: none;">
+                <div class="section-header">
+                    <h2>Menu Availability by Branch</h2>
+                    <button class="action-btn btn-update" onclick="loadMenuAvailability()">Refresh</button>
+                </div>
+                <p style="color: #666; margin: 0.75rem 0 1rem; font-size: 0.95rem;">
+                    Mark items unavailable when out of stock at a branch. Names and images stay the same on the website.
+                </p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem;">
+                    <label style="font-weight: 600;">Branch</label>
+                    <select id="menuAvailabilityBranch" onchange="loadMenuAvailability()"
+                        style="padding: 0.5rem 0.75rem; border: 1px solid #ddd; border-radius: 5px; min-width: 220px;">
+                        <option value="">Select branch...</option>
+                    </select>
+                    <input type="search" id="menuAvailabilitySearch" placeholder="Search items..."
+                        oninput="filterMenuAvailabilityTable()"
+                        style="padding: 0.5rem 0.75rem; border: 1px solid #ddd; border-radius: 5px; flex: 1; min-width: 200px;">
+                </div>
+                <div id="menuAvailabilityContainer">
+                    <div style="text-align: center; padding: 2rem; color: #666;">Select a branch to manage availability.</div>
                 </div>
             </div>
         </div>
@@ -5043,6 +5068,7 @@ Debug info:
                 if (usersSection) usersSection.classList.remove('hidden');
 
                 if (section === 'orders') {
+                    hideExtraAdminSections([]);
                     // Show orders section and stats
                     if (ordersSection) {
                         ordersSection.style.display = 'block';
@@ -5176,10 +5202,54 @@ Debug info:
                         statsGrid.style.visibility = 'hidden';
                     }
                     document.querySelector('.header h1').textContent = 'Branch Settings';
+                    hideExtraAdminSections(['branchesSection']);
                     loadBranches();
+                } else if (section === 'menu-availability') {
+                    if (currentUser && currentUser.user_type !== 'super_admin') {
+                        alert('Access denied. Super admin only.');
+                        return;
+                    }
+                    if (ordersSection) {
+                        ordersSection.style.display = 'none';
+                        ordersSection.style.visibility = 'hidden';
+                        ordersSection.classList.add('hidden');
+                    }
+                    if (customersSection) {
+                        customersSection.style.display = 'none';
+                        customersSection.style.visibility = 'hidden';
+                        customersSection.classList.add('hidden');
+                    }
+                    if (usersSection) {
+                        usersSection.style.display = 'none';
+                        usersSection.style.visibility = 'hidden';
+                        usersSection.classList.add('hidden');
+                    }
+                    if (statsGrid) {
+                        statsGrid.style.display = 'none';
+                        statsGrid.style.visibility = 'hidden';
+                    }
+                    hideExtraAdminSections(['menuAvailabilitySection']);
+                    document.querySelector('.header h1').textContent = 'Menu Availability';
+                    initMenuAvailabilityTab();
                 }
             });
         });
+
+        function hideExtraAdminSections(showIds) {
+            const ids = ['branchesSection', 'menuAvailabilitySection'];
+            ids.forEach((id) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const show = showIds.includes(id);
+                el.style.display = show ? 'block' : 'none';
+                el.style.visibility = show ? 'visible' : 'hidden';
+                if (show) {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+        }
 
         // Close add item modal when clicking outside
         document.getElementById('addItemModal').addEventListener('click', (e) => {
@@ -5355,6 +5425,177 @@ Debug info:
             } catch (error) {
                 console.error('Error saving branch:', error);
                 alert('Error saving branch: ' + error.message);
+            }
+        }
+
+        // ==================== MENU AVAILABILITY ====================
+
+        let menuAvailabilityProducts = [];
+        let menuAvailabilityBranchesLoaded = false;
+
+        async function initMenuAvailabilityTab() {
+            await populateMenuAvailabilityBranches();
+            const select = document.getElementById('menuAvailabilityBranch');
+            if (select && select.value) {
+                await loadMenuAvailability();
+            }
+        }
+
+        async function populateMenuAvailabilityBranches() {
+            if (menuAvailabilityBranchesLoaded) return;
+            const select = document.getElementById('menuAvailabilityBranch');
+            if (!select) return;
+
+            try {
+                const response = await fetch(`${API_URL}/admin/branches`, {
+                    headers: getAuthHeaders()
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to load branches');
+                }
+                const branches = await response.json();
+                select.innerHTML = '<option value="">Select branch...</option>' +
+                    branches.map((b) => `<option value="${b.name}">${b.name}</option>`).join('');
+                menuAvailabilityBranchesLoaded = true;
+            } catch (error) {
+                console.error('Error loading branches for menu availability:', error);
+            }
+        }
+
+        async function loadMenuAvailability() {
+            const branchName = document.getElementById('menuAvailabilityBranch')?.value || '';
+            const container = document.getElementById('menuAvailabilityContainer');
+            if (!container) return;
+
+            if (!branchName) {
+                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: #666;">Select a branch to manage availability.</div>';
+                return;
+            }
+
+            container.innerHTML = '<div style="text-align: center; padding: 2rem;">Loading menu...</div>';
+
+            try {
+                const response = await fetch(
+                    `${API_URL}/admin/branch-product-availability?branch_name=${encodeURIComponent(branchName)}`,
+                    { headers: getAuthHeaders() }
+                );
+
+                if (response.status === 401) {
+                    alert('Session expired. Please login again.');
+                    logout();
+                    return;
+                }
+
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({ error: 'Failed to load availability' }));
+                    throw new Error(err.error || 'Failed to load availability');
+                }
+
+                const data = await response.json();
+                menuAvailabilityProducts = data.products || [];
+                displayMenuAvailabilityTable();
+            } catch (error) {
+                console.error('Error loading menu availability:', error);
+                container.innerHTML = `<div style="text-align: center; padding: 2rem; color: #dc3545;">${error.message}</div>`;
+            }
+        }
+
+        function displayMenuAvailabilityTable() {
+            const container = document.getElementById('menuAvailabilityContainer');
+            const search = (document.getElementById('menuAvailabilitySearch')?.value || '').trim().toLowerCase();
+            if (!container) return;
+
+            const filtered = menuAvailabilityProducts.filter((p) => {
+                if (!search) return true;
+                return p.name.toLowerCase().includes(search) || String(p.id).includes(search);
+            });
+
+            if (!filtered.length) {
+                container.innerHTML = '<div style="text-align: center; padding: 2rem;">No items match your search.</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="overflow-x: auto; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8f9fa; text-align: left;">
+                                <th style="padding: 0.75rem 1rem;">ID</th>
+                                <th style="padding: 0.75rem 1rem;">Item</th>
+                                <th style="padding: 0.75rem 1rem;">Category</th>
+                                <th style="padding: 0.75rem 1rem;">Status</th>
+                                <th style="padding: 0.75rem 1rem;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${filtered.map((p) => {
+                                const statusLabel = p.permanently_restricted
+                                    ? 'Not offered (permanent)'
+                                    : (p.unavailable ? 'Unavailable' : 'Available');
+                                const statusColor = p.unavailable ? '#dc3545' : '#198754';
+                                const btnLabel = p.unavailable ? 'Mark available' : 'Mark unavailable';
+                                const btnAction = p.unavailable ? 'true' : 'false';
+                                const disabled = p.permanently_restricted ? 'disabled' : '';
+                                return `
+                                    <tr class="menu-avail-row" data-name="${p.name.toLowerCase()}" style="border-top: 1px solid #eee;">
+                                        <td style="padding: 0.65rem 1rem;">${p.id}</td>
+                                        <td style="padding: 0.65rem 1rem;">${p.name}</td>
+                                        <td style="padding: 0.65rem 1rem; color: #666;">${p.category}</td>
+                                        <td style="padding: 0.65rem 1rem; color: ${statusColor}; font-weight: 600;">${statusLabel}</td>
+                                        <td style="padding: 0.65rem 1rem;">
+                                            <button class="action-btn btn-update" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;"
+                                                ${disabled}
+                                                onclick="setMenuItemAvailability(${p.id}, ${btnAction})">${btnLabel}</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function filterMenuAvailabilityTable() {
+            displayMenuAvailabilityTable();
+        }
+
+        async function setMenuItemAvailability(productId, makeAvailable) {
+            const branchName = document.getElementById('menuAvailabilityBranch')?.value || '';
+            if (!branchName) {
+                alert('Please select a branch first.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/admin/branch-product-availability`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeaders()
+                    },
+                    body: JSON.stringify({
+                        branch_name: branchName,
+                        product_id: productId,
+                        available: makeAvailable === true || makeAvailable === 'true'
+                    })
+                });
+
+                if (response.status === 401) {
+                    alert('Session expired. Please login again.');
+                    logout();
+                    return;
+                }
+
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({ error: 'Failed to update availability' }));
+                    throw new Error(err.error || 'Failed to update availability');
+                }
+
+                await loadMenuAvailability();
+            } catch (error) {
+                console.error('Error updating menu availability:', error);
+                alert('Error: ' + error.message);
             }
         }
     </script>

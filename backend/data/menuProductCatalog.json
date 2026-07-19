@@ -1,0 +1,267 @@
+[
+  {
+    "id": 1,
+    "name": "Classic American",
+    "category": "beef-smashers"
+  },
+  {
+    "id": 2,
+    "name": "Onion Melt",
+    "category": "beef-smashers"
+  },
+  {
+    "id": 3,
+    "name": "Frankie",
+    "category": "beef-smashers"
+  },
+  {
+    "id": 4,
+    "name": "Big Ben",
+    "category": "beef-smashers"
+  },
+  {
+    "id": 5,
+    "name": "Tokyo",
+    "category": "beef-speciality"
+  },
+  {
+    "id": 6,
+    "name": "Truffle Royal",
+    "category": "beef-speciality"
+  },
+  {
+    "id": 7,
+    "name": "BLT Texas",
+    "category": "beef-speciality"
+  },
+  {
+    "id": 8,
+    "name": "Bangkok",
+    "category": "beef-speciality"
+  },
+  {
+    "id": 9,
+    "name": "BLT Classic",
+    "category": "beef-speciality"
+  },
+  {
+    "id": 10,
+    "name": "Swiss Mushroom",
+    "category": "beef-speciality"
+  },
+  {
+    "id": 11,
+    "name": "Classic Chicken",
+    "category": "chicken-burgers"
+  },
+  {
+    "id": 12,
+    "name": "Pepper Chicken",
+    "category": "chicken-burgers"
+  },
+  {
+    "id": 13,
+    "name": "Tangy Crunch",
+    "category": "chicken-burgers"
+  },
+  {
+    "id": 14,
+    "name": "Roost",
+    "category": "chicken-burgers"
+  },
+  {
+    "id": 15,
+    "name": "Asian Fusion",
+    "category": "chicken-burgers"
+  },
+  {
+    "id": 16,
+    "name": "Mexicana",
+    "category": "chicken-burgers"
+  },
+  {
+    "id": 17,
+    "name": "Hell Fire",
+    "category": "chicken-burgers"
+  },
+  {
+    "id": 18,
+    "name": "Carolina Reaper",
+    "category": "wings"
+  },
+  {
+    "id": 19,
+    "name": "Korean BBQ",
+    "category": "wings"
+  },
+  {
+    "id": 20,
+    "name": "Buffalo",
+    "category": "wings"
+  },
+  {
+    "id": 21,
+    "name": "Thai",
+    "category": "wings"
+  },
+  {
+    "id": 22,
+    "name": "French Truffle",
+    "category": "loaded-fries"
+  },
+  {
+    "id": 23,
+    "name": "Chicken Parma",
+    "category": "loaded-fries"
+  },
+  {
+    "id": 24,
+    "name": "Funky Cheese",
+    "category": "loaded-fries"
+  },
+  {
+    "id": 25,
+    "name": "Philly Cheese",
+    "category": "loaded-fries"
+  },
+  {
+    "id": 26,
+    "name": "Chicken Crunchers",
+    "category": "appetizers"
+  },
+  {
+    "id": 27,
+    "name": "Plain Fries",
+    "category": "appetizers"
+  },
+  {
+    "id": 28,
+    "name": "Spicy Fries",
+    "category": "appetizers"
+  },
+  {
+    "id": 29,
+    "name": "Plain Funnel Cake",
+    "category": "desserts"
+  },
+  {
+    "id": 30,
+    "name": "Chocolate Funnel Cake",
+    "category": "desserts"
+  },
+  {
+    "id": 31,
+    "name": "Strawberry Funnel Cake",
+    "category": "desserts"
+  },
+  {
+    "id": 32,
+    "name": "Benzo Cake",
+    "category": "desserts"
+  },
+  {
+    "id": 33,
+    "name": "Oreo Crush",
+    "category": "premium-shakes"
+  },
+  {
+    "id": 34,
+    "name": "Strawberry Oreo",
+    "category": "premium-shakes"
+  },
+  {
+    "id": 35,
+    "name": "Caramel Walnut",
+    "category": "premium-shakes"
+  },
+  {
+    "id": 36,
+    "name": "Strawberry Pavlova",
+    "category": "premium-shakes"
+  },
+  {
+    "id": 37,
+    "name": "Butter Pecan",
+    "category": "premium-shakes"
+  },
+  {
+    "id": 38,
+    "name": "Hazel Dream",
+    "category": "premium-shakes"
+  },
+  {
+    "id": 39,
+    "name": "Lotus Swirl",
+    "category": "premium-shakes"
+  },
+  {
+    "id": 40,
+    "name": "Pistachio Cream",
+    "category": "premium-shakes"
+  },
+  {
+    "id": 41,
+    "name": "Coke",
+    "category": "soft-drinks"
+  },
+  {
+    "id": 42,
+    "name": "Sprite",
+    "category": "soft-drinks"
+  },
+  {
+    "id": 43,
+    "name": "Fanta",
+    "category": "soft-drinks"
+  },
+  {
+    "id": 44,
+    "name": "Coke Zero",
+    "category": "soft-drinks"
+  },
+  {
+    "id": 45,
+    "name": "Sprite Zero",
+    "category": "soft-drinks"
+  },
+  {
+    "id": 46,
+    "name": "Dasani Water",
+    "category": "soft-drinks"
+  },
+  {
+    "id": 47,
+    "name": "Classic American Combo",
+    "category": "beef-smasher-meals"
+  },
+  {
+    "id": 48,
+    "name": "Onion Melt Combo",
+    "category": "beef-smasher-meals"
+  },
+  {
+    "id": 49,
+    "name": "Frankie Combo",
+    "category": "beef-smasher-meals"
+  },
+  {
+    "id": 50,
+    "name": "Big Ben Combo",
+    "category": "beef-smasher-meals"
+  },
+  {
+    "id": 60,
+    "name": "Pepper Chicken Combo",
+    "category": "signature-chicken-meals"
+  },
+  {
+    "id": 61,
+    "name": "Roost Combo",
+    "category": "signature-chicken-meals"
+  },
+  {
+    "id": 62,
+    "name": "Tangy Crunch Combo",
+    "category": "signature-chicken-meals"
+  }
+]

@@ -14,6 +14,8 @@ const AdminUser = require('./models/AdminUser');
 const Rider = require('./models/Rider');
 const Customer = require('./models/Customer');
 const Branch = require('./models/Branch');
+const BranchProductAvailability = require('./models/BranchProductAvailability');
+const { MENU_PRODUCT_CATALOG } = require('./data/menuProductCatalog');
 const ExcelJS = require('exceljs');
 const { Parser: Json2CsvParser } = require('json2csv');
 
@@ -75,6 +77,55 @@ function orderItemBlockedAtIslamabadKarachi(item) {
     if (item.category === 'premium-shakes' || [33, 34, 35, 36, 37, 38, 39, 40].includes(item.id)) return true;
     if (item.category === 'desserts') return true;
     return false;
+}
+
+function resolveCanonicalBranchName(branch) {
+    if (!branch) return null;
+    const s = String(branch).trim();
+    if (/islamabad/i.test(s)) return 'Islamabad';
+    if (/karachi\s+badar/i.test(s)) return 'Karachi Badar';
+    if (KARACHI_JOHAR_BRANCH_REGEX.test(s)) return 'Karachi Jauhar';
+    if (/gulberg/i.test(s)) return 'Gulberg II, Lahore';
+    if (/dha/i.test(s)) return 'DHA Phase 5, Lahore';
+    if (isJoharTownLahoreBranchName(s)) return 'Johar Town, Lahore';
+    return s;
+}
+
+async function getAdminUnavailableProductIds(branchName) {
+    const canonical = resolveCanonicalBranchName(branchName);
+    if (!canonical) return [];
+    const rows = await BranchProductAvailability.find({
+        branch_name: canonical,
+        available: false
+    }).select('product_id').lean();
+    return rows.map((row) => row.product_id);
+}
+
+async function orderItemUnavailableAtBranch(item, branch, adminUnavailableIds) {
+    if (!item || item.id === undefined || item.id === null) return false;
+    const productId = Number(item.id);
+    if (!Number.isInteger(productId)) return false;
+    if (isIslamabadOrKarachiOrderBranch(branch) && orderItemBlockedAtIslamabadKarachi(item)) {
+        return true;
+    }
+    return adminUnavailableIds.includes(productId);
+}
+
+async function buildUnavailableByBranchMap() {
+    const rows = await BranchProductAvailability.find({ available: false })
+        .select('branch_name product_id')
+        .lean();
+    const map = {};
+    rows.forEach((row) => {
+        if (!map[row.branch_name]) {
+            map[row.branch_name] = [];
+        }
+        map[row.branch_name].push(row.product_id);
+    });
+    Object.keys(map).forEach((key) => {
+        map[key] = [...new Set(map[key])].sort((a, b) => a - b);
+    });
+    return map;
 }
 
 // Lahore JT / Johar Town — excludes "Karachi Jauhar"
@@ -496,11 +547,25 @@ app.post('/api/orders', async (req, res) => {
             });
         }
 
-        if (isIslamabadOrKarachiOrderBranch(branch) && Array.isArray(items)) {
-            const blocked = items.find(orderItemBlockedAtIslamabadKarachi);
+        if (Array.isArray(items)) {
+            const adminUnavailableIds = await getAdminUnavailableProductIds(branch);
+            let blocked = null;
+            for (const item of items) {
+                if (await orderItemUnavailableAtBranch(item, branch, adminUnavailableIds)) {
+                    blocked = item;
+                    break;
+                }
+            }
+
             if (blocked) {
+                if (isIslamabadOrKarachiOrderBranch(branch) && orderItemBlockedAtIslamabadKarachi(blocked)) {
+                    return res.status(400).json({
+                        error: 'Truffle Royal, Loaded Fries, Premium Shakes, and desserts are not available at Islamabad and Karachi branches. Please update your cart or choose another branch.'
+                    });
+                }
+                const label = blocked.name || `Item #${blocked.id}`;
                 return res.status(400).json({
-                    error: 'Truffle Royal, Loaded Fries, Premium Shakes, and desserts are not available at Islamabad and Karachi branches. Please update your cart or choose another branch.'
+                    error: `${label} is currently unavailable at this branch. Please update your cart or choose another branch.`
                 });
             }
         }
@@ -1404,6 +1469,130 @@ app.put('/api/admin/branches/:id', authenticateAdmin, async (req, res) => {
         });
     } catch (error) {
         console.error('Error updating branch:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ==================== BRANCH PRODUCT AVAILABILITY ====================
+
+// Public: unavailable product IDs per branch (admin toggles only)
+app.get('/api/branch-product-availability', async (req, res) => {
+    try {
+        const unavailable = await buildUnavailableByBranchMap();
+        res.json({ unavailable });
+    } catch (error) {
+        console.error('Error fetching branch product availability:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Admin: menu catalog + availability flags for one branch
+app.get('/api/admin/branch-product-availability', authenticateAdmin, async (req, res) => {
+    try {
+        if (req.user.user_type !== 'super_admin') {
+            return res.status(403).json({ error: 'Access denied. Super admin only.' });
+        }
+
+        const branchName = (req.query.branch_name || '').trim();
+        if (!branchName) {
+            return res.status(400).json({ error: 'branch_name query parameter is required' });
+        }
+
+        const branch = await Branch.findOne({ name: branchName });
+        if (!branch) {
+            return res.status(404).json({ error: 'Branch not found' });
+        }
+
+        const unavailableRows = await BranchProductAvailability.find({
+            branch_name: branchName,
+            available: false
+        }).select('product_id').lean();
+        const adminUnavailable = new Set(unavailableRows.map((row) => row.product_id));
+        const isRestrictedBranch = isIslamabadBranchName(branchName)
+            || isKarachiJoharBranchName(branchName)
+            || isKarachiBadarBranchName(branchName);
+
+        const products = MENU_PRODUCT_CATALOG.map((product) => {
+            const permanentlyRestricted = isRestrictedBranch && orderItemBlockedAtIslamabadKarachi(product);
+            const adminMarkedUnavailable = adminUnavailable.has(product.id);
+            return {
+                id: product.id,
+                name: product.name,
+                category: product.category,
+                unavailable: permanentlyRestricted || adminMarkedUnavailable,
+                permanently_restricted: permanentlyRestricted,
+                admin_marked_unavailable: adminMarkedUnavailable
+            };
+        });
+
+        res.json({
+            branch_name: branchName,
+            products
+        });
+    } catch (error) {
+        console.error('Error fetching admin branch product availability:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Admin: set product availability at a branch
+app.put('/api/admin/branch-product-availability', authenticateAdmin, async (req, res) => {
+    try {
+        if (req.user.user_type !== 'super_admin') {
+            return res.status(403).json({ error: 'Access denied. Super admin only.' });
+        }
+
+        const branchName = (req.body.branch_name || '').trim();
+        const productId = Number(req.body.product_id);
+        const available = req.body.available;
+
+        if (!branchName) {
+            return res.status(400).json({ error: 'branch_name is required' });
+        }
+        if (!Number.isInteger(productId)) {
+            return res.status(400).json({ error: 'product_id must be an integer' });
+        }
+        if (typeof available !== 'boolean') {
+            return res.status(400).json({ error: 'available must be a boolean' });
+        }
+
+        const branch = await Branch.findOne({ name: branchName });
+        if (!branch) {
+            return res.status(404).json({ error: 'Branch not found' });
+        }
+
+        const catalogItem = MENU_PRODUCT_CATALOG.find((p) => p.id === productId);
+        if (!catalogItem) {
+            return res.status(404).json({ error: 'Product not found in menu catalog' });
+        }
+
+        const isRestrictedBranch = isIslamabadBranchName(branchName)
+            || isKarachiJoharBranchName(branchName)
+            || isKarachiBadarBranchName(branchName);
+        if (isRestrictedBranch && orderItemBlockedAtIslamabadKarachi(catalogItem) && available) {
+            return res.status(400).json({
+                error: 'This item is permanently unavailable at Islamabad and Karachi branches and cannot be enabled.'
+            });
+        }
+
+        if (available) {
+            await BranchProductAvailability.deleteOne({ branch_name: branchName, product_id: productId });
+        } else {
+            await BranchProductAvailability.findOneAndUpdate(
+                { branch_name: branchName, product_id: productId },
+                { branch_name: branchName, product_id: productId, available: false },
+                { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
+        }
+
+        res.json({
+            success: true,
+            branch_name: branchName,
+            product_id: productId,
+            available
+        });
+    } catch (error) {
+        console.error('Error updating branch product availability:', error);
         res.status(500).json({ error: error.message });
     }
 });

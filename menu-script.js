@@ -597,7 +597,10 @@ let selectedBranch = localStorage.getItem('selectedBranch') || 'gulberg';
 let orderType = localStorage.getItem('orderType') || null; // 'delivery' or 'pickup'
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    if (typeof ZoroBranchRestrictions !== 'undefined') {
+        await ZoroBranchRestrictions.fetchBranchProductAvailability();
+    }
     // Only initialize if we're on the menu page (check for menuContainer)
     if (menuContainer) {
         displayMenu('all');
@@ -752,8 +755,7 @@ function createProductCard(product) {
     card.className = 'product-card';
     const branchCode = typeof selectedBranch !== 'undefined' ? selectedBranch : localStorage.getItem('selectedBranch');
     const isOutOfStockHere = typeof ZoroBranchRestrictions !== 'undefined'
-        && ZoroBranchRestrictions.isIsbOrKarachiLocalBranchCode(branchCode)
-        && ZoroBranchRestrictions.isProductUnavailableAtIsbKarachi(product);
+        && ZoroBranchRestrictions.isProductUnavailableAtBranch(product, branchCode);
     
     // Calculate discounted price
     const pricing = getDiscountedPrice(product);
@@ -1129,8 +1131,14 @@ window.toggleCart = toggleCart;
 function showProductModal(product) {
     if (typeof ZoroBranchRestrictions !== 'undefined') {
         const effectiveBranch = (typeof selectedBranch !== 'undefined' ? selectedBranch : null) || localStorage.getItem('selectedBranch');
-        if (ZoroBranchRestrictions.isIsbOrKarachiLocalBranchCode(effectiveBranch) && ZoroBranchRestrictions.isProductUnavailableAtIsbKarachi(product)) {
-            alert('Truffle Royal, Loaded Fries, Premium Shakes, and desserts are not available at Islamabad and Karachi branches. Please choose another branch from the home page, or select a Lahore branch at checkout.');
+        if (ZoroBranchRestrictions.isProductUnavailableAtBranch(product, effectiveBranch)) {
+            const isPermanent = ZoroBranchRestrictions.isIsbOrKarachiLocalBranchCode(effectiveBranch)
+                && ZoroBranchRestrictions.isProductUnavailableAtIsbKarachi(product);
+            alert(
+                isPermanent
+                    ? 'Truffle Royal, Loaded Fries, Premium Shakes, and desserts are not available at Islamabad and Karachi branches. Please choose another branch from the home page, or select a Lahore branch at checkout.'
+                    : 'This item is currently unavailable at your selected branch. Please choose another item or branch.'
+            );
             return;
         }
     }
