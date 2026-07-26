@@ -592,6 +592,15 @@ const branchSelector = document.getElementById('branchSelector');
 const startOrderBtn = document.getElementById('startOrderBtn');
 const branchOptions = document.querySelectorAll('.branch-option');
 
+// Clear temporarily disabled branches so users don't stay on inactive locations
+try {
+    const savedBranch = localStorage.getItem('selectedBranch');
+    if (savedBranch === 'islamabad' || savedBranch === 'karachi' || savedBranch === 'karachi_badar') {
+        localStorage.removeItem('selectedBranch');
+        localStorage.removeItem('selectedBranchName');
+    }
+} catch (_) {}
+
 // Location state
 let selectedBranch = localStorage.getItem('selectedBranch') || 'gulberg';
 let orderType = localStorage.getItem('orderType') || null; // 'delivery' or 'pickup'

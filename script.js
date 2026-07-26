@@ -128,6 +128,15 @@ function setupWelcomeModal() {
         });
     }
 
+    // Clear temporarily disabled branches so users re-select an active one
+    try {
+        const savedBranch = localStorage.getItem('selectedBranch');
+        if (savedBranch === 'islamabad' || savedBranch === 'karachi' || savedBranch === 'karachi_badar') {
+            localStorage.removeItem('selectedBranch');
+            localStorage.removeItem('selectedBranchName');
+        }
+    } catch (_) {}
+
     // Show immediately unless previously dismissed OR branch already selected
     let dismissed = false;
     let hasBranch = false;
