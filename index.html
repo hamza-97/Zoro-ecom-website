@@ -49,6 +49,79 @@
             style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 
+    <!-- Maintenance Mode Overlay (tap "bigger" 4 times to bypass) -->
+    <style>
+        .maintenance-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2147483647;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 24px;
+            background: #0d0d0d;
+            color: #fff;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .maintenance-overlay img {
+            width: 140px;
+            max-width: 40vw;
+        }
+
+        .maintenance-overlay h1 {
+            margin: 0;
+            font-size: clamp(1.8rem, 6vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .maintenance-overlay .maintenance-red {
+            color: #d32f2f;
+        }
+
+        #maintenanceBigger {
+            cursor: default;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body.maintenance-active {
+            overflow: hidden;
+        }
+    </style>
+    <div class="maintenance-overlay" id="maintenanceOverlay">
+        <img src="zoroLogo.png" alt="Zoro Burger">
+        <h1>Something <span class="maintenance-red" id="maintenanceBigger">bigger</span> and <span
+                class="maintenance-red">better</span> is coming</h1>
+    </div>
+    <script>
+        (function () {
+            var KEY = 'zoroMaintenanceBypass';
+            var overlay = document.getElementById('maintenanceOverlay');
+            var bypassed = false;
+            try { bypassed = localStorage.getItem(KEY) === '1'; } catch (e) { }
+            if (bypassed) { overlay.remove(); return; }
+
+            document.body.classList.add('maintenance-active');
+            var taps = 0, timer;
+            document.getElementById('maintenanceBigger').addEventListener('click', function () {
+                taps++;
+                clearTimeout(timer);
+                timer = setTimeout(function () { taps = 0; }, 1500);
+                if (taps >= 4) {
+                    try { localStorage.setItem(KEY, '1'); } catch (e) { }
+                    document.body.classList.remove('maintenance-active');
+                    overlay.remove();
+                }
+            });
+        })();
+    </script>
+
     <!-- Entry / Welcome Modal (first thing user sees) -->
     <div class="welcome-modal" id="welcomeModal" aria-hidden="true">
         <div class="welcome-modal-content" role="dialog" aria-modal="true" aria-labelledby="welcomeModalTitle">
