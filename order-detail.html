@@ -1662,7 +1662,13 @@
                     product.name.toLowerCase().includes('burger')
                 );
 
-                if (product.sizes && Array.isArray(product.sizes)) {
+                const menuProduct = typeof getProductSizes === 'function' && typeof products !== 'undefined'
+                    ? products.find(p => p.id === product.id)
+                    : null;
+                if (menuProduct) {
+                    // Same size options as the customer menu (menu-script.js)
+                    sizes = getProductSizes(menuProduct);
+                } else if (product.sizes && Array.isArray(product.sizes)) {
                     sizes = product.sizes;
                 } else if (isBurger) {
                     // Default burger sizes - use the pricing from menu-script.js logic
@@ -1724,24 +1730,16 @@
             if (product || item) {
                 const category = product ? product.category : (item.category || '');
                 const name = product ? product.name : (item.name || '');
-                const isBeef = category && (category === 'beef-smashers' || category === 'beef-speciality' || category.includes('beef'));
-                const isChicken = category && (category === 'chicken-burgers' || category.includes('chicken'));
+                const isBeef = category && (category === 'beef-smashers' || category.includes('beef'));
+                const isChicken = category === 'chicken-burgers';
                 const isWings = category && category === 'wings';
                 const isBurger = name.toLowerCase().includes('burger') || isBeef || isChicken;
 
                 if (isBurger && !isWings) {
                     addons = [
-                        { name: 'Pickles', price: 195 },
-                        { name: 'Onions', price: 195 },
-                        { name: 'Pickled Red Onions', price: 195 },
-                        { name: 'Tomatoes', price: 195 },
-                        { name: 'Crispy Onions', price: 195 },
-                        { name: 'Cheese Slice', price: 195 },
-                        { name: 'Bacon', price: 195 },
-                        { name: 'Lettuce', price: 195 },
-                        { name: 'Grilled Onions', price: 195 },
-                        { name: 'Nachos', price: 195 },
-                        { name: 'Jalapenos', price: 195 }
+                        { name: 'Double the Cheese', price: 95 },
+                        { name: 'Meal: Plain Fries & Drink', price: 595 },
+                        { name: 'Meal: Spicy Fries & Drink', price: 645 }
                     ];
                 }
             }
@@ -1760,7 +1758,7 @@
             const productDescription = product ? (product.description || '') : (item ? (item.description || '') : '');
             const productImage = product ? (product.image || '') : (item ? (item.image || '') : '');
             const categoryName = product && product.category ?
-                (product.category.includes('beef') ? 'BEEF SMASHERS' :
+                (product.category.includes('beef') ? 'SMASH BEEF BURGERS' :
                     product.category.includes('chicken') ? 'CHICKEN BURGERS' :
                         product.category.toUpperCase()) : '';
 

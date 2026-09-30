@@ -3513,7 +3513,7 @@ Debug info:
             }
 
             // Determine if product is wings early (needed for add-ons logic)
-            const isWings = product && product.category === 'wings';
+            const isWings = false; // Wings are now a single flat price (no bone-in/boneless or piece options)
 
             // Initialize basePricing and APPLY_DISCOUNTS at function level (needed for wing types)
             let basePricing = { original: product ? product.price : 0, discounted: product ? product.price : 0, discountRate: 0 };
@@ -3740,148 +3740,8 @@ Debug info:
                         product.category.includes('burger')
                     );
 
-                    if (isCustomMealCombo) {
-                        const isBeefMealCombo = product.category === 'beef-smasher-meals';
-                        sizes = isBeefMealCombo ? [
-                            { name: 'Single Patty', originalPrice: 1585, price: 1195 },
-                            { name: 'Double Patty', originalPrice: 1985, price: 1595 },
-                            { name: 'Triple Patty', originalPrice: 2385, price: 1995 }
-                        ] : [
-                            { name: 'Single Patty', originalPrice: 1585, price: 1195 },
-                            { name: 'Double Patty', originalPrice: 1985, price: 1595 }
-                        ];
-                    } else if (isShakes) {
-                        // Premium Shakes: Regular and Large sizes
-                        // Pricing rules:
-                        // - If regular is 695, large is 995
-                        // - If regular is 795, large is 1095
-                        // - If regular is 895, large is 1195
-                        // - If regular is 1095, large is 1395
-                        const regularPrice = product.price;
-                        let largePrice;
-
-                        if (regularPrice === 695) {
-                            largePrice = 995;
-                        } else if (regularPrice === 795) {
-                            largePrice = 1095;
-                        } else if (regularPrice === 895) {
-                            largePrice = 1195;
-                        } else if (regularPrice === 1095) {
-                            largePrice = 1395;
-                        } else {
-                            // Fallback calculation if price doesn't match
-                            largePrice = regularPrice + 300;
-                        }
-
-                        const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
-                        sizes = [
-                            { name: 'Regular', originalPrice: regularPrice, price: APPLY_DISCOUNTS ? Math.round(regularPrice * (1 - discountRate)) : regularPrice },
-                            { name: 'Large', originalPrice: largePrice, price: APPLY_DISCOUNTS ? Math.round(largePrice * (1 - discountRate)) : largePrice }
-                        ];
-                    } else if (isWings) {
-                        // Wings: 6 pieces or 12 pieces (price will be calculated based on bone-in/boneless)
-                        const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
-                        sizes = [
-                            { name: '6 Pieces', originalPrice: 895, price: APPLY_DISCOUNTS ? Math.round(895 * (1 - discountRate)) : 895 },
-                            { name: '12 Pieces', originalPrice: 1495, price: APPLY_DISCOUNTS ? Math.round(1495 * (1 - discountRate)) : 1495 }
-                        ];
-                    } else if (isChickenCrunchers) {
-                        // Chicken Crunchers: 6, 12, or 18 pieces
-                        const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
-                        sizes = [
-                            { name: '6 Pieces', originalPrice: 595, price: APPLY_DISCOUNTS ? Math.round(595 * (1 - discountRate)) : 595 },
-                            { name: '12 Pieces', originalPrice: 1195, price: APPLY_DISCOUNTS ? Math.round(1195 * (1 - discountRate)) : 1195 },
-                            { name: '18 Pieces', originalPrice: 1795, price: APPLY_DISCOUNTS ? Math.round(1795 * (1 - discountRate)) : 1795 }
-                        ];
-                    } else if (isBurger) {
-                        // Use exact prices based on category with discounts
-                        // Beef Smashers: Single 895, Double 1295, Triple 1695
-                        // Beef Speciality: Single 995, Double 1395, Triple 1795
-                        // Swiss Mushroom (id 10): Single 1295, Double 1695, Triple 2095
-                        // Classic Chicken (id 11): Single 695, Double 1195, No Triple
-                        // Pepper Chicken (id 12): Single 895, Double 1295, No Triple
-                        // Tangy Crunch (id 13): Single 895, Double 1295, No Triple
-                        // Roost (id 14): Single 895, Double 1295, No Triple
-                        // Other Chicken Burgers: Single 995, Double 1395, No Triple
-                        const isBeefSmashers = product.category === 'beef-smashers';
-                        const isBeefSpeciality = product.category === 'beef-speciality';
-                        const isChickenBurgers = product.category === 'chicken-burgers';
-                        const isSwissMushroom = product.id === 10; // Swiss Mushroom has id 10
-                        const isClassicChicken = product.id === 11;
-                        const isPepperChicken = product.id === 12; // Pepper Chicken has id 12
-                        const isTangyCrunch = product.id === 13; // Tangy Crunch has id 13
-                        const isRoost = product.id === 14; // Roost has id 14
-
-                        let singleOriginal, doubleOriginal, tripleOriginal;
-                        let hasTriple = true;
-
-                        if (isBeefSmashers) {
-                            singleOriginal = 895;
-                            doubleOriginal = 1295;
-                            tripleOriginal = 1695;
-                        } else if (isBeefSpeciality) {
-                            if (isSwissMushroom) {
-                                // Swiss Mushroom has different pricing (original prices before discount)
-                                singleOriginal = 1295;  // Original price, discount will be applied on top
-                                doubleOriginal = 1695;  // Original price, discount will be applied on top
-                                tripleOriginal = 2095;  // Original price, discount will be applied on top
-                            } else {
-                                // Other Beef Speciality burgers
-                                singleOriginal = 995;
-                                doubleOriginal = 1395;
-                                tripleOriginal = 1795;
-                            }
-                        } else if (isChickenBurgers) {
-                            if (isClassicChicken) {
-                                singleOriginal = 695;
-                                doubleOriginal = 1195;
-                                hasTriple = false;
-                            } else if (isPepperChicken) {
-                                // Pepper Chicken: Single 895, Double 1295
-                                singleOriginal = 895;
-                                doubleOriginal = 1295;
-                                hasTriple = false;
-                            } else if (isTangyCrunch) {
-                                // Tangy Crunch: Single 895, Double 1295
-                                singleOriginal = 895;
-                                doubleOriginal = 1295;
-                                hasTriple = false;
-                            } else if (isRoost) {
-                                // Roost: Single 895, Double 1295
-                                singleOriginal = 895;
-                                doubleOriginal = 1295;
-                                hasTriple = false;
-                            } else {
-                                // Other Chicken Burgers
-                                singleOriginal = 995;
-                                doubleOriginal = 1395;
-                                hasTriple = false;
-                            }
-                        } else {
-                            singleOriginal = product.price;
-                            doubleOriginal = Math.round(product.price * 1.447);
-                            tripleOriginal = Math.round(product.price * 1.894);
-                        }
-
-                        const discountRate = APPLY_DISCOUNTS ? basePricing.discountRate : 0;
-                        sizes = [
-                            { name: 'Single', originalPrice: singleOriginal, price: APPLY_DISCOUNTS ? Math.round(singleOriginal * (1 - discountRate)) : singleOriginal }
-                        ];
-
-                        if (hasTriple) {
-                            sizes.push(
-                                { name: 'Double', originalPrice: doubleOriginal, price: APPLY_DISCOUNTS ? Math.round(doubleOriginal * (1 - discountRate)) : doubleOriginal },
-                                { name: 'Triple', originalPrice: tripleOriginal, price: APPLY_DISCOUNTS ? Math.round(tripleOriginal * (1 - discountRate)) : tripleOriginal }
-                            );
-                        } else {
-                            sizes.push(
-                                { name: 'Double', originalPrice: doubleOriginal, price: APPLY_DISCOUNTS ? Math.round(doubleOriginal * (1 - discountRate)) : doubleOriginal }
-                            );
-                        }
-                    } else {
-                        // Regular items (non-burger, non-wings)
-                        sizes = [{ name: 'Regular', originalPrice: product.price, price: APPLY_DISCOUNTS ? basePricing.discounted : product.price }];
-                    }
+                    // Same size options as the customer menu (menu-script.js)
+                    sizes = getProductSizes(product).map(size => ({ ...size, originalPrice: size.price }));
                 }
             } else {
                 // Don't show placeholder size options before a product is selected.
@@ -3959,17 +3819,8 @@ Debug info:
                     ];
                 } else if (!isCombo && !isWings && !isRamadanDealWithOptions && (isBeef || isChicken)) {
                     addons = [
-                        { name: 'Pickles', price: 195 },
-                        { name: 'Onions', price: 195 },
-                        { name: 'Pickled Red Onions', price: 195 },
-                        { name: 'Tomatoes', price: 195 },
-                        { name: 'Crispy Onions', price: 195 },
-                        { name: 'Cheese Slice', price: 195 },
-                        { name: 'Bacon', price: 195 },
-                        { name: 'Lettuce', price: 195 },
-                        { name: 'Grilled Onions', price: 195 },
-                        { name: 'Nachos', price: 195 },
-                        { name: 'Jalapenos', price: 195 }
+                        { name: 'Double the Cheese', price: DOUBLE_CHEESE_PRICE },
+                        ...MEAL_OPTIONS.map(meal => ({ name: `Meal: ${meal.name}`, price: meal.price }))
                     ];
                 }
             }
