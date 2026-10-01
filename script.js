@@ -365,17 +365,9 @@ function initializeCategorySlider() {
         let categoryProducts;
         
         if (category === 'all') {
-            // Show all products, but limit shakes and soft drinks to 4
-            const shakes = allProducts.filter(p => p.category === 'premium-shakes').slice(0, 4);
-            const softDrinks = allProducts.filter(p => p.category === 'soft-drinks').slice(0, 4);
-            const otherProducts = allProducts.filter(p => p.category !== 'premium-shakes' && p.category !== 'soft-drinks');
-            categoryProducts = [...otherProducts, ...shakes, ...softDrinks];
+            categoryProducts = allProducts;
         } else {
             categoryProducts = allProducts.filter(p => p.category === category);
-            // Limit to 4 items for premium-shakes and soft-drinks
-            if (category === 'premium-shakes' || category === 'soft-drinks') {
-                categoryProducts = categoryProducts.slice(0, 4);
-            }
         }
         
         console.log('Category products:', categoryProducts.length);

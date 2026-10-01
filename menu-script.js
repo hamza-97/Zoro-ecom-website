@@ -44,7 +44,7 @@ const products = [
     },
     {
         id: 9,
-        name: 'BLT Classic',
+        name: 'Bacon n Cheese',
         category: 'beef-smashers',
         price: 1095,
         image: 'ZoroImages/BltClassic.png',
@@ -52,7 +52,7 @@ const products = [
     },
     {
         id: 10,
-        name: 'Swiss Mushroom',
+        name: 'Cheesy Mushroom',
         category: 'beef-smashers',
         price: 1095,
         image: 'ZoroImages/SwissMushroom.png',
@@ -150,6 +150,7 @@ const products = [
         id: 64,
         name: 'Hot Take Tenders',
         category: 'tenders',
+        hidden: true, // Launching next month - set to false (or remove) to go live
         price: 895,
         image: 'ZoroImages/ChickenCrunchers.png',
         description: '3 Crispy Chicken Tenders, Hot Take style'
@@ -158,6 +159,7 @@ const products = [
         id: 65,
         name: 'Thai Tenders',
         category: 'tenders',
+        hidden: true, // Launching next month - set to false (or remove) to go live
         price: 895,
         image: 'ZoroImages/ChickenCrunchers.png',
         description: '3 Crispy Chicken Tenders tossed in Thai Sweet and Spicy Sauce'
@@ -166,6 +168,7 @@ const products = [
         id: 66,
         name: 'Korean BBQ Tenders',
         category: 'tenders',
+        hidden: true, // Launching next month - set to false (or remove) to go live
         price: 895,
         image: 'ZoroImages/ChickenCrunchers.png',
         description: '3 Crispy Chicken Tenders glazed in Korean BBQ Sauce'
@@ -311,24 +314,13 @@ const products = [
         price: 195,
         image: 'ZoroImages/Fanta.png',
         description: 'Fruity Fanta'
-    },
-    {
-        id: 44,
-        name: 'Coke Zero',
-        category: 'soft-drinks',
-        price: 195,
-        image: 'ZoroImages/CokeZero.png',
-        description: 'Zero sugar Coca-Cola'
-    },
-    {
-        id: 45,
-        name: 'Sprite Zero',
-        category: 'soft-drinks',
-        price: 195,
-        image: 'ZoroImages/SpriteZero.png',
-        description: 'Zero sugar Sprite'
     }
 ];
+
+// Hidden products (e.g. not launched yet) stay in the list above but are not shown or orderable
+for (let i = products.length - 1; i >= 0; i--) {
+    if (products[i].hidden) products.splice(i, 1);
+}
 
 // Make products globally accessible for other scripts
 if (typeof window !== 'undefined') {
@@ -378,13 +370,14 @@ const categoryOrder = [
 
 // ==================== PRODUCT OPTIONS (shared by menu + home page) ====================
 // "Serious hunger?" upgrades and "Make it a meal" from the menu board
+// Each extra patty is DOUBLE_PATTY_PRICE (beef burgers go up to triple)
 const DOUBLE_PATTY_PRICE = 395;
 const DOUBLE_CHEESE_PRICE = 95;
 const MEAL_OPTIONS = [
     { name: 'Plain Fries & Drink', price: 595 },
     { name: 'Spicy Fries & Drink', price: 645 }
 ];
-const MEAL_DRINKS = ['Coke', 'Sprite', 'Fanta', 'Coke Zero', 'Sprite Zero'];
+const MEAL_DRINKS = ['Coke', 'Sprite', 'Fanta'];
 
 function isBurgerProduct(product) {
     return !!product && (product.category === 'beef-smashers' || product.category === 'chicken-burgers');
@@ -393,10 +386,16 @@ function isBurgerProduct(product) {
 // Returns the size choices for a product: [{ name, price }]
 function getProductSizes(product) {
     if (isBurgerProduct(product)) {
-        const doubleLabel = product.category === 'beef-smashers' ? 'Double the Beef' : 'Double the Chicken';
+        if (product.category === 'beef-smashers') {
+            return [
+                { name: 'Single', price: product.price },
+                { name: 'Double the Beef', price: product.price + DOUBLE_PATTY_PRICE },
+                { name: 'Triple the Beef', price: product.price + DOUBLE_PATTY_PRICE * 2 }
+            ];
+        }
         return [
             { name: 'Single', price: product.price },
-            { name: doubleLabel, price: product.price + DOUBLE_PATTY_PRICE }
+            { name: 'Double the Chicken', price: product.price + DOUBLE_PATTY_PRICE }
         ];
     }
     if (product.category === 'premium-shakes') {
@@ -645,7 +644,7 @@ let cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
 const DISCONTINUED_PRODUCT_IDS = [101, 102, 103];
 
 // Clear carts built against an older menu (prices/items changed)
-const MENU_VERSION = '2026-10-jt-panels';
+const MENU_VERSION = '2026-10-01-menu-fixes';
 if (localStorage.getItem('zoroMenuVersion') !== MENU_VERSION) {
     cart = [];
     localStorage.setItem('zoroMenuVersion', MENU_VERSION);

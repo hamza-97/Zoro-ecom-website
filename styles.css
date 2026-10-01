@@ -2427,3 +2427,27 @@ html {
     }
 }
 
+
+/* Home hero: static web banner (replaces the hero video) */
+.hero.hero-banner {
+    background: #8e1826;
+    padding: 0 0 2rem;
+    min-height: 0;
+    gap: 1.5rem;
+}
+
+.hero-banner-img {
+    display: block;
+    width: 100%;
+    max-width: 1520px;
+    height: auto;
+}
+
+@media (max-width: 768px) {
+    /* Artwork sits in the middle of a wide banner; crop the plain side margins on phones */
+    .hero-banner-img {
+        height: 58vw;
+        object-fit: cover;
+        object-position: center;
+    }
+}

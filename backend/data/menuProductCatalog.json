@@ -26,12 +26,12 @@
   },
   {
     "id": 9,
-    "name": "BLT Classic",
+    "name": "Bacon n Cheese",
     "category": "beef-smashers"
   },
   {
     "id": 10,
-    "name": "Swiss Mushroom",
+    "name": "Cheesy Mushroom",
     "category": "beef-smashers"
   },
   {
@@ -83,21 +83,6 @@
     "id": 25,
     "name": "Philly Cheese",
     "category": "loaded-fries"
-  },
-  {
-    "id": 64,
-    "name": "Hot Take Tenders",
-    "category": "tenders"
-  },
-  {
-    "id": 65,
-    "name": "Thai Tenders",
-    "category": "tenders"
-  },
-  {
-    "id": 66,
-    "name": "Korean BBQ Tenders",
-    "category": "tenders"
   },
   {
     "id": 27,
@@ -177,16 +162,6 @@
   {
     "id": 43,
     "name": "Fanta",
-    "category": "soft-drinks"
-  },
-  {
-    "id": 44,
-    "name": "Coke Zero",
-    "category": "soft-drinks"
-  },
-  {
-    "id": 45,
-    "name": "Sprite Zero",
     "category": "soft-drinks"
   }
 ]
