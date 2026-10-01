@@ -163,5 +163,15 @@
     "id": 43,
     "name": "Fanta",
     "category": "soft-drinks"
+  },
+  {
+    "id": 44,
+    "name": "Coke Zero",
+    "category": "soft-drinks"
+  },
+  {
+    "id": 45,
+    "name": "Sprite Zero",
+    "category": "soft-drinks"
   }
 ]

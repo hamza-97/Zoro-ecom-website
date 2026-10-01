@@ -314,6 +314,22 @@ const products = [
         price: 195,
         image: 'ZoroImages/Fanta.png',
         description: 'Fruity Fanta'
+    },
+    {
+        id: 44,
+        name: 'Coke Zero',
+        category: 'soft-drinks',
+        price: 195,
+        image: 'ZoroImages/CokeZero.png',
+        description: 'Zero sugar Coca-Cola'
+    },
+    {
+        id: 45,
+        name: 'Sprite Zero',
+        category: 'soft-drinks',
+        price: 195,
+        image: 'ZoroImages/SpriteZero.png',
+        description: 'Zero sugar Sprite'
     }
 ];
 
@@ -377,7 +393,7 @@ const MEAL_OPTIONS = [
     { name: 'Plain Fries & Drink', price: 595 },
     { name: 'Spicy Fries & Drink', price: 645 }
 ];
-const MEAL_DRINKS = ['Coke', 'Sprite', 'Fanta'];
+const MEAL_DRINKS = ['Coke', 'Sprite', 'Fanta', 'Coke Zero', 'Sprite Zero'];
 
 function isBurgerProduct(product) {
     return !!product && (product.category === 'beef-smashers' || product.category === 'chicken-burgers');
