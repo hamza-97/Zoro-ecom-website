@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Details - Zoro Burger</title>
     <link rel="icon" href="favicon.png" type="image/png">
-    <link rel="stylesheet" href="styles.css?v=20261002b">
+    <link rel="stylesheet" href="styles.css?v=20261008">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -1081,7 +1081,7 @@
     </div>
 
     <!-- Load menu-script.js to get products -->
-    <script src="menu-script.js?v=20261002b"></script>
+    <script src="menu-script.js?v=20261008"></script>
 
     <script>
         const API_URL = 'https://zoroburger.com/api';
@@ -1737,10 +1737,9 @@
 
                 if (isBurger && !isWings) {
                     addons = [
-                        { name: 'Double the Cheese', price: 95 },
-                        { name: 'Meal: Plain Fries & Drink', price: 595 },
-                        { name: 'Meal: Spicy Fries & Drink', price: 645 }
-                    ];
+                        { name: 'Double the Cheese', price: DOUBLE_CHEESE_PRICE },
+                        ...MEAL_OPTIONS.map(meal => ({ name: `Meal: ${meal.name}`, price: meal.price }))
+                    ].map(addon => ({ ...addon, price: applyDiscount(addon.price) }));
                 }
             }
 

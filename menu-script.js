@@ -399,8 +399,17 @@ function isBurgerProduct(product) {
     return !!product && (product.category === 'beef-smashers' || product.category === 'chicken-burgers');
 }
 
-// Returns the size choices for a product: [{ name, price }]
+// Returns the size choices for a product: [{ name, originalPrice, price }] with the discount applied
 function getProductSizes(product) {
+    return getProductBaseSizes(product).map(size => ({
+        name: size.name,
+        originalPrice: size.price,
+        price: applyDiscount(size.price)
+    }));
+}
+
+// Menu-board (undiscounted) size prices
+function getProductBaseSizes(product) {
     if (isBurgerProduct(product)) {
         if (product.category === 'beef-smashers') {
             return [
@@ -442,20 +451,28 @@ function renderProductModalBody(product) {
     const categoryName = categoryNames[product.category] || '';
 
     const sizesHTML = sizes.map((size, index) => `
-        <div class="size-option ${index === 0 ? 'selected' : ''}" data-size="${size.name}" data-price="${size.price}">
+        <div class="size-option ${index === 0 ? 'selected' : ''}" data-size="${size.name}" data-price="${size.price}" data-original-price="${size.originalPrice}">
             <span class="size-option-name">${size.name}</span>
             <span class="size-option-price">
+                ${size.originalPrice !== size.price ? `<span class="size-price-original">Rs ${size.originalPrice.toLocaleString()}</span>` : ''}
                 <span class="size-price-discounted">Rs ${size.price.toLocaleString()}</span>
             </span>
         </div>
     `).join('');
 
-    const mealsHTML = [{ name: 'No Meal', price: 0 }].concat(MEAL_OPTIONS).map((meal, index) => `
-        <div class="size-option meal-option ${index === 0 ? 'selected' : ''}" data-meal="${index === 0 ? '' : meal.name}" data-price="${meal.price}">
+    const mealsHTML = [{ name: 'No Meal', price: 0 }].concat(MEAL_OPTIONS).map((meal, index) => {
+        const mealPrice = applyDiscount(meal.price);
+        return `
+        <div class="size-option meal-option ${index === 0 ? 'selected' : ''}" data-meal="${index === 0 ? '' : meal.name}" data-price="${mealPrice}">
             <span class="size-option-name">${meal.name}</span>
-            ${meal.price > 0 ? `<span class="size-option-price"><span class="size-price-discounted">+ Rs ${meal.price.toLocaleString()}</span></span>` : ''}
+            ${meal.price > 0 ? `<span class="size-option-price">
+                ${mealPrice !== meal.price ? `<span class="size-price-original">Rs ${meal.price.toLocaleString()}</span>` : ''}
+                <span class="size-price-discounted">+ Rs ${mealPrice.toLocaleString()}</span>
+            </span>` : ''}
         </div>
-    `).join('');
+    `;
+    }).join('');
+    const cheesePrice = applyDiscount(DOUBLE_CHEESE_PRICE);
 
     const drinksHTML = MEAL_DRINKS.map((drink, index) => `
         <div class="size-option drink-option ${index === 0 ? 'selected' : ''}" data-drink="${drink}">
@@ -491,9 +508,11 @@ function renderProductModalBody(product) {
                     <div class="modal-section-required">Optional</div>
                 </div>
                 <div class="addons-grid">
-                    <div class="addon-option" data-addon="Double the Cheese" data-price="${DOUBLE_CHEESE_PRICE}">
+                    <div class="addon-option" data-addon="Double the Cheese" data-price="${cheesePrice}" data-original-price="${DOUBLE_CHEESE_PRICE}">
                         <div class="addon-name">Double the Cheese</div>
-                        <div class="addon-price">Rs ${DOUBLE_CHEESE_PRICE}</div>
+                        <div class="addon-price">
+                            ${cheesePrice !== DOUBLE_CHEESE_PRICE ? `<span style="text-decoration: line-through; color: #999; margin-right: 0.35rem;">Rs ${DOUBLE_CHEESE_PRICE}</span>` : ''}Rs ${cheesePrice}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -562,6 +581,7 @@ function buildCartItemFromModal(product) {
     }
     const sizeName = selectedSize.dataset.size;
     const sizePrice = parseInt(selectedSize.dataset.price, 10);
+    const sizeOriginalPrice = parseInt(selectedSize.dataset.originalPrice, 10) || sizePrice;
 
     const addons = Array.from(document.querySelectorAll('#modalBody .addon-option.selected')).map(addon => ({
         name: addon.dataset.addon,
@@ -587,7 +607,7 @@ function buildCartItemFromModal(product) {
         name: product.name,
         image: product.image,
         price: sizePrice,
-        originalPrice: sizePrice,
+        originalPrice: sizeOriginalPrice,
         quantity: quantity,
         size: sizeName,
         addons: addons,
@@ -599,59 +619,22 @@ function buildCartItemFromModal(product) {
 
 // Toggle to enable/disable discounts globally
 // Set to true to apply discounts, false to show original prices only
-const APPLY_DISCOUNTS = false;
+const APPLY_DISCOUNTS = true;
+// Flat discount on every item, size, add-on and meal
+const FLAT_DISCOUNT_RATE = 0.20;
 window.APPLY_DISCOUNTS = APPLY_DISCOUNTS;
 
-// Discount rates by category
-// Only combo meals have custom discount rates
-// All other items (beef-smashers, beef-speciality, chicken-burgers, wings, loaded-fries, appetizers, desserts, premium-shakes, soft-drinks) get 20% off (default)
-const discountRates = {
-    'beef-smasher-meals': 0.1980,    // 19.8% off (1490 → 1195)
-    'signature-chicken-meals': 0.1980, // 19.8% off (1490 → 1195)
-    // All other categories: 20% off (default)
-};
+// Apply the current discount to any menu price
+function applyDiscount(price) {
+    return APPLY_DISCOUNTS ? Math.round(price * (1 - FLAT_DISCOUNT_RATE)) : price;
+}
 
 // Calculate discounted price for a product
 function getDiscountedPrice(product) {
-    const originalPrice = product.price;
-    const isClassicChicken = product.id === 11;
-
-    // Classic Chicken is always sold at full price (no discount).
-    if (isClassicChicken) {
-        return {
-            original: originalPrice,
-            discounted: originalPrice,
-            discountRate: 0
-        };
-    }
-    
-    // If product has explicit discounted price (e.g. Ramadan deals), use it
-    if (product.discountedPrice != null) {
-        const discounted = APPLY_DISCOUNTS ? product.discountedPrice : originalPrice;
-        const rate = originalPrice > 0 ? 1 - (discounted / originalPrice) : 0;
-        return {
-            original: originalPrice,
-            discounted: discounted,
-            discountRate: rate
-        };
-    }
-    
-    // If discounts are disabled, return original price for both
-    if (!APPLY_DISCOUNTS) {
-        return {
-            original: originalPrice,
-            discounted: originalPrice,
-            discountRate: 0
-        };
-    }
-    
-    // Apply discount if enabled
-    const discountRate = discountRates[product.category] || 0.20; // Default 20% off
-    const discountedPrice = Math.round(originalPrice * (1 - discountRate));
     return {
-        original: originalPrice,
-        discounted: discountedPrice,
-        discountRate: discountRate
+        original: product.price,
+        discounted: applyDiscount(product.price),
+        discountRate: APPLY_DISCOUNTS ? FLAT_DISCOUNT_RATE : 0
     };
 }
 
@@ -660,7 +643,7 @@ let cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
 const DISCONTINUED_PRODUCT_IDS = [101, 102, 103];
 
 // Clear carts built against an older menu (prices/items changed)
-const MENU_VERSION = '2026-10-01-menu-fixes';
+const MENU_VERSION = '2026-10-08-flat-20-off';
 if (localStorage.getItem('zoroMenuVersion') !== MENU_VERSION) {
     cart = [];
     localStorage.setItem('zoroMenuVersion', MENU_VERSION);
