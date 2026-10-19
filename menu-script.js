@@ -1,4 +1,4 @@
-// Products Data organized according to the current in-store menu (JT panels)
+// Products Data organized according to the current Foodpanda menu
 // Make products globally accessible
 const products = [
     // SMASH BEEF BURGERS
@@ -6,47 +6,47 @@ const products = [
         id: 63,
         name: 'No Brainer',
         category: 'beef-smashers',
-        price: 795,
+        price: 785,
         image: 'ZoroImages/Products/NoBrainer.jpg',
         description: 'Beef Patty, Onions, Pickles, Ketchup, Mustard'
-    },
-    {
-        id: 8,
-        name: 'Bangkok',
-        category: 'beef-smashers',
-        price: 995,
-        image: 'ZoroImages/Products/Bangkok.jpg',
-        description: 'Beef Patty, Lettuce, Jalapenos, Cheese, Onions, Chilli Mayo'
     },
     {
         id: 1,
         name: 'Classic American',
         category: 'beef-smashers',
-        price: 995,
+        price: 885,
         image: 'ZoroImages/Products/ClassicAmerican.jpg',
         description: 'Beef Patty, Pickles, Onions, Cheese, Ketchup, Mayo'
-    },
-    {
-        id: 2,
-        name: 'Onion Melt',
-        category: 'beef-smashers',
-        price: 995,
-        image: 'ZoroImages/Products/OnionMelt.jpg',
-        description: 'Beef Patty, Grilled Onions, Cheese, Lettuce, Crispy Onions, Garlic Aioli'
     },
     {
         id: 4,
         name: 'Big Ben',
         category: 'beef-smashers',
-        price: 995,
+        price: 885,
         image: 'ZoroImages/Products/BigBen.jpg',
         description: 'Beef Patty, Grilled Onions, Cheese, Onions, Crispy Onions, Jalapeno Mayo'
+    },
+    {
+        id: 2,
+        name: 'Onion Melt',
+        category: 'beef-smashers',
+        price: 985,
+        image: 'ZoroImages/Products/OnionMelt.jpg',
+        description: 'Beef Patty, Grilled Onions, Cheese, Lettuce, Crispy Onions, Garlic Aioli'
+    },
+    {
+        id: 8,
+        name: 'Bangkok',
+        category: 'beef-smashers',
+        price: 985,
+        image: 'ZoroImages/Products/Bangkok.jpg',
+        description: 'Beef Patty, Lettuce, Jalapenos, Cheese, Onions, Chilli Mayo'
     },
     {
         id: 9,
         name: 'Bacon n Cheese',
         category: 'beef-smashers',
-        price: 1095,
+        price: 1085,
         image: 'ZoroImages/Products/BaconNCheese.jpg',
         description: 'Beef Patty, Bacon, Lettuce, Tomatoes, Cheese, Ketchup, Mustard, Mayo'
     },
@@ -54,7 +54,7 @@ const products = [
         id: 10,
         name: 'Cheesy Mushroom',
         category: 'beef-smashers',
-        price: 1095,
+        price: 1085,
         image: 'ZoroImages/Products/CheesyMushroom.jpg',
         description: 'Beef Patty, Cheesy Mushroom Sauce, Mayo, Cheese'
     },
@@ -64,31 +64,31 @@ const products = [
         id: 11,
         name: 'Classic Chicken',
         category: 'chicken-burgers',
-        price: 695,
+        price: 785,
         image: 'ZoroImages/Products/ClassicChicken.jpg',
         description: 'Chicken Patty, Cheese, Mayo, Lettuce'
-    },
-    {
-        id: 14,
-        name: 'Roost',
-        category: 'chicken-burgers',
-        price: 995,
-        image: 'ZoroImages/Products/Roost.jpg',
-        description: 'Chicken Breast Fillet, Cheese, Lettuce, Mayo, Tomatoes'
     },
     {
         id: 17,
         name: 'Hellfire',
         category: 'chicken-burgers',
-        price: 995,
+        price: 985,
         image: 'ZoroImages/Products/Hellfire.jpg',
         description: 'Chicken Breast Fillet, Fiery Buffalo Sauce, Cheese, Lettuce, Chilli Mayo, Jalapenos'
+    },
+    {
+        id: 14,
+        name: 'Roost',
+        category: 'chicken-burgers',
+        price: 885,
+        image: 'ZoroImages/Products/Roost.jpg',
+        description: 'Chicken Breast Fillet, Cheese, Lettuce, Mayo, Tomatoes'
     },
     {
         id: 16,
         name: 'Mexicana',
         category: 'chicken-burgers',
-        price: 1095,
+        price: 985,
         image: 'ZoroImages/Products/Mexicana.jpg',
         description: 'Chicken Breast Fillet, Nacho Chips, Lettuce, Jalapenos, Onions, Salsa Mayo, Cheese'
     },
@@ -96,7 +96,7 @@ const products = [
         id: 13,
         name: 'Tangy Crunch',
         category: 'chicken-burgers',
-        price: 1095,
+        price: 1085,
         image: 'ZoroImages/Products/TangyCrunch.jpg',
         description: 'Chicken Breast Fillet, Coleslaw, Mayo, Honey Mustard'
     },
@@ -106,7 +106,7 @@ const products = [
         id: 19,
         name: 'Korean BBQ Wings',
         category: 'wings',
-        price: 695,
+        price: 685,
         image: 'ZoroImages/Products/KoreanBbqWings.jpg',
         description: 'Crispy Chicken Wings glazed in Korean BBQ Sauce'
     },
@@ -114,7 +114,7 @@ const products = [
         id: 20,
         name: 'Spicy Buffalo Wings',
         category: 'wings',
-        price: 695,
+        price: 685,
         image: 'ZoroImages/Products/SpicyBuffaloWings.jpg',
         description: 'Crispy Chicken Wings tossed in Spicy Buffalo Sauce'
     },
@@ -122,17 +122,16 @@ const products = [
         id: 21,
         name: 'Thai Wings',
         category: 'wings',
-        price: 695,
+        price: 685,
         image: 'ZoroImages/Products/ThaiWings.jpg',
         description: 'Crispy Chicken Wings coated in Thai Sweet and Spicy Sauce'
     },
-
     // LOADED FRIES
     {
         id: 24,
         name: 'Funky Cheese',
         category: 'loaded-fries',
-        price: 995,
+        price: 1085,
         image: 'ZoroImages/Products/FunkyCheese.jpg',
         description: 'Chicken Cubes, Spicy Fries, Chilli Mayo, Cheese, Jalapenos'
     },
@@ -140,11 +139,10 @@ const products = [
         id: 25,
         name: 'Philly Cheese',
         category: 'loaded-fries',
-        price: 995,
+        price: 1085,
         image: 'ZoroImages/Products/PhillyCheese.jpg',
         description: 'Australian Beef Patty, Grilled Onions, Garlic Aioli, Cheese'
     },
-
     // TENDERS (3pc)
     {
         id: 64,
@@ -173,13 +171,12 @@ const products = [
         image: 'ZoroImages/ChickenCrunchers.png',
         description: '3 Crispy Chicken Tenders glazed in Korean BBQ Sauce'
     },
-
     // SIDES
     {
         id: 27,
         name: 'Plain Fries',
         category: 'appetizers',
-        price: 495,
+        price: 435,
         image: 'ZoroImages/Products/PlainFries.jpg',
         description: 'Classic crispy golden fries'
     },
@@ -187,7 +184,7 @@ const products = [
         id: 28,
         name: 'Spicy Fries',
         category: 'appetizers',
-        price: 545,
+        price: 485,
         image: 'ZoroImages/Products/SpicyFries.jpg',
         description: 'Fries with a spicy kick'
     },
@@ -199,7 +196,6 @@ const products = [
         image: 'ZoroImages/Products/Crunchers.jpg',
         description: 'Crispy chicken bites perfect for sharing'
     },
-
     // MILK SHAKES (price = Regular, largePrice = Large)
     {
         id: 33,
@@ -255,7 +251,6 @@ const products = [
         image: 'ZoroImages/Products/HazelDream.jpg',
         description: 'Dreamy hazelnut shake that melts in your mouth'
     },
-
     // FUNNEL CAKES
     {
         id: 29,
@@ -277,17 +272,16 @@ const products = [
         id: 31,
         name: 'Strawberry Funnel Cake',
         category: 'desserts',
-        price: 595,
+        price: 495,
         image: 'ZoroImages/Products/StrawberryFunnelCake.jpg',
         description: 'Crispy Golden Canadian Funnel Cake topped with Vanilla Ice Cream and housemade Strawberry Sauce'
     },
-
     // DRINKS
     {
         id: 46,
         name: 'Water',
         category: 'soft-drinks',
-        price: 125,
+        price: 215,
         image: 'ZoroImages/DasaniWater.png',
         description: 'Bottled water'
     },
@@ -295,7 +289,7 @@ const products = [
         id: 41,
         name: 'Coke',
         category: 'soft-drinks',
-        price: 195,
+        price: 235,
         image: 'ZoroImages/Coke.png',
         description: 'Refreshing Coca-Cola'
     },
@@ -303,7 +297,7 @@ const products = [
         id: 42,
         name: 'Sprite',
         category: 'soft-drinks',
-        price: 195,
+        price: 235,
         image: 'ZoroImages/Sprite.png',
         description: 'Crisp and refreshing Sprite'
     },
@@ -311,7 +305,7 @@ const products = [
         id: 43,
         name: 'Fanta',
         category: 'soft-drinks',
-        price: 195,
+        price: 235,
         image: 'ZoroImages/Fanta.png',
         description: 'Fruity Fanta'
     },
@@ -319,7 +313,7 @@ const products = [
         id: 44,
         name: 'Coke Zero',
         category: 'soft-drinks',
-        price: 195,
+        price: 235,
         image: 'ZoroImages/CokeZero.png',
         description: 'Zero sugar Coca-Cola'
     },
@@ -327,7 +321,7 @@ const products = [
         id: 45,
         name: 'Sprite Zero',
         category: 'soft-drinks',
-        price: 195,
+        price: 235,
         image: 'ZoroImages/SpriteZero.png',
         description: 'Zero sugar Sprite'
     }
@@ -387,7 +381,7 @@ const categoryOrder = [
 // ==================== PRODUCT OPTIONS (shared by menu + home page) ====================
 // "Serious hunger?" upgrades and "Make it a meal" from the menu board
 // Each extra patty is DOUBLE_PATTY_PRICE (beef burgers go up to triple)
-const DOUBLE_PATTY_PRICE = 395;
+const DOUBLE_PATTY_PRICE = 375;
 const DOUBLE_CHEESE_PRICE = 95;
 const MEAL_OPTIONS = [
     { name: 'Plain Fries & Drink', price: 595 },
@@ -643,7 +637,7 @@ let cart = JSON.parse(localStorage.getItem('zoroCart')) || [];
 const DISCONTINUED_PRODUCT_IDS = [101, 102, 103];
 
 // Clear carts built against an older menu (prices/items changed)
-const MENU_VERSION = '2026-10-08-flat-20-off';
+const MENU_VERSION = '2026-10-18-foodpanda-prices';
 if (localStorage.getItem('zoroMenuVersion') !== MENU_VERSION) {
     cart = [];
     localStorage.setItem('zoroMenuVersion', MENU_VERSION);
